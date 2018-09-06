@@ -3,9 +3,10 @@ project(RIFE_Engine)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
+find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLFW REQUIRED)
-find_package(OpenGL REQUIRED)
+
 
 if(NOT OPENGL_FOUND)
     message(ERROR " OPENGL not found!")
