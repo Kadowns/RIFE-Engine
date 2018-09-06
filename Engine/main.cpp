@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-
+#include "Window.h"
 
 int main() {
 
@@ -39,7 +39,7 @@ int main() {
 
 	do {
 		//precisa arrumar, gl.h ta sendo incluido antes do glew.h e parece que essa função ai ta duplicada, se vc descomentar ela o código explode
-	//	glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 
 		glfwSwapBuffers(window);

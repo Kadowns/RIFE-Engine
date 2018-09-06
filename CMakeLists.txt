@@ -5,5 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 find_package(GLEW REQUIRED)
 find_package(GLFW REQUIRED)
+find_package(OpenGL REQUIRED)
+
 add_executable(RIFE_Engine ${CMAKE_HOME_DIRECTORY}/Engine/main.cpp)
-target_link_libraries(RIFE_Engine GLEW GLFW)
+target_link_libraries(RIFE_Engine GLEW GLFW OpenGL)
