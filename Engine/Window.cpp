@@ -39,12 +39,6 @@ void Window::init(){
 	
 	glfwSwapInterval(1);
 
-	//glew
-	//glfwMakeContextCurrent(m_window);
-
-	//if (glewInit() != GLEW_OK)
-    //   throw std::exception("Failed to initialize Glew");
-
 	glfwShowWindow(m_window);
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
 
@@ -56,7 +50,6 @@ void Window::loop(){
 	m_scene->init();
 	do {
 		TIME->earlyUpdate();
-		//glClear(GL_COLOR_BUFFER_BIT);
 		
 		double time = TIME->getLastFrameTime();
 		m_scene->update(time);
