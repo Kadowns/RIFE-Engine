@@ -11,8 +11,9 @@ find_package(GLFW REQUIRED)
 
 add_library(Vulkan SHARED IMPORTED)
 
+
 add_executable(RIFE ${CMAKE_HOME_DIRECTORY}/Engine/main.cpp)
-target_link_libraries(RIFE Vulkan::Vulkan)
+target_link_libraries(RIFE Vulkan::Vulkan GLFW)
 
 target_sources(RIFE PUBLIC 
     ${CMAKE_HOME_DIRECTORY}/Engine/Keyboard.cpp
