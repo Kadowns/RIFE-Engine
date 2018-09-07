@@ -3,7 +3,7 @@
 //gl dependencies
 #ifndef GLDEP
 #define GLDEP
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #endif // !GLDEP
 
