@@ -39,12 +39,17 @@ if(WIN32)
     find_library(Vulkan_LIBRARY
       NAMES vulkan-1
       PATHS
-        "$ENV{VULKAN_SDK}/Bin")
+        "$ENV{VULKAN_SDK}/Lib"
+        "$ENV{VULKAN_SDK}/Bin"
+        )
   elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     find_library(Vulkan_LIBRARY
       NAMES vulkan-1
       PATHS
-        "$ENV{VULKAN_SDK}/Bin32")
+        "$ENV{VULKAN_SDK}/Lib32"
+        "$ENV{VULKAN_SDK}/Bin32"
+        NO_SYSTEM_ENVIRONMENT_PATH
+        )
   endif()
 else()
     find_path(Vulkan_INCLUDE_DIR
@@ -60,6 +65,7 @@ endif()
 set(Vulkan_LIBRARIES ${Vulkan_LIBRARY})
 set(Vulkan_INCLUDE_DIRS ${Vulkan_INCLUDE_DIR})
 
+#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Vulkan
   DEFAULT_MSG
