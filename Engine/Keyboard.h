@@ -5,10 +5,6 @@
 #define KEYBOARD Keyboard::getInstance()
 
 class Keyboard {	
-private:
-	static Keyboard *m_instance;
-	std::set<int> m_pressedKeys, m_downKeys, m_releasedKeys;
-	Keyboard();
 public:
 
 	~Keyboard();
@@ -21,5 +17,9 @@ public:
 
 	void update();
 
+private:
+	Keyboard();
+	static Keyboard *m_instance;
+	std::set<int> m_pressedKeys, m_downKeys, m_releasedKeys;
 };
 
