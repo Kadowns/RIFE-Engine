@@ -17,11 +17,4 @@ find_package(GLFW REQUIRED)
 set(GLFW_DIR ${CMAKE_HOME_DIRECTORY}/libs/glfw)
 set(GLFW_INCLUDE_DIR ${GLFW_DIR}/include)
 set(GLFW_LIBRARY ${GLFW_DIR}/lib)
-set(GENERAL_INCLUDES 
-			 ${Vulkan_INCLUDE_DIRS}
-			 ${GRAPHICS_INCLUDE}
-			 ${APPLICATION_INCLUDE})
 
-#target_include_directories(Main GENERAL_INCLUDES)
-message("Vulkan libraries: ${GENERAL_INCLUDES}")
-target_link_libraries(Main interface ${GENERAL_INCLUDES})
