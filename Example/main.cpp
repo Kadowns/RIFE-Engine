@@ -1,6 +1,5 @@
-#include "Window.h"
-#include "Test.h"
-
+#include <Window.h>
+#include <Test.h>
 
 int main() {
 	Scene *scene = new Test();
@@ -13,7 +12,7 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	//só ta aqui pra dar pra ler os debug callback dps que destruiu o vkinstance e vkcallback
+	//sï¿½ ta aqui pra dar pra ler os debug callback dps que destruiu o vkinstance e vkcallback
 	system("pause");
 
 	delete scene;

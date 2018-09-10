@@ -1,6 +1,7 @@
 #pragma once
-#include <GLFW/glfw3.h>
+
 #include <set>
+#include <GLFW/glfw3.h>
 
 #define KEYBOARD Keyboard::getInstance()
 

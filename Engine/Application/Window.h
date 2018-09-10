@@ -7,7 +7,7 @@
 #define GLFW_INCLUDE_VULKAN
 #endif // !GLDEP
 #include "Scene.h"
-#include "Time.h"
+#include "time.h"
 
 #include <iostream>
 #include <stdexcept>
