@@ -1,4 +1,4 @@
-add_library(GLEW STATIC IMPORTED)
+add_library(GLEW STATIC IMPORTED GLOBAL)
 target_include_directories(GLEW
         INTERFACE
         ${CMAKE_HOME_DIRECTORY}/libs/glew/include

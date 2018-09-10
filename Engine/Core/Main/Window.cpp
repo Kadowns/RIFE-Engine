@@ -168,6 +168,67 @@ void Window::createVkInstance() {
 	}
 }
 
+void Window::pickPhysicalDevice() {
+
+	//verifica quantas placas de video suportam a vulkan no pc
+	uint32_t deviceCount = 0;
+	vkEnumeratePhysicalDevices(m_vkInstance, &deviceCount, nullptr);
+
+	//se não houver nenhuma placa de video que suporta, para o programa
+	if (deviceCount == 0) {
+		throw std::runtime_error("failed to find GPUs with vulkan support!");
+	}
+
+	//lista todas as placas de video disponiveis
+	std::vector<VkPhysicalDevice> devices(deviceCount);
+	vkEnumeratePhysicalDevices(m_vkInstance, &deviceCount, devices.data());
+
+	//map usado pra rankear a melhor placa de video
+	std::multimap<int, VkPhysicalDevice> candidates;
+
+	for (const auto& device : devices) {
+		//verifica a qualidade da placa de video
+		int score = rateDeviceSuitability(device);
+
+		//guarda a referencia da placa de video junto com seu score
+		candidates.insert(std::make_pair(score, device));
+	}
+	
+	//caso o score da melhor placa de video seja maior que zero, iremos utilizar ela
+	if (candidates.rbegin()->first > 0) {
+		m_vkPhysicalDevice = candidates.rbegin()->second;
+	}
+	else  {
+		//caso nenhuma preste
+		throw std::runtime_error("no suitable GPU found!");
+	}
+
+}
+
+
+int Window::rateDeviceSuitability(VkPhysicalDevice device) {
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+	VkPhysicalDeviceFeatures deviceFeatures;
+	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+	if (!deviceFeatures.geometryShader) {
+		return 0;
+	}
+
+	//TODO------------fazer um sistema de scores mais eficiente
+	int score = 0;
+
+	if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+		score += 999;
+	}
+
+	score += deviceProperties.limits.maxImageDimension2D;
+
+	return score;
+}
+
 //loop principal, n tem segredo né
 void Window::loop(){
 	m_scene->init();
@@ -177,7 +238,7 @@ void Window::loop(){
 		double time = TIME->getLastFrameTime();
 		m_scene->update(time);
 		m_scene->draw();
-		//printf("Time: %f, FPS : %f, Total frames: %i\n", time, TIME->getFPS(), TIME->getTotalFrames());
+		printf("Time: %f, FPS : %f, Total frames: %i\n", time, TIME->getFPS(), TIME->getTotalFrames());
 		
 		KEYBOARD->update();
 		glfwSwapBuffers(m_window);

@@ -1,4 +1,4 @@
-add_library(GLFW STATIC IMPORTED)
+add_library(GLFW STATIC IMPORTED GLOBAL)
 target_include_directories(GLFW
         INTERFACE
         ${CMAKE_HOME_DIRECTORY}/libs/glfw/include

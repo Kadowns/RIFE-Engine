@@ -5,11 +5,8 @@
 #define GLDEP
 
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 #endif // !GLDEP
-
 #include "Scene.h"
-#include "Keyboard.h"
 #include "Time.h"
 
 #include <iostream>
@@ -18,6 +15,7 @@
 #include <cstdlib>
 
 #include <vector>
+#include <map>
 #include <chrono>
 #include <thread>
 
@@ -58,6 +56,7 @@ private :
 	GLFWwindow *m_window;
 	GLFWerrorfun m_errorCallback;
 	VkInstance m_vkInstance;
+	VkPhysicalDevice m_vkPhysicalDevice = VK_NULL_HANDLE;
 	VkDebugUtilsMessengerEXT m_vkCallback;
 	
 	Window();
@@ -67,12 +66,13 @@ private :
 	void initVulkan();
 	void setupDebugCallback();
 	void createVkInstance();
+	void pickPhysicalDevice();
 	void loop();
 	void terminate();
-
 	
 	std::vector<const char*> getRequiredExtensions();
 	bool checkValidationLayerSupport();
+	int rateDeviceSuitability(VkPhysicalDevice device);
 		
 public:
 
