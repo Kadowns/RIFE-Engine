@@ -5,9 +5,10 @@
 #define GLDEP
 
 #define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 #endif // !GLDEP
 #include "Scene.h"
-#include "time.h"
+#include "Clock.h"
 
 #include <iostream>
 #include <stdexcept>

@@ -1,41 +1,41 @@
-#include "Time.h"
+#include "Clock.h"
 
-Time* Time::m_instance = nullptr;
+Clock* Clock::m_instance = nullptr;
 
-Time::Time(){
+Clock::Clock(){
 }
 
 
-Time::~Time()
+Clock::~Clock()
 {
 }
 
-Time* Time::getInstance(){
-	return m_instance != nullptr ? m_instance : (m_instance = new Time());
+Clock* Clock::getInstance(){
+	return m_instance != nullptr ? m_instance : (m_instance = new Clock());
 }
 
-int Time::getTotalFrames() {
+int Clock::getTotalFrames() {
 	return m_frames;
 }
 
-double Time::getFPS() {
+double Clock::getFPS() {
 	return m_frameRate;
 }
 
-double Time::getLastFrameTime() {
+double Clock::getLastFrameTime() {
 	double elapsed_secs = double(m_deltaClocks) / CLOCKS_PER_SEC;
 	return elapsed_secs;
 }
 
-double Time::clockToMilliseconds(clock_t ticks) {
+double Clock::clockToMilliseconds(clock_t ticks) {
 	return (ticks / (double)CLOCKS_PER_SEC)*1000.0;
 }
 
-void Time::earlyUpdate() {
+void Clock::earlyUpdate() {
 	m_earlyClocks = clock();
 }
 
-void Time::lateUpdate(){
+void Clock::lateUpdate(){
 	
 	m_lateClocks = clock();
 	m_deltaClocks = m_lateClocks - m_earlyClocks;

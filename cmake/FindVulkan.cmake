@@ -27,7 +27,6 @@
 #   Vulkan_INCLUDE_DIR    - the Vulkan include directory
 #   Vulkan_LIBRARY        - the path to the Vulkan library
 #
-
 if(WIN32)
   find_path(Vulkan_INCLUDE_DIR
     NAMES vulkan/vulkan.h

@@ -1,11 +1,11 @@
 #pragma once
 #include <time.h>
 
-#define TIME Time::getInstance()
+#define TIME Clock::getInstance()
 
-class Time {
+class Clock {
 private:
-	static Time* m_instance;
+	static Clock* m_instance;
 	clock_t m_earlyClocks, m_lateClocks, m_deltaClocks;
 	int m_frames = 0;
 	float m_fpsUpdateRate = 10.0f;
@@ -15,9 +15,9 @@ private:
 	double clockToMilliseconds(clock_t clocks);
 
 public:
-	Time();
-	~Time();
-	static Time* getInstance();
+	Clock();
+	~Clock();
+	static Clock* getInstance();
 
 	int getTotalFrames();
 	double getFPS();	
