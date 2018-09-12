@@ -17,7 +17,6 @@ void vk::Wrapper::terminateVulkan() {
 	}
 
 	vkDestroySurfaceKHR(m_vkInstance, m_vkSurface, nullptr);
-	vkDestroyInstance(m_vkInstance, nullptr);
 	vkDestroyDevice(m_vkDevice, nullptr);
 	vkDestroyInstance(m_vkInstance, nullptr);
 }
@@ -102,7 +101,7 @@ bool vk::Wrapper::checkValidationLayerSupport() {
 }
 
 bool vk::Wrapper::checkDeviceExtensionSupport(VkPhysicalDevice device) {
-	
+	return true;
 }
 
 int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {

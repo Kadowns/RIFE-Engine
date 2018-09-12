@@ -1,11 +1,11 @@
-#include <Include/Window.h>
+#include <Include/Application.h>
 #include <Include/Test.h>
 
 int main() {
 	Scene *scene = new Test();
-	Window *window = new Window(scene, "Test", 800, 600);
+	Application *app = new Application(scene, "Test", 800, 600);
 	try {
-		window->show();
+		app->show();
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -16,7 +16,7 @@ int main() {
 	system("pause");
 
 	delete scene;
-	delete window;
+	delete app;
 
     return EXIT_SUCCESS;
 }
