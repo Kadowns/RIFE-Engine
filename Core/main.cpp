@@ -1,5 +1,5 @@
-#include <Window.h>
-#include <Test.h>
+#include <Include/Window.h>
+#include <Include/Test.h>
 
 int main() {
 	Scene *scene = new Test();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Window.h"
+#include "Application.h"
 #include "Scene.h"
 
 class Triangle : public Scene {
@@ -17,13 +17,6 @@ private:
 		"void main(){\n"
 		"    out_color = vec4(1.0, 1.0, 0.0, 1.0);\n"
 		"}";
-//	GLuint m_vaoID;
-
-	/** Guarda o id do buffer com todas as posições do vértice. */
-//	GLuint m_positionsID;
-
-	/** Guarda o id do shader program, após compilado e linkado */
-//	GLuint m_shaderID;
 
 public:
 	Triangle();

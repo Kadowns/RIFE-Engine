@@ -1,0 +1,2 @@
+add_executable(RIFE_Engine main.cpp)
+target_link_libraries(RIFE_Engine Application)

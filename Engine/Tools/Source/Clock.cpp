@@ -1,4 +1,4 @@
-#include "Clock.h"
+#include "Include/Clock.h"
 
 Clock* Clock::m_instance = nullptr;
 
@@ -23,8 +23,7 @@ double Clock::getFPS() {
 }
 
 double Clock::getLastFrameTime() {
-	double elapsed_secs = double(m_deltaClocks) / CLOCKS_PER_SEC;
-	return elapsed_secs;
+	return double(m_deltaClocks) / CLOCKS_PER_SEC;
 }
 
 double Clock::clockToMilliseconds(clock_t ticks) {

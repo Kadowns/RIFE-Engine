@@ -8,7 +8,7 @@ private:
 	static Clock* m_instance;
 	clock_t m_earlyClocks, m_lateClocks, m_deltaClocks;
 	int m_frames = 0;
-	float m_fpsUpdateRate = 10.0f;
+	float m_fpsUpdateRate = 4.0f;
 	double m_frameRate = 30;
 	double m_dt = 0;
 

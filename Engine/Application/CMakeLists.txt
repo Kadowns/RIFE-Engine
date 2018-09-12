@@ -1,16 +1,17 @@
 include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 message("Creating app")
 set(APPLICATION_INCLUDE
-        Window.h
-        Window.cpp
-        Test.h Triangle.h
+        Include/Application.h  
+        Include/Test.h 
+		Include/Triangle.h
+		Include/Scene.h
         )
-set(APPLICATION_DEFINITION
-        Test.cpp Triangle.cpp
+set(APPLICATION_SOURCE
+        Source/Application.cpp
+        Source/Test.cpp
+		Source/Triangle.cpp
         )
-set(APPLICATION_SCENE
-        Scene.h
-        )
-set(APPLICATION_ALL ${APPLICATION_INCLUDE} ${APPLICATION_DEFINITION} ${APPLICATION_SCENE})
+
+set(APPLICATION_ALL ${APPLICATION_INCLUDE} ${APPLICATION_SOURCE})
 CreateModule(Application "${APPLICATION_ALL}")
-target_link_libraries(Application Tools)
+target_link_libraries(Application Tools Graphics)
