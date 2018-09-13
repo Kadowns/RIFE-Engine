@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 //#include "vulkan/vulkan.h"
 #endif // !GLDEP
+#include "MathUtilities.h"
 #include <iostream>
 #include <vector>
 #include <set>
@@ -43,9 +44,17 @@ namespace vk {
 		}
 	};
 
+	struct SwapChainSupportDetails {
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
+
 	class Wrapper {
 
 	private:
+	    uint32_t m_width, m_height;
+
 		VkInstance m_vkInstance;
 		VkPhysicalDevice m_vkPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice m_vkDevice;
@@ -54,6 +63,10 @@ namespace vk {
 		VkSurfaceKHR m_vkSurface;
 
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
+		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
 		std::vector<const char*> getRequiredExtensions();
 		bool checkValidationLayerSupport();
@@ -64,10 +77,11 @@ namespace vk {
 		void createVkInstance();
 		void createSurface(GLFWwindow *window);
 		void createLogicalDevice();
+		void createSwapChain();
 
 	public:
 		Wrapper();
-		void initializeVulkan(GLFWwindow *window);
+		void initializeVulkan(GLFWwindow *window, int windowW, int windowH);
 		void terminateVulkan();
 
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
