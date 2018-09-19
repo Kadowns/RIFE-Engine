@@ -64,6 +64,7 @@ namespace vk {
 		VkSwapchainKHR m_vkSwapChain;
 
 		std::vector<VkImage> m_vkSwapChainImages;
+		std::vector<VkImageView> m_vkSwapChainImageViews;
 		VkFormat m_vkSwapChainImageFormat;
 		VkExtent2D m_vkSwapChainExtent;
 
@@ -83,6 +84,7 @@ namespace vk {
 		void createSurface(GLFWwindow *window);
 		void createLogicalDevice();
 		void createSwapChain();
+		void createImageViews();
 
 	public:
 		Wrapper();
