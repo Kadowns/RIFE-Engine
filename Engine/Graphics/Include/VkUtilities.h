@@ -61,6 +61,11 @@ namespace vk {
 		VkQueue m_vkGraphicsQueue, m_vkPresentQueue;
 		VkDebugUtilsMessengerEXT m_vkCallback;
 		VkSurfaceKHR m_vkSurface;
+		VkSwapchainKHR m_vkSwapChain;
+
+		std::vector<VkImage> m_vkSwapChainImages;
+		VkFormat m_vkSwapChainImageFormat;
+		VkExtent2D m_vkSwapChainExtent;
 
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
@@ -91,4 +96,4 @@ namespace vk {
 			void* pUserData);
 
 	};
-}
+};

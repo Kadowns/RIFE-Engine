@@ -19,6 +19,7 @@ void vk::Wrapper::terminateVulkan() {
 		DestroyDebugUtilsMessengerEXT(m_vkInstance, m_vkCallback, nullptr);
 	}
 
+	vkDestroySwapchainKHR(m_vkDevice, m_vkSwapChain, nullptr);
 	vkDestroySurfaceKHR(m_vkInstance, m_vkSurface, nullptr);
 	vkDestroyDevice(m_vkDevice, nullptr);
 	vkDestroyInstance(m_vkInstance, nullptr);
@@ -120,6 +121,7 @@ VkPresentModeKHR vk::Wrapper::chooseSwapPresentMode(const std::vector<VkPresentM
 	return  bestMode;
 }
 
+//Define o tamanho das imagens que vão ser renderizadas (verificando se é possivel)
 VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabilities){
 	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 		return capabilities.currentExtent;
@@ -186,36 +188,48 @@ bool vk::Wrapper::checkDeviceExtensionSupport(VkPhysicalDevice device) {
 
 	std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
+	//requiredExtensions possuiu todas as extensões necessárias
+	//nesse loop nós pegamos as extensões que possuimos e retiramos elas do requiredExtensions
 	for (const auto& extension : availableExtensions) {
 		requiredExtensions.erase(extension.extensionName);
 	}
 
+	//caso todas as extensões tenham sido apagadas do required extensions
+	//significa que possuimos todas as que são necessárias
 	return requiredExtensions.empty();
 }
 
 int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {
+
+	///Pega informações da GPU
+	//propriedades
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(device, &deviceProperties);
 
+	//features
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
+	//se não tiver geometry shader, pula fora
 	if (!deviceFeatures.geometryShader) {
 		return 0;
 	}
 
+
+	//Verifica se possui suporte para os queue families
 	auto families = findQueueFamilies(device);
 	if (!families.isComplete())
 		return 0;
 	
-
+	//verifica se possui as extensões necessárias
 	bool extensionsSupported = checkDeviceExtensionSupport(device);
 	if (!extensionsSupported)
 		return 0;
 
 	
+	//Verifica se possuiu suporte de SwapChains (é basicamente uma queue das imagens que foram renderizadas e vão ser printadas na tela)
 	SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
-	if (!swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty()) {
+	if (swapChainSupport.formats.empty() || swapChainSupport.presentModes.empty()) {
 		return 0;
 	}
 	
@@ -393,13 +407,22 @@ void vk::Wrapper::createLogicalDevice() {
 
 void vk::Wrapper::createSwapChain() {
 
+	//Verifica o suporte de swapChains
 	SwapChainSupportDetails swapChainSupport = querySwapChainSupport(m_vkPhysicalDevice);
 
+	//Define que tipo de imagem vai ser gerada
 	VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
+
+	//Define qual vai ser a maneira que a swap chain vai se comportar (queue, ou simplesmente jogando tudo na tela)
 	VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
+
+	//verifica se a swap chain consegue gerar imagens de qualque tamanho e, caso não consiga, define qual vai ser o tamanho permitido
 	VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 	
-	//caso maxImageCount seja 0, a swapchain suporta qualquer quantidade de imagens
+	m_vkSwapChainImageFormat = surfaceFormat.format;
+	m_vkSwapChainExtent = extent;
+
+	//caso maxImageCount seja 0, a queue da swapchain suporta qualquer quantidade de imagens
 	uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
 	if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
 		imageCount = swapChainSupport.capabilities.maxImageCount;
@@ -430,6 +453,25 @@ void vk::Wrapper::createSwapChain() {
 		createInfo.queueFamilyIndexCount = 0; // Optional
 		createInfo.pQueueFamilyIndices = nullptr; // Optional
 	}
+
+	createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+
+	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+
+	createInfo.presentMode = presentMode;
+	createInfo.clipped = VK_TRUE;
+
+	createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+	if (vkCreateSwapchainKHR(m_vkDevice, &createInfo, nullptr, &m_vkSwapChain) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create swap chain!");
+	}
+
+	vkGetSwapchainImagesKHR(m_vkDevice, m_vkSwapChain, &imageCount, nullptr);
+	m_vkSwapChainImages.resize(imageCount);
+	vkGetSwapchainImagesKHR(m_vkDevice, m_vkSwapChain, &imageCount, m_vkSwapChainImages.data());
+
+
 }
 
 
