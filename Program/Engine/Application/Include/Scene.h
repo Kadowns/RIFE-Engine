@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Include/Keyboard.h>
+#include <Keyboard.h>
 
 class Scene {
 protected:

@@ -1,5 +1,5 @@
-#include <Include/Application.h>
-#include <Include/Test.h>
+#include <Application.h>
+#include <Test.h>
 
 int main() {
 	Scene *scene = new Test();

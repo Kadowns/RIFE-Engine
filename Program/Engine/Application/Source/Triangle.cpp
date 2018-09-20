@@ -1,4 +1,4 @@
-#include "Include/Triangle.h"
+#include <Triangle.h>
 
 Triangle::Triangle(){
 
@@ -32,17 +32,17 @@ void Triangle::deinit() {
 
 int Triangle::compileShader(int shaderType, const char* code) {
 	return 0;
-	//Solicitamos a placa de vídeo um novo id de shader
+	//Solicitamos a placa de vï¿½deo um novo id de shader
 //	GLuint shader = glCreateShader(shaderType);
 
-	//Informamos a OpenGL qual é o código fonte do shader a ser compilado (variável code)
+	//Informamos a OpenGL qual ï¿½ o cï¿½digo fonte do shader a ser compilado (variï¿½vel code)
 	
 //	glShaderSource(shader, 1, &code, NULL);
 
-	//Solicitamos que a OpenGL faça a compilação.
+	//Solicitamos que a OpenGL faï¿½a a compilaï¿½ï¿½o.
 //	glCompileShader(shader);
 
-	//Testamos se não houve erro de compilação
+	//Testamos se nï¿½o houve erro de compilaï¿½ï¿½o
 //	GLint isCompiled = 0;
 //	glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
 	//if (isCompiled == GL_FALSE) {
@@ -55,6 +55,6 @@ int Triangle::compileShader(int shaderType, const char* code) {
 	//	throw new std::exception(errorLog);
 	//}
 
-	//Caso não haja, retornamos o id do shader
+	//Caso nï¿½o haja, retornamos o id do shader
 	//return shader;
 }

@@ -1,4 +1,5 @@
-#include "Include/VkUtilities.h"
+#include <VkUtilities.h>
+#include <cstring>
 
 vk::Wrapper::Wrapper() {}
 
@@ -10,8 +11,8 @@ void vk::Wrapper::initializeVulkan(GLFWwindow *window, int windowW, int windowH)
 	setupDebugCallback();//caso seja no modo debug, cria e configura o debug callback
 	createSurface(window);//Cria uma "superficie" na janela onde podemos desenhar
 	pickPhysicalDevice();//escolhe a melhor GPU disponivel
-	createLogicalDevice();//faz uns bagulho com queue e sei lá o que
-	createSwapChain();//Cria a swap chain, é uma queue que é usada pra mostrar as imagens na hora certa
+	createLogicalDevice();//faz uns bagulho com queue e sei lï¿½ o que
+	createSwapChain();//Cria a swap chain, ï¿½ uma queue que ï¿½ usada pra mostrar as imagens na hora certa
 	createImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
 }
 
@@ -126,7 +127,7 @@ VkPresentModeKHR vk::Wrapper::chooseSwapPresentMode(const std::vector<VkPresentM
 	return  bestMode;
 }
 
-//Define o tamanho das imagens que vão ser renderizadas (verificando se é possivel)
+//Define o tamanho das imagens que vï¿½o ser renderizadas (verificando se ï¿½ possivel)
 VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabilities){
 	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
 		return capabilities.currentExtent;
@@ -188,26 +189,26 @@ bool vk::Wrapper::checkDeviceExtensionSupport(VkPhysicalDevice device) {
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
-	//lista as extensões disponiveis
+	//lista as extensï¿½es disponiveis
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
 	std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
-	//requiredExtensions possuiu todas as extensões necessárias
-	//nesse loop nós pegamos as extensões que possuimos e retiramos elas do requiredExtensions
+	//requiredExtensions possuiu todas as extensï¿½es necessï¿½rias
+	//nesse loop nï¿½s pegamos as extensï¿½es que possuimos e retiramos elas do requiredExtensions
 	for (const auto& extension : availableExtensions) {
 		requiredExtensions.erase(extension.extensionName);
 	}
 
-	//caso todas as extensões tenham sido apagadas do required extensions
-	//significa que possuimos todas as que são necessárias
+	//caso todas as extensï¿½es tenham sido apagadas do required extensions
+	//significa que possuimos todas as que sï¿½o necessï¿½rias
 	return requiredExtensions.empty();
 }
 
 int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {
 
-	///Pega informações da GPU
+	///Pega informaï¿½ï¿½es da GPU
 	//propriedades
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -216,7 +217,7 @@ int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-	//se não tiver geometry shader, pula fora
+	//se nï¿½o tiver geometry shader, pula fora
 	if (!deviceFeatures.geometryShader) {
 		return 0;
 	}
@@ -227,13 +228,13 @@ int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {
 	if (!families.isComplete())
 		return 0;
 	
-	//verifica se possui as extensões necessárias
+	//verifica se possui as extensï¿½es necessï¿½rias
 	bool extensionsSupported = checkDeviceExtensionSupport(device);
 	if (!extensionsSupported)
 		return 0;
 
 	
-	//Verifica se possuiu suporte de SwapChains (é basicamente uma queue das imagens que foram renderizadas e vão ser printadas na tela)
+	//Verifica se possuiu suporte de SwapChains (ï¿½ basicamente uma queue das imagens que foram renderizadas e vï¿½o ser printadas na tela)
 	SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
 	if (swapChainSupport.formats.empty() || swapChainSupport.presentModes.empty()) {
 		return 0;
@@ -256,7 +257,7 @@ void vk::Wrapper::pickPhysicalDevice() {
 	uint32_t deviceCount = 0;
 	vkEnumeratePhysicalDevices(m_vkInstance, &deviceCount, nullptr);
 
-	//se não houver nenhuma placa de video que suporta, para o programa
+	//se nï¿½o houver nenhuma placa de video que suporta, para o programa
 	if (deviceCount == 0) {
 		throw std::runtime_error("failed to find GPUs with vulkan support!");
 	}
@@ -294,15 +295,15 @@ void vk::Wrapper::setupDebugCallback() {
 	VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 
-	//Quão importante a mensagem precisa ser para ser enviada
+	//Quï¿½o importante a mensagem precisa ser para ser enviada
 	createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
 		| VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
 		| VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-	//Quais tipos de mensagem são enviadas
+	//Quais tipos de mensagem sï¿½o enviadas
 	createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
 		| VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
 		| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-	//ponteiro para a função debugCallback (implementada nessa mesma classe)
+	//ponteiro para a funï¿½ï¿½o debugCallback (implementada nessa mesma classe)
 	createInfo.pfnUserCallback = debugCallback;
 	createInfo.pUserData = nullptr; // Optional
 
@@ -320,7 +321,7 @@ void vk::Wrapper::createVkInstance() {
 
 	}
 
-	//Informações pra vulkan fazer umas otimizações
+	//Informaï¿½ï¿½es pra vulkan fazer umas otimizaï¿½ï¿½es
 	///Application Info-----------------------------------------------
 	VkApplicationInfo appInfo = {};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -332,17 +333,17 @@ void vk::Wrapper::createVkInstance() {
 	///---------------------------------------------------------------
 
 
-	//Define umas bagaça global sei la tendi nada
+	//Define umas bagaï¿½a global sei la tendi nada
 	///Create Info-----------------------------------------------------
 	VkInstanceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	createInfo.pApplicationInfo = &appInfo;//guarda a struct lá de cima dentro dessa bagacinha
+	createInfo.pApplicationInfo = &appInfo;//guarda a struct lï¿½ de cima dentro dessa bagacinha
 
 	auto extensions = getRequiredExtensions();
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	createInfo.ppEnabledExtensionNames = extensions.data();
 
-	//passa pro struct as validation layers (serve pra testar se a gente ta fazendo merda no código)
+	//passa pro struct as validation layers (serve pra testar se a gente ta fazendo merda no cï¿½digo)
 	if (enableValidationLayers) {
 		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
 		createInfo.ppEnabledLayerNames = validationLayers.data();
@@ -422,7 +423,7 @@ void vk::Wrapper::createSwapChain() {
 	//Define qual vai ser a maneira que a swap chain vai se comportar (queue, ou simplesmente jogando tudo na tela)
 	VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
 
-	//verifica se a swap chain consegue gerar imagens de qualque tamanho e, caso não consiga, define qual vai ser o tamanho permitido
+	//verifica se a swap chain consegue gerar imagens de qualque tamanho e, caso nï¿½o consiga, define qual vai ser o tamanho permitido
 	VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 	
 	m_vkSwapChainImageFormat = surfaceFormat.format;
@@ -434,7 +435,7 @@ void vk::Wrapper::createSwapChain() {
 		imageCount = swapChainSupport.capabilities.maxImageCount;
 	}
 
-	//Informações da swapchain
+	//Informaï¿½ï¿½es da swapchain
 	VkSwapchainCreateInfoKHR createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	createInfo.surface = m_vkSurface;

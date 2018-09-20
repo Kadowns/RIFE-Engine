@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Application.h"
-#include "Scene.h"
+#include <Application.h>
+#include <Scene.h>
 
 class Triangle : public Scene {
 private:
