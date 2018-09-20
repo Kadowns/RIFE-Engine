@@ -1,4 +1,4 @@
-#include "Include/Clock.h"
+#include <Clock.h>
 
 Clock* Clock::m_instance = nullptr;
 
