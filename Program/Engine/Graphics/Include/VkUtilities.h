@@ -3,9 +3,8 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-//#include "vulkan/vulkan.h"
 #endif // !GLDEP
-#include "MathUtilities.h"
+#include "RifeMath.h"
 #include <iostream>
 #include <vector>
 #include <set>
@@ -85,6 +84,7 @@ namespace vk {
 		void createLogicalDevice();
 		void createSwapChain();
 		void createImageViews();
+		void createGraphicsPipeline();
 
 	public:
 		Wrapper();

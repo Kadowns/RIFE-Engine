@@ -14,7 +14,7 @@
 #include <chrono>
 #include <thread>
 
-#define WINDOW Application::getInstance()
+#define APPLICATION Application::getInstance()
 
 //----------------------------------------------------
 class Application {

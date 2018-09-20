@@ -134,10 +134,11 @@ VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabi
 	else {
 		VkExtent2D actualExtent = { m_width, m_height };
 
-		actualExtent.width = math::clamp<uint32_t>(m_width,
+		
+		actualExtent.width = rifeMath::clamp<uint32_t>(m_width,
 			capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 
-		actualExtent.height = math::clamp<uint32_t>(m_height,
+		actualExtent.height = rifeMath::clamp<uint32_t>(m_height,
 			capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
 		return actualExtent;
@@ -503,6 +504,10 @@ void vk::Wrapper::createImageViews() {
 			throw std::runtime_error("failed to create image views!");
 		}
 	}
+}
+
+void vk::Wrapper::createGraphicsPipeline() {
+
 }
 
 

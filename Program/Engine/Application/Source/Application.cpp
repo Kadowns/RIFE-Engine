@@ -93,7 +93,6 @@ void Application::loop(){
 		printf("Time: %f, FPS : %f, Total frames: %i\n", time, TIME->getFPS(), TIME->getTotalFrames());
 		
 		KEYBOARD->update();
-		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 
 		TIME->lateUpdate();
