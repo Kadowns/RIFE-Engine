@@ -1,13 +1,13 @@
 #include <Application.h>
-#include <Test.h>
+#include <Triangle.h>
 
 int main() {
-	Scene *scene = new Test();
+	Scene *scene = new Triangle();
 	Application *app = new Application(scene, "Test", 800, 600);
 	try {
 		app->show();
 	}
-	catch (const std::exception& e) {
+	catch (const std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}

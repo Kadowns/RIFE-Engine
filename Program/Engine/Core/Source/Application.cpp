@@ -66,9 +66,6 @@ void Application::initGlfw() {
     if (m_window == nullptr)
         throw std::runtime_error("Failed to create the GLFW Window");
 
-    uint32_t extensionCount = 0;
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
     glfwSwapInterval(1);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
@@ -90,7 +87,6 @@ void Application::loop() {
         double time = TIME->getLastFrameTime();
         m_scene->update(time);
         m_scene->draw();
-        printf("Time: %f, FPS : %f, Total frames: %i\n", time, TIME->getFPS(), TIME->getTotalFrames());
 
         KEYBOARD->update();
         glfwPollEvents();

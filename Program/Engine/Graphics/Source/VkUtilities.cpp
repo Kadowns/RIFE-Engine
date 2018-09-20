@@ -14,6 +14,7 @@ void vk::Wrapper::initializeVulkan(GLFWwindow *window, int windowW, int windowH)
 	createLogicalDevice();//faz uns bagulho com queue e sei l� o que
 	createSwapChain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
 	createImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
+	createGraphicsPipeline();
 }
 
 void vk::Wrapper::terminateVulkan() {
@@ -508,7 +509,8 @@ void vk::Wrapper::createImageViews() {
 }
 
 void vk::Wrapper::createGraphicsPipeline() {
-
+	auto vertShaderCode = readFile("Program/Application/Common/Resources/Shaders/vert.spv");
+	auto fragShaderCode = readFile("Program/Application/Common/Resources/Shaders/frag.spv");
 }
 
 
@@ -535,4 +537,28 @@ void vk::DestroyDebugUtilsMessengerEXT(VkInstance instance,
 		func(instance, callback, pAllocator);
 	}
 }
+
+//Le arquivos (TO DO-> criar uma classe de funções uteis
+std::vector<char> vk::readFile(const std::string& filename) {
+	//abre o arquivo, começa a ler pelo final e em binario
+	std::ifstream file(filename, std::ios::ate | std::ios::binary);
+
+	//se n abriu o arquivo, pula fora
+	if (!file.is_open()) {
+		throw std::runtime_error("failed to open file!");
+	}
+
+	//Cria o buffer com o tamanho do arquivo
+	size_t fileSize = (size_t)file.tellg();
+	std::vector<char> buffer(fileSize);
+
+	//volta para o começo do arquivo
+	file.seekg(0);
+	//passa os dados do arquio pro buffer
+	file.read(buffer.data(), fileSize);
+	file.close();
+
+	return buffer;
+}
+
 //---------------------------------------------------

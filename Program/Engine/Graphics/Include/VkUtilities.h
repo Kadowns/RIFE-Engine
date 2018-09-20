@@ -6,6 +6,7 @@
 #endif // !GLDEP
 #include "RifeMath.h"
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <set>
 #include <map>
@@ -20,6 +21,8 @@ namespace vk {
 	extern void DestroyDebugUtilsMessengerEXT(VkInstance instance,
 		VkDebugUtilsMessengerEXT callback,
 		const VkAllocationCallbacks* pAllocator);
+
+	static std::vector<char> readFile(const std::string& filename);
 
 	const std::vector<const char*> validationLayers = {
 		"VK_LAYER_LUNARG_standard_validation"

@@ -20,6 +20,7 @@ void Triangle::init() {
 }
 
 void Triangle::update(float secs) {
+	//printf("Time: %f, FPS : %f, Total frames: %i\n", secs, TIME->getFPS(), TIME->getTotalFrames());
 }
 
 void Triangle::draw() {
