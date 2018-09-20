@@ -52,7 +52,7 @@ void Application::init() {
 void Application::initGlfw() {
 
     if (!glfwInit())
-        throw std::exception("Unable to initialize glfw");
+        throw std::runtime_error("Unable to initialize glfw");
 
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -63,8 +63,8 @@ void Application::initGlfw() {
 
     m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), NULL, NULL);
 
-    if (m_window == NULL)
-        throw std::exception("Failed to create the GLFW Window");
+    if (m_window == nullptr)
+        throw std::runtime_error("Failed to create the GLFW Window");
 
     uint32_t extensionCount = 0;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
