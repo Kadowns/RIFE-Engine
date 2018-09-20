@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VkUtilities.h"
-#include "Clock.h"
+#include <VkUtilities.h>
+#include <Clock.h>
 #include "Scene.h"
 
 #include <iostream>
@@ -13,7 +13,6 @@
 #include <map>
 #include <chrono>
 #include <thread>
-#include <GLFW/glfw3.h>
 
 #define APPLICATION Application::getInstance()
 
