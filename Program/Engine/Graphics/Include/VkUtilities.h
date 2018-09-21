@@ -1,6 +1,8 @@
 #ifndef GLDEP
 #define GLDEP
 
+#define SHADERS_FOLDER std::string("Common/Resources/Shaders/")
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #endif // !GLDEP
@@ -70,16 +72,20 @@ namespace vk {
 		VkFormat m_vkSwapChainImageFormat;
 		VkExtent2D m_vkSwapChainExtent;
 
+		//Helper Functions-------------------
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-
-		std::vector<const char*> getRequiredExtensions();
+		VkShaderModule createShaderModule(const std::vector<char>& code);
+		std::vector<const char*> getRequiredExtensions();	
 		bool checkValidationLayerSupport();
 		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 		int rateDeviceSuitability(VkPhysicalDevice device);
+		//-----------------------------------
+
+		//Initializer functions
 		void pickPhysicalDevice();
 		void setupDebugCallback();
 		void createVkInstance();
@@ -88,6 +94,7 @@ namespace vk {
 		void createSwapChain();
 		void createImageViews();
 		void createGraphicsPipeline();
+		//---------------------
 
 	public:
 		Wrapper();

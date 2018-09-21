@@ -147,6 +147,21 @@ VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabi
 	}
 }
 
+VkShaderModule vk::Wrapper::createShaderModule(const std::vector<char>& code) {
+
+	VkShaderModuleCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = code.size();
+	//Cast de char* para uint32_t* 
+	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+	VkShaderModule shaderModule;
+	if (vkCreateShaderModule(m_vkDevice, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create shader module!");
+	}
+	return shaderModule;
+}
+
 std::vector<const char*> vk::Wrapper::getRequiredExtensions() {
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions;
@@ -509,8 +524,36 @@ void vk::Wrapper::createImageViews() {
 }
 
 void vk::Wrapper::createGraphicsPipeline() {
-	auto vertShaderCode = readFile("Program/Application/Common/Resources/Shaders/vert.spv");
-	auto fragShaderCode = readFile("Program/Application/Common/Resources/Shaders/frag.spv");
+
+	//OS BINÁRIOS DO SHADER PRECISAM ESTAR NA MESMA PASTA DO EXECUTAVEL, FICA LÁ EM CMAKE/BUILDS/BLABLABLA
+	auto vertShaderCode = readFile("vert.spv");
+	auto fragShaderCode = readFile("frag.spv");
+
+	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+
+	//Prepara o vertex shader
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
+	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertShaderStageInfo.module = vertShaderModule;
+	vertShaderStageInfo.pName = "main";
+	//--------
+
+	//Prepara o fragment shader
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
+	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragShaderStageInfo.module = fragShaderModule;
+	fragShaderStageInfo.pName = "main";
+	//--------
+
+	//deixa os dois shadersStage juntos no array bonito
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+
+	vkDestroyShaderModule(m_vkDevice, fragShaderModule, nullptr);
+	vkDestroyShaderModule(m_vkDevice, vertShaderModule, nullptr);
 }
 
 
