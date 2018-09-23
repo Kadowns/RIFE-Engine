@@ -71,6 +71,9 @@ namespace vk {
 		std::vector<VkImageView> m_vkSwapChainImageViews;
 		VkFormat m_vkSwapChainImageFormat;
 		VkExtent2D m_vkSwapChainExtent;
+		VkRenderPass m_vkRenderPass;
+		VkPipelineLayout m_vkPipelineLayout;
+		VkPipeline m_vkGraphicsPipeline;
 
 		//Helper Functions-------------------
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
@@ -93,6 +96,7 @@ namespace vk {
 		void createLogicalDevice();
 		void createSwapChain();
 		void createImageViews();
+		void createRenderPass();
 		void createGraphicsPipeline();
 		//---------------------
 
