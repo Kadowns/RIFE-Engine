@@ -18,6 +18,8 @@ private:
 		"    out_color = vec4(1.0, 1.0, 0.0, 1.0);\n"
 		"}";
 
+	vk::Wrapper* vkWrapper;
+
 public:
 	Triangle();
 	~Triangle();

@@ -10,13 +10,7 @@ Triangle::~Triangle() {
 }
 
 void Triangle::init() {
-
-
-	/*static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-         0.0f,  1.0f, 0.0f,
-	};*/
+	vkWrapper = APPLICATION->getVkWrapper();
 }
 
 void Triangle::update(float secs) {
@@ -25,37 +19,46 @@ void Triangle::update(float secs) {
 
 void Triangle::draw() {
 
+	uint32_t imageIndex;
+	vkAcquireNextImageKHR(vkWrapper->getDevice(),
+		vkWrapper->getSwapChain(),
+		std::numeric_limits<uint64_t>::max(),
+		vkWrapper->getImageAvailableSemaphore(),
+		VK_NULL_HANDLE, &imageIndex);
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+	VkSemaphore waitSemaphores[] = { vkWrapper->getImageAvailableSemaphore() };
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphores;
+	submitInfo.pWaitDstStageMask = waitStages;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &vkWrapper->getCommandBuffers()[imageIndex];
+
+	VkSemaphore signalSemaphores[] = { vkWrapper->getRenderFinishedSemaphore() };
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphores;
+
+	if (vkQueueSubmit(vkWrapper->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+		throw std::runtime_error("failed to submit draw command buffer!");
+	}
+
+	VkPresentInfoKHR presentInfo = {};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = signalSemaphores;
+	VkSwapchainKHR swapChains[] = { vkWrapper->getSwapChain() };
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = swapChains;
+	presentInfo.pImageIndices = &imageIndex;
+	presentInfo.pResults = nullptr; // Optional
+
+	vkQueuePresentKHR(vkWrapper->getPresentQueue(), &presentInfo);
+
 }
 
 void Triangle::deinit() {
 
-}
-
-int Triangle::compileShader(int shaderType, const char* code) {
-	return 0;
-	//Solicitamos a placa de v�deo um novo id de shader
-//	GLuint shader = glCreateShader(shaderType);
-
-	//Informamos a OpenGL qual � o c�digo fonte do shader a ser compilado (vari�vel code)
-	
-//	glShaderSource(shader, 1, &code, NULL);
-
-	//Solicitamos que a OpenGL fa�a a compila��o.
-//	glCompileShader(shader);
-
-	//Testamos se n�o houve erro de compila��o
-//	GLint isCompiled = 0;
-//	glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-	//if (isCompiled == GL_FALSE) {
-	//	int length;
-	//	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-
-	//	auto errorLog = static_cast<char*>(alloca(length * sizeof(char)));
-
-	//	glGetShaderInfoLog(shader, length, &length, errorLog);
-	//	throw new std::exception(errorLog);
-	//}
-
-	//Caso n�o haja, retornamos o id do shader
-	//return shader;
 }

@@ -52,6 +52,8 @@ public:
 
     int getHeight();
 
+	vk::Wrapper* getVkWrapper() { return m_vkWrapper; }
+
     void define(Scene *scene, const std::string &title, int width, int height);
 
     Application(Scene *scene, const std::string &title, int width, int height);

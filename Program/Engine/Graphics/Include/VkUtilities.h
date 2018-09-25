@@ -66,14 +66,19 @@ namespace vk {
 		VkDebugUtilsMessengerEXT m_vkCallback;
 		VkSurfaceKHR m_vkSurface;
 		VkSwapchainKHR m_vkSwapChain;
+		VkCommandPool m_vkCommandPool;
 
 		std::vector<VkImage> m_vkSwapChainImages;
 		std::vector<VkImageView> m_vkSwapChainImageViews;
+		std::vector<VkFramebuffer> m_vkSwapChainFramebuffers;
+		std::vector<VkCommandBuffer> m_vkCommandBuffers;
 		VkFormat m_vkSwapChainImageFormat;
 		VkExtent2D m_vkSwapChainExtent;
 		VkRenderPass m_vkRenderPass;
 		VkPipelineLayout m_vkPipelineLayout;
 		VkPipeline m_vkGraphicsPipeline;
+		VkSemaphore m_vkImageAvailableSemaphore;
+		VkSemaphore m_vkRenderFinishedSemaphore;
 
 		//Helper Functions-------------------
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
@@ -98,18 +103,36 @@ namespace vk {
 		void createImageViews();
 		void createRenderPass();
 		void createGraphicsPipeline();
+		void createFramebuffers();
+		void createCommandPool();
+		void createCommandBuffers();
+		void createSemaphores();
 		//---------------------
 
 	public:
-		Wrapper();
-		void initializeVulkan(GLFWwindow *window, int windowW, int windowH);
-		void terminateVulkan();
 
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 			VkDebugUtilsMessageTypeFlagsEXT messageType,
 			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 			void* pUserData);
+
+
+		Wrapper();
+		void initializeVulkan(GLFWwindow *window, int windowW, int windowH);
+		void terminateVulkan();
+
+
+		//Getters
+		VkDevice getDevice()& { return m_vkDevice; }
+		std::vector<VkCommandBuffer>& getCommandBuffers() { return m_vkCommandBuffers; }
+		VkQueue& getGraphicsQueue() { return m_vkGraphicsQueue; }
+		VkQueue& getPresentQueue() { return m_vkPresentQueue; }
+		VkSwapchainKHR& getSwapChain() { return m_vkSwapChain; }
+		VkSemaphore& getImageAvailableSemaphore() { return m_vkImageAvailableSemaphore; }
+		VkSemaphore& getRenderFinishedSemaphore() { return m_vkRenderFinishedSemaphore; }
+
+		//---------------------
 
 	};
 };
