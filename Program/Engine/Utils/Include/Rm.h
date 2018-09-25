@@ -1,7 +1,13 @@
 #include <Types.h>
 #include <math.h>
+#include <algorithm>
 
 namespace rm {
+
+	template<class T>
+	const T& clamp(const T& x, const T& upper, const T& lower) {
+		return std::min(upper, std::max(x, lower));
+	}
 
 	class vec2f {
 	protected:

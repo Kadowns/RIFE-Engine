@@ -141,10 +141,10 @@ VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabi
 		VkExtent2D actualExtent = { m_width, m_height };
 
 		
-		actualExtent.width = rifeMath::clamp<uint32_t>(m_width,
+		actualExtent.width = rm::clamp<uint32_t>(m_width,
 			capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 
-		actualExtent.height = rifeMath::clamp<uint32_t>(m_height,
+		actualExtent.height = rm::clamp<uint32_t>(m_height,
 			capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
 		return actualExtent;
