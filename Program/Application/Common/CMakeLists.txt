@@ -1,11 +1,11 @@
 include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 set(COMMON_INCLUDE
         Include/Test.h 
-		Include/Triangle.h	
+        Include/Triangle.h	
         )
 set(COMMON_SOURCE
         Source/Test.cpp
-		Source/Triangle.cpp
+        Source/Triangle.cpp
         )
 
 set(COMMON_ALL ${COMMON_INCLUDE} ${COMMON_SOURCE})
