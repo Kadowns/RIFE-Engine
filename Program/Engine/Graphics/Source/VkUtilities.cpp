@@ -1,15 +1,14 @@
 #include <VkUtilities.h>
 #include <cstring>
 
-vk::Wrapper::Wrapper() {}
+vk::Wrapper::Wrapper(GLFWwindow *window) : m_glfwWindow(window){}
 
 //Inicializa a vulkan
-void vk::Wrapper::initializeVulkan(GLFWwindow *window, int windowW, int windowH) {
-    m_width = windowW;
-    m_height = windowH;
+void vk::Wrapper::initializeVulkan() {
+
     createVkInstance();//Cria e configura a instancia
     setupDebugCallback();//caso seja no modo debug, cria e configura o debug callback
-    createSurface(window);//Cria uma "superficie" na janela onde podemos desenhar
+    createSurface();//Cria uma "superficie" na janela onde podemos desenhar
     pickPhysicalDevice();//escolhe a melhor GPU disponivel
     createLogicalDevice();//faz uns bagulho com queue e sei l� o que
     createSwapChain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
@@ -22,17 +21,31 @@ void vk::Wrapper::initializeVulkan(GLFWwindow *window, int windowW, int windowH)
     createSyncObjects();
 }
 
+void vk::Wrapper::recreateSwapChain(){
+
+	int width = 0, height = 0;
+	while (width == 0 || height == 0) {
+		glfwGetFramebufferSize(m_glfwWindow, &width, &height);
+		glfwWaitEvents();
+	}
+
+	vkDeviceWaitIdle(m_vkDevice);
+
+	cleanupSwapChain();
+
+	createSwapChain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
+	createImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
+	createRenderPass();//Cria o render pass que eu n faço ideia do que é
+	createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE
+	createFramebuffers();//Frame buffers
+	createCommandBuffers();
+}
+
 void vk::Wrapper::terminateVulkan() {
+	cleanupSwapChain();
+
     if (enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(m_vkInstance, m_vkCallback, nullptr);
-    }
-
-    for (auto framebuffer : m_vkSwapChainFramebuffers) {
-        vkDestroyFramebuffer(m_vkDevice, framebuffer, nullptr);
-    }
-
-    for (auto imageView : m_vkSwapChainImageViews) {
-        vkDestroyImageView(m_vkDevice, imageView, nullptr);
     }
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
@@ -41,10 +54,7 @@ void vk::Wrapper::terminateVulkan() {
         vkDestroyFence(m_vkDevice, m_vkInFlightFences[i], nullptr);
     }
     vkDestroyCommandPool(m_vkDevice, m_vkCommandPool, nullptr);
-    vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(m_vkDevice, m_vkPipelineLayout, nullptr);
-    vkDestroyRenderPass(m_vkDevice, m_vkRenderPass, nullptr);
-    vkDestroySwapchainKHR(m_vkDevice, m_vkSwapChain, nullptr);
+   
     vkDestroySurfaceKHR(m_vkInstance, m_vkSurface, nullptr);
     vkDestroyDevice(m_vkDevice, nullptr);
     vkDestroyInstance(m_vkInstance, nullptr);
@@ -152,9 +162,13 @@ VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabi
         return capabilities.currentExtent;
     }
     else {
-        VkExtent2D actualExtent = { m_width, m_height };
-
         
+		int width, height;
+		glfwGetFramebufferSize(m_glfwWindow, &width, &height);
+		m_width = static_cast<uint32_t>(width);
+		m_height = static_cast<uint32_t>(height);
+
+		VkExtent2D actualExtent = { m_width, m_height };
         actualExtent.width = rm::clamp<uint32_t>(m_width,
             capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 
@@ -393,8 +407,8 @@ void vk::Wrapper::createVkInstance() {
 }
 
 //Cria a superficie na janela 
-void vk::Wrapper::createSurface(GLFWwindow *window) {
-    if (glfwCreateWindowSurface(m_vkInstance, window, nullptr, &m_vkSurface) != VK_SUCCESS) {
+void vk::Wrapper::createSurface() {
+    if (glfwCreateWindowSurface(m_vkInstance, m_glfwWindow, nullptr, &m_vkSurface) != VK_SUCCESS) {
         throw std::runtime_error("failed to create window surface!");
     }
 }
@@ -868,6 +882,25 @@ void vk::Wrapper::createSyncObjects() {
             throw std::runtime_error("failed to create syncObjects for a frame!");
         }
     }
+}
+
+void vk::Wrapper::cleanupSwapChain() {
+	for (size_t i = 0; i < m_vkSwapChainFramebuffers.size(); i++) {
+		vkDestroyFramebuffer(m_vkDevice, m_vkSwapChainFramebuffers[i], nullptr);
+	}
+
+	vkFreeCommandBuffers(m_vkDevice, m_vkCommandPool,
+		static_cast<uint32_t>(m_vkCommandBuffers.size()), m_vkCommandBuffers.data());
+
+	vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);
+	vkDestroyPipelineLayout(m_vkDevice, m_vkPipelineLayout, nullptr);
+	vkDestroyRenderPass(m_vkDevice, m_vkRenderPass, nullptr);
+
+	for (size_t i = 0; i < m_vkSwapChainImageViews.size(); i++) {
+		vkDestroyImageView(m_vkDevice, m_vkSwapChainImageViews[i], nullptr);
+	}
+
+	vkDestroySwapchainKHR(m_vkDevice, m_vkSwapChain, nullptr);
 }
 
 //Proxys pro debug-----------------------------------

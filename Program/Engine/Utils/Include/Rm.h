@@ -61,4 +61,3 @@ namespace rm {
         vec3f xyz() { return *this; }
     };
 }
-https://www.aa.com/i18n/travel-info/arrival-times.jsp

@@ -14,7 +14,7 @@ void Triangle::init() {
 }
 
 void Triangle::update(float secs) {
-	//printf("Time: %f, FPS : %f, Total frames: %i\n", secs, TIME->getFPS(), TIME->getTotalFrames());
+	printf("Time: %f, FPS : %f, Total frames: %i\n", secs, TIME->getFPS(), TIME->getTotalFrames());
 }
 
 void Triangle::draw() {
@@ -25,16 +25,24 @@ void Triangle::draw() {
 	auto inFlightFences = vkWrapper->getInFlightFences();
 	auto imageAvailableSemaphores = vkWrapper->getImageAvailableSemaphores();
 	auto renderFinishedSemaphores = vkWrapper->getRenderFinishedSemaphores();
+	auto frameBufferResized = APPLICATION->framebufferResized();
 
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR(device,
+	VkResult result = vkAcquireNextImageKHR(device,
 		swapChain,
 		std::numeric_limits<uint64_t>::max(),
 		imageAvailableSemaphores[currentFrame],
 		VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || frameBufferResized) {
+		frameBufferResized = false;
+		vkWrapper->recreateSwapChain();
+	}
+	else if (result != VK_SUCCESS) {
+		throw std::runtime_error("failed to acquire swap chain image!");
+	}
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -52,6 +60,8 @@ void Triangle::draw() {
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
+	vkResetFences(device, 1, &inFlightFences[currentFrame]);
+
 	if (vkQueueSubmit(vkWrapper->getGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
@@ -66,7 +76,15 @@ void Triangle::draw() {
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr; // Optional
 
-	vkQueuePresentKHR(vkWrapper->getPresentQueue(), &presentInfo);
+	result = vkQueuePresentKHR(vkWrapper->getPresentQueue(), &presentInfo);
+
+	/*if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+		vkWrapper->recreateSwapChain();
+	}
+	else if (result != VK_SUCCESS) {
+		throw std::runtime_error("failed to present swap chain image!");
+	}*/
+
 
 	currentFrame = (currentFrame + 1) % vk::MAX_FRAMES_IN_FLIGHT;
 }

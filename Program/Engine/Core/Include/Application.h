@@ -16,6 +16,8 @@
 
 #define APPLICATION Application::getInstance()
 
+
+
 //----------------------------------------------------
 class Application {
 private :
@@ -26,6 +28,7 @@ private :
     int m_height;
     std::string m_title;
     bool m_initialized = false;
+	bool m_framebufferResized = false;
 
     Scene *m_scene;
     GLFWwindow *m_window;
@@ -47,6 +50,10 @@ private :
 public:
 
     static Application *getInstance();
+
+	static void frameBufferResizedCallback(GLFWwindow *window, int width, int height);
+
+	bool& framebufferResized() { return m_framebufferResized; }
 
     int getWidth();
 

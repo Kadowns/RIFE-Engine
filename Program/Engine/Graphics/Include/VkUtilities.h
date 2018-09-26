@@ -64,6 +64,8 @@ namespace vk {
         uint32_t m_width, m_height;
         size_t m_currentFrame = 0;
 
+		GLFWwindow* m_glfwWindow;
+
         VkInstance m_vkInstance;
         VkPhysicalDevice m_vkPhysicalDevice = VK_NULL_HANDLE;
         VkDevice m_vkDevice;
@@ -104,7 +106,7 @@ namespace vk {
         void pickPhysicalDevice();
         void setupDebugCallback();
         void createVkInstance();
-        void createSurface(GLFWwindow *window);
+        void createSurface();
         void createLogicalDevice();
         void createSwapChain();
         void createImageViews();
@@ -116,6 +118,8 @@ namespace vk {
         void createSyncObjects();
         //---------------------
 
+		void cleanupSwapChain();
+
     public:
 
         static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -125,8 +129,9 @@ namespace vk {
             void* pUserData);
 
 
-        Wrapper();
-        void initializeVulkan(GLFWwindow *window, int windowW, int windowH);
+        Wrapper(GLFWwindow *window);
+        void initializeVulkan();
+		void recreateSwapChain();
         void terminateVulkan();
 
 

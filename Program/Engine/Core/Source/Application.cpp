@@ -8,6 +8,12 @@ Application *Application::getInstance() {
 }
 //----------------------------------
 
+void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int height) {
+	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+	app->m_framebufferResized = true;
+}
+
+
 int Application::getWidth() {
     return m_width;
 }
@@ -66,16 +72,18 @@ void Application::initGlfw() {
     if (m_window == nullptr)
         throw std::runtime_error("Failed to create the GLFW Window");
 
-    glfwSwapInterval(1);
+	glfwSetWindowUserPointer(m_window, this);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
+
+	glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
 
 }
 
 //Inicializa a vulkan
 void Application::initVulkan() {
-    m_vkWrapper = new vk::Wrapper();
-    m_vkWrapper->initializeVulkan(m_window, m_width, m_height);
+    m_vkWrapper = new vk::Wrapper(m_window);
+    m_vkWrapper->initializeVulkan();
 }
 
 //loop principal, n tem segredo n�
