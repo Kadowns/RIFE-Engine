@@ -26,6 +26,10 @@ namespace vk {
 
 	static std::vector<char> readFile(const std::string& filename);
 
+	const int MAX_FRAMES_IN_FLIGHT = 2;
+
+
+
 	const std::vector<const char*> validationLayers = {
 		"VK_LAYER_LUNARG_standard_validation"
 	};
@@ -58,6 +62,7 @@ namespace vk {
 
 	private:
 	    uint32_t m_width, m_height;
+		size_t m_currentFrame = 0;
 
 		VkInstance m_vkInstance;
 		VkPhysicalDevice m_vkPhysicalDevice = VK_NULL_HANDLE;
@@ -72,13 +77,15 @@ namespace vk {
 		std::vector<VkImageView> m_vkSwapChainImageViews;
 		std::vector<VkFramebuffer> m_vkSwapChainFramebuffers;
 		std::vector<VkCommandBuffer> m_vkCommandBuffers;
+		std::vector<VkSemaphore> m_vkImageAvailableSemaphores;
+		std::vector<VkSemaphore> m_vkRenderFinishedSemaphores;
+		std::vector<VkFence> m_vkInFlightFences;
 		VkFormat m_vkSwapChainImageFormat;
 		VkExtent2D m_vkSwapChainExtent;
 		VkRenderPass m_vkRenderPass;
 		VkPipelineLayout m_vkPipelineLayout;
 		VkPipeline m_vkGraphicsPipeline;
-		VkSemaphore m_vkImageAvailableSemaphore;
-		VkSemaphore m_vkRenderFinishedSemaphore;
+		
 
 		//Helper Functions-------------------
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
@@ -106,7 +113,7 @@ namespace vk {
 		void createFramebuffers();
 		void createCommandPool();
 		void createCommandBuffers();
-		void createSemaphores();
+		void createSyncObjects();
 		//---------------------
 
 	public:
@@ -129,8 +136,10 @@ namespace vk {
 		VkQueue& getGraphicsQueue() { return m_vkGraphicsQueue; }
 		VkQueue& getPresentQueue() { return m_vkPresentQueue; }
 		VkSwapchainKHR& getSwapChain() { return m_vkSwapChain; }
-		VkSemaphore& getImageAvailableSemaphore() { return m_vkImageAvailableSemaphore; }
-		VkSemaphore& getRenderFinishedSemaphore() { return m_vkRenderFinishedSemaphore; }
+		std::vector<VkSemaphore>& getImageAvailableSemaphores() { return m_vkImageAvailableSemaphores; }
+		std::vector<VkSemaphore>& getRenderFinishedSemaphores() { return m_vkRenderFinishedSemaphores; }
+		std::vector<VkFence>& getInFlightFences() { return m_vkInFlightFences; }
+		size_t& getCurrentFrame() { return m_currentFrame; }
 
 		//---------------------
 

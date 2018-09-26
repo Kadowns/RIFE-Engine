@@ -19,17 +19,27 @@ void Triangle::update(float secs) {
 
 void Triangle::draw() {
 
+	auto currentFrame = vkWrapper->getCurrentFrame();
+	auto device = vkWrapper->getDevice();
+	auto swapChain = vkWrapper->getSwapChain();
+	auto inFlightFences = vkWrapper->getInFlightFences();
+	auto imageAvailableSemaphores = vkWrapper->getImageAvailableSemaphores();
+	auto renderFinishedSemaphores = vkWrapper->getRenderFinishedSemaphores();
+
+	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	vkResetFences(device, 1, &inFlightFences[currentFrame]);
+
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR(vkWrapper->getDevice(),
-		vkWrapper->getSwapChain(),
+	vkAcquireNextImageKHR(device,
+		swapChain,
 		std::numeric_limits<uint64_t>::max(),
-		vkWrapper->getImageAvailableSemaphore(),
+		imageAvailableSemaphores[currentFrame],
 		VK_NULL_HANDLE, &imageIndex);
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { vkWrapper->getImageAvailableSemaphore() };
+	VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphores;
@@ -37,11 +47,12 @@ void Triangle::draw() {
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &vkWrapper->getCommandBuffers()[imageIndex];
 
-	VkSemaphore signalSemaphores[] = { vkWrapper->getRenderFinishedSemaphore() };
+
+	VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if (vkQueueSubmit(vkWrapper->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+	if (vkQueueSubmit(vkWrapper->getGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
@@ -49,7 +60,7 @@ void Triangle::draw() {
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.waitSemaphoreCount = 1;
 	presentInfo.pWaitSemaphores = signalSemaphores;
-	VkSwapchainKHR swapChains[] = { vkWrapper->getSwapChain() };
+	VkSwapchainKHR swapChains[] = { swapChain };
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
 	presentInfo.pImageIndices = &imageIndex;
@@ -57,6 +68,7 @@ void Triangle::draw() {
 
 	vkQueuePresentKHR(vkWrapper->getPresentQueue(), &presentInfo);
 
+	currentFrame = (currentFrame + 1) % vk::MAX_FRAMES_IN_FLIGHT;
 }
 
 void Triangle::deinit() {

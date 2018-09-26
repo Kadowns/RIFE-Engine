@@ -19,7 +19,7 @@ void vk::Wrapper::initializeVulkan(GLFWwindow *window, int windowW, int windowH)
 	createFramebuffers();//Frame buffers
 	createCommandPool();
 	createCommandBuffers();
-	createSemaphores();
+	createSyncObjects();
 }
 
 void vk::Wrapper::terminateVulkan() {
@@ -35,8 +35,11 @@ void vk::Wrapper::terminateVulkan() {
 		vkDestroyImageView(m_vkDevice, imageView, nullptr);
 	}
 
-	vkDestroySemaphore(m_vkDevice, m_vkRenderFinishedSemaphore, nullptr);
-	vkDestroySemaphore(m_vkDevice, m_vkImageAvailableSemaphore, nullptr);
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		vkDestroySemaphore(m_vkDevice, m_vkRenderFinishedSemaphores[i], nullptr);
+		vkDestroySemaphore(m_vkDevice, m_vkImageAvailableSemaphores[i], nullptr);
+		vkDestroyFence(m_vkDevice, m_vkInFlightFences[i], nullptr);
+	}
 	vkDestroyCommandPool(m_vkDevice, m_vkCommandPool, nullptr);
 	vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);
 	vkDestroyPipelineLayout(m_vkDevice, m_vkPipelineLayout, nullptr);
@@ -842,16 +845,28 @@ void vk::Wrapper::createCommandBuffers() {
 	}
 }
 
-void vk::Wrapper::createSemaphores() {
+void vk::Wrapper::createSyncObjects() {
+
+	m_vkImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	m_vkRenderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	m_vkInFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 	semaphoreInfo.pNext = nullptr;
 	semaphoreInfo.flags = 0;
 
-	if (vkCreateSemaphore(m_vkDevice, &semaphoreInfo, nullptr, &m_vkImageAvailableSemaphore) != VK_SUCCESS ||
-		vkCreateSemaphore(m_vkDevice, &semaphoreInfo, nullptr, &m_vkRenderFinishedSemaphore) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create semaphores!");
+	VkFenceCreateInfo fenceInfo = {};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		if (vkCreateSemaphore(m_vkDevice, &semaphoreInfo, nullptr, &m_vkImageAvailableSemaphores[i]) != VK_SUCCESS ||
+			vkCreateSemaphore(m_vkDevice, &semaphoreInfo, nullptr, &m_vkRenderFinishedSemaphores[i]) != VK_SUCCESS ||
+			vkCreateFence(m_vkDevice, &fenceInfo, nullptr, &m_vkInFlightFences[i]) != VK_SUCCESS) {
+
+			throw std::runtime_error("failed to create syncObjects for a frame!");
+		}
 	}
 }
 
