@@ -31,32 +31,34 @@ void vk::Wrapper::recreateSwapChain(){
 
 	vkDeviceWaitIdle(m_vkDevice);
 
-	cleanupSwapChain();
+    cleanupSwapChain();
 
-	createSwapChain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
-	createImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
-	createRenderPass();//Cria o render pass que eu n faço ideia do que é
-	createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE
-	createFramebuffers();//Frame buffers
-	createCommandBuffers();
+    createSwapChain();
+    createImageViews();
+    createRenderPass();
+    createGraphicsPipeline();
+    createFramebuffers();
+    createCommandBuffers();
 }
 
 void vk::Wrapper::terminateVulkan() {
 	cleanupSwapChain();
-
-    if (enableValidationLayers) {
-        DestroyDebugUtilsMessengerEXT(m_vkInstance, m_vkCallback, nullptr);
-    }
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(m_vkDevice, m_vkRenderFinishedSemaphores[i], nullptr);
         vkDestroySemaphore(m_vkDevice, m_vkImageAvailableSemaphores[i], nullptr);
         vkDestroyFence(m_vkDevice, m_vkInFlightFences[i], nullptr);
     }
+
     vkDestroyCommandPool(m_vkDevice, m_vkCommandPool, nullptr);
-   
-    vkDestroySurfaceKHR(m_vkInstance, m_vkSurface, nullptr);
+
     vkDestroyDevice(m_vkDevice, nullptr);
+
+    if (enableValidationLayers) {
+        DestroyDebugUtilsMessengerEXT(m_vkInstance, m_vkCallback, nullptr);
+    }
+
+    vkDestroySurfaceKHR(m_vkInstance, m_vkSurface, nullptr);
     vkDestroyInstance(m_vkInstance, nullptr);
 }
 
@@ -885,22 +887,21 @@ void vk::Wrapper::createSyncObjects() {
 }
 
 void vk::Wrapper::cleanupSwapChain() {
-	for (size_t i = 0; i < m_vkSwapChainFramebuffers.size(); i++) {
-		vkDestroyFramebuffer(m_vkDevice, m_vkSwapChainFramebuffers[i], nullptr);
-	}
+    for (size_t i = 0; i < m_vkSwapChainFramebuffers.size(); i++) {
+        vkDestroyFramebuffer(m_vkDevice, m_vkSwapChainFramebuffers[i], nullptr);
+    }
 
-	vkFreeCommandBuffers(m_vkDevice, m_vkCommandPool,
-		static_cast<uint32_t>(m_vkCommandBuffers.size()), m_vkCommandBuffers.data());
+    vkFreeCommandBuffers(m_vkDevice, m_vkCommandPool, static_cast<uint32_t>(m_vkCommandBuffers.size()), m_vkCommandBuffers.data());
 
-	vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);
-	vkDestroyPipelineLayout(m_vkDevice, m_vkPipelineLayout, nullptr);
-	vkDestroyRenderPass(m_vkDevice, m_vkRenderPass, nullptr);
+    vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(m_vkDevice, m_vkPipelineLayout, nullptr);
+    vkDestroyRenderPass(m_vkDevice, m_vkRenderPass, nullptr);
 
-	for (size_t i = 0; i < m_vkSwapChainImageViews.size(); i++) {
-		vkDestroyImageView(m_vkDevice, m_vkSwapChainImageViews[i], nullptr);
-	}
+    for (size_t i = 0; i < m_vkSwapChainImageViews.size(); i++) {
+        vkDestroyImageView(m_vkDevice, m_vkSwapChainImageViews[i], nullptr);
+    }
 
-	vkDestroySwapchainKHR(m_vkDevice, m_vkSwapChain, nullptr);
+    vkDestroySwapchainKHR(m_vkDevice, m_vkSwapChain, nullptr);
 }
 
 //Proxys pro debug-----------------------------------

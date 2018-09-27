@@ -10,7 +10,7 @@ Application *Application::getInstance() {
 
 void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int height) {
 	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
-	app->m_framebufferResized = true;
+	app->m_framebufferResized = true;  
 }
 
 
@@ -62,8 +62,8 @@ void Application::initGlfw() {
 
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
@@ -73,11 +73,10 @@ void Application::initGlfw() {
         throw std::runtime_error("Failed to create the GLFW Window");
 
 	glfwSetWindowUserPointer(m_window, this);
+   // glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
-
-	glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
-
+   
 }
 
 //Inicializa a vulkan

@@ -28,6 +28,7 @@ void Triangle::draw() {
 	auto frameBufferResized = APPLICATION->framebufferResized();
 
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+   
 
 	uint32_t imageIndex;
 	VkResult result = vkAcquireNextImageKHR(device,
@@ -60,8 +61,8 @@ void Triangle::draw() {
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
-
+    vkResetFences(device, 1, &inFlightFences[currentFrame]);
+   
 	if (vkQueueSubmit(vkWrapper->getGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
@@ -78,13 +79,12 @@ void Triangle::draw() {
 
 	result = vkQueuePresentKHR(vkWrapper->getPresentQueue(), &presentInfo);
 
-	/*if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-		vkWrapper->recreateSwapChain();
-	}
-	else if (result != VK_SUCCESS) {
-		throw std::runtime_error("failed to present swap chain image!");
-	}*/
-
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+        vkWrapper->recreateSwapChain();
+    }
+    else if (result != VK_SUCCESS) {
+        throw std::runtime_error("failed to present swap chain image!");
+    }
 
 	currentFrame = (currentFrame + 1) % vk::MAX_FRAMES_IN_FLIGHT;
 }
