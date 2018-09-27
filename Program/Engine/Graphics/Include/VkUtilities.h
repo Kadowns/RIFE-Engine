@@ -136,15 +136,15 @@ namespace vk {
 
 
         //Getters
-        VkDevice getDevice()& { return m_vkDevice; }
-        std::vector<VkCommandBuffer>& getCommandBuffers() { return m_vkCommandBuffers; }
-        VkQueue& getGraphicsQueue() { return m_vkGraphicsQueue; }
-        VkQueue& getPresentQueue() { return m_vkPresentQueue; }
-        VkSwapchainKHR& getSwapChain() { return m_vkSwapChain; }
-        std::vector<VkSemaphore>& getImageAvailableSemaphores() { return m_vkImageAvailableSemaphores; }
-        std::vector<VkSemaphore>& getRenderFinishedSemaphores() { return m_vkRenderFinishedSemaphores; }
-        std::vector<VkFence>& getInFlightFences() { return m_vkInFlightFences; }
-        size_t& getCurrentFrame() { return m_currentFrame; }
+        VkDevice* getDevice() { return &m_vkDevice; }
+        std::vector<VkCommandBuffer>* getCommandBuffers() { return &m_vkCommandBuffers; }
+        VkQueue* getGraphicsQueue() { return &m_vkGraphicsQueue; }
+        VkQueue* getPresentQueue() { return &m_vkPresentQueue; }
+        VkSwapchainKHR* getSwapChain() { return &m_vkSwapChain; }
+        std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
+        std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
+        std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }
+        size_t* getCurrentFrame() { return &m_currentFrame; }
 
         //---------------------
 

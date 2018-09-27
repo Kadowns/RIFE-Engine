@@ -49,12 +49,12 @@ private :
 
 public:
 
-    static Application *getInstance();
-
 	static void frameBufferResizedCallback(GLFWwindow *window, int width, int height);
 
-	bool& framebufferResized() { return m_framebufferResized; }
+    static Application *getInstance();
 
+	bool* framebufferResized() { return &m_framebufferResized; }
+	
     int getWidth();
 
     int getHeight();

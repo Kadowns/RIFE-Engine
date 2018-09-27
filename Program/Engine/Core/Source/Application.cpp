@@ -7,10 +7,9 @@ Application *Application::getInstance() {
     return m_instance != nullptr ? m_instance : (m_instance = new Application());
 }
 //----------------------------------
-
 void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int height) {
 	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
-	app->m_framebufferResized = true;  
+	app->m_framebufferResized = true;
 }
 
 
@@ -73,7 +72,7 @@ void Application::initGlfw() {
         throw std::runtime_error("Failed to create the GLFW Window");
 
 	glfwSetWindowUserPointer(m_window, this);
-   // glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
+    glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
    
@@ -102,7 +101,7 @@ void Application::loop() {
 
     } // se o maluco apertar os bot�o de sair, vc sai
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == GLFW_FALSE);
-    vkDeviceWaitIdle(m_vkWrapper->getDevice());
+    vkDeviceWaitIdle(*m_vkWrapper->getDevice());
     m_scene->deinit();
 }
 
