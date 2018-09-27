@@ -609,8 +609,8 @@ void vk::Wrapper::createRenderPass() {
 void vk::Wrapper::createGraphicsPipeline() {
 
     //OS BINÁRIOS DO SHADER PRECISAM ESTAR NA MESMA PASTA DO EXECUTAVEL, FICA LÁ EM CMAKE/BUILDS/BLABLABLA
-    auto vertShaderCode = readFile("vert.spv");
-    auto fragShaderCode = readFile("frag.spv");
+    auto vertShaderCode = readFile(VERT_SHADER);
+    auto fragShaderCode = readFile(FRAG_SHADER);
 
     VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
     VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);

@@ -40,8 +40,10 @@ endif(NOT Eigen3_FIND_VERSION)
 message("EIGEN VERSAO ${Eigen3_FIND_VERSION}")
 
 macro(_eigen3_check_version)
-
-  file(READ "${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" _eigen3_version_header)
+message("to aqui")
+	  message("to aqui")
+message("$ENV{EIGEN3_ROOT}")
+  file(READ "$ENV{EIGEN3_ROOT}/src/Core/util/Macros.h" _eigen3_version_header)
  
   string(REGEX MATCH "define[ \t]+EIGEN_WORLD_VERSION[ \t]+([0-9]+)" _eigen3_world_version_match "${_eigen3_version_header}")
   set(EIGEN3_WORLD_VERSION "${CMAKE_MATCH_1}")
@@ -77,24 +79,28 @@ else (EIGEN3_INCLUDE_DIR)
   # search first if an Eigen3Config.cmake is available in the system,
   # if successful this would set EIGEN3_INCLUDE_DIR and the rest of
   # the script will work as usual
+  message("hover rosa")
+  message("$ENV{EIGEN_ROOT_DIR}")
   find_package(Eigen3 ${Eigen3_FIND_VERSION} NO_MODULE QUIET)
 
   if(NOT EIGEN3_INCLUDE_DIR)
+  
+
     find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
         HINTS
         ENV EIGEN3_ROOT 
         ENV EIGEN3_ROOT_DIR
         PATHS
-        ${CMAKE_INSTALL_PREFIX}/include
-        ${KDE4_INCLUDE_DIR}
-        PATH_SUFFIXES eigen3 eigen
+        $ENV{EIGEN_ROOT_DIR}
       )
   endif(NOT EIGEN3_INCLUDE_DIR)
 
   if(EIGEN3_INCLUDE_DIR)
+    
     _eigen3_check_version()
   endif(EIGEN3_INCLUDE_DIR)
-
+  message("to aqui")
+	  message("to aqui")
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Eigen3 DEFAULT_MSG EIGEN3_INCLUDE_DIR EIGEN3_VERSION_OK)
 

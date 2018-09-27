@@ -1,7 +1,8 @@
 #ifndef GLDEP
 #define GLDEP
 
-#define SHADERS_FOLDER std::string("Common/Resources/Shaders/")
+#define VERT_SHADER std::string("triVert.spv")
+#define FRAG_SHADER std::string("triFrag.spv")
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
