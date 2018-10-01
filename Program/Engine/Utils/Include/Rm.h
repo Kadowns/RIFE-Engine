@@ -1,7 +1,7 @@
 #include <Types.h>
 #include <math.h>
 #include <algorithm>
-
+#include <Eigen/src/Core/Matrix.h>
 
 namespace rm {
 
