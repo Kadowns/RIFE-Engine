@@ -1,7 +1,12 @@
 #include <Types.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <algorithm>
-#include <Eigen/Core>
+#include <Eigen/Dense>
+
+#define DEG_TO_RAD (M_PI / 180)
+#define RAD_TO_DEG (180 / M_PI)
+
 
 namespace rm {
 
@@ -10,54 +15,42 @@ namespace rm {
         return std::min(upper, std::max(x, lower));
     }
 
-    class vec2f {
-    protected:
+	template<class T>
+	Eigen::Matrix<T, 4, 4> perspective( double fovy, double aspect, double zNear, double zFar) {
+		typedef Eigen::Matrix<T, 4, 4> Matrix4;
 
-        float64 m_x, m_y;
+		assert(aspect > 0);
+		assert(zFar > zNear);
+	
 
-    public:	
-        //Constructor
-        vec2f();
-        vec2f(const vec2f &vec);
-        vec2f(float64 x, float64 y);
+		double tanHalfFovy = tan(fovy / 2.0);
+		Matrix4 res = Matrix4::Zero();
+		res(0, 0) = 1.0 / (aspect * tanHalfFovy);
+		res(1, 1) = 1.0 / (tanHalfFovy);
+		res(2, 2) = -(zFar + zNear) / (zFar - zNear);
+		res(3, 2) = -1.0;
+		res(2, 3) = -(2.0 * zFar * zNear) / (zFar - zNear);
+		return res;
+	}
 
-        //Getters
-        float64 x() { return m_x; }
-        float64 y() { return m_y; }
-        vec2f xy() { return *this; }
-        float64 magnitude();
-        float64 dot(vec2f vec);
-        vec2f cross(vec2f vec);
-        vec2f normalized();
+	template<class T>
+	Eigen::Matrix<T, 4, 4> lookAt(Eigen::Matrix<T, 3, 1> const & eye,
+		Eigen::Matrix<T, 3, 1> const &center, Eigen::Matrix<T, 3, 1> const & up) {
+		typedef Eigen::Matrix<T, 4, 4> Matrix4;
+		typedef Eigen::Matrix<T, 3, 1> Vector3;
 
-        //Methods
-        void normalize();
-        
+		Vector3 f = (center - eye).normalized();
+		Vector3 u = up.normalized();
+		Vector3 s = f.cross(u).normalized();
+		u = s.cross(f);
 
-        //Operators
-        vec2f operator/(float64 scalar);
-        void operator/=(float64 scalar);
+		Matrix4 res;
+		res <<
+			s.x(),    s.y(),  s.z(),   -s.dot(eye),
+			u.x(),    u.y(),  u.z(),   -u.dot(eye),
+			-f.x(),   -f.y(), -f.z(),  f.dot(eye),
+			0,        0,      0,       1;
 
-    };
-
-    class vec3f : vec2f {
-    protected:
-
-        float64 m_z;
-
-    public:
-
-        //Constructors
-        vec3f(const vec3f &vec);
-        vec3f(const vec2f &vecxy, float64 z);
-        vec3f(float64 x, float64 y, float64 z);
-        vec3f();
-
-
-        //Getters
-        float64 z() { return m_z; }
-        vec2f xz() { return vec2f(m_x, m_z); }
-        vec2f yz() { return vec2f(m_y, m_z); }
-        vec3f xyz() { return *this; }
-    };
-}
+		return res;
+	}
+};

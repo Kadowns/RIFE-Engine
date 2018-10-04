@@ -70,7 +70,9 @@ else (EIGEN3_INCLUDE_DIR)
   # search first if an Eigen3Config.cmake is available in the system,
   # if successful this would set EIGEN3_INCLUDE_DIR and the rest of
   # the script will work as usual
+  message("que porra eh essa: ${EIGEN3_INCLUDE_DIR}")
   find_package(Eigen3 ${Eigen3_FIND_VERSION} NO_MODULE QUIET)
+  
 
   if(NOT EIGEN3_INCLUDE_DIR)
     find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
@@ -94,10 +96,4 @@ else (EIGEN3_INCLUDE_DIR)
   mark_as_advanced(EIGEN3_INCLUDE_DIR)
 
 endif(EIGEN3_INCLUDE_DIR)
-
-#add_library(Eigen3::Eigen SHARED IMPORTED)
-#target_include_directories(Eigen3::Eigen
-#        INTERFACE
-#        ${EIGEN3_INCLUDE_DIR}
-#        )
 message("Including ${EIGEN3_INCLUDE_DIR}!")

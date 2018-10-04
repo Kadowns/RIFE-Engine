@@ -1,18 +1,17 @@
-#ifndef GLDEP
-#define GLDEP
+#pragma once
 
-#define VERT_SHADER std::string("triVert.spv")
-#define FRAG_SHADER std::string("triFrag.spv")
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#endif // !GLDEP
-#include <Rm.h>
+#include <GraphicsDependencys.h>
+#include <Vertex.h>
+#include <UniformBufferObject.h>
 #include <iostream>
+#include <cstring>
 #include <fstream>
 #include <vector>
 #include <set>
 #include <map>
+
+#define VERT_SHADER std::string("triVert.spv")
+#define FRAG_SHADER std::string("triFrag.spv")
 
 namespace vk {
     //Proxys pro debug--------------------
@@ -29,7 +28,17 @@ namespace vk {
 
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
+	const std::vector<gph::Vertex> vertices = {
+	{{-0.5f, -0.3f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},//0
+	{{0.0f, -0.7f, 0.0f}, {1.0f, 1.0f, 1.0f, 0.01f}},//1
+	{{0.5f, -0.3f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},//2
+	{{-0.35f, 0.5f, 0.0f}, {0.0f, 1.0f, 1.0f, 1.0f}},//3
+	{{0.35f, 0.5f, 0.0f}, {1.0f, 0.0f, 1.0f, 1.0f}}//4
+	};
 
+	const std::vector<uint16_t> indices = {
+		0, 1, 3, 1, 4, 3, 1, 2, 4
+	};
 
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_LUNARG_standard_validation"
@@ -76,6 +85,15 @@ namespace vk {
         VkSwapchainKHR m_vkSwapChain;
         VkCommandPool m_vkCommandPool;
 
+		VkBuffer m_vkVertexBuffer;
+		VkDeviceMemory m_vkVertexBufferMemory;
+
+		VkBuffer m_vkIndexBuffer;
+		VkDeviceMemory m_vkIndexBufferMemory;
+
+		std::vector<VkBuffer> m_vkUniformBuffers;
+		std::vector<VkDeviceMemory> m_vkUniformBuffersMemory;
+
         std::vector<VkImage> m_vkSwapChainImages;
         std::vector<VkImageView> m_vkSwapChainImageViews;
         std::vector<VkFramebuffer> m_vkSwapChainFramebuffers;
@@ -86,6 +104,9 @@ namespace vk {
         VkFormat m_vkSwapChainImageFormat;
         VkExtent2D m_vkSwapChainExtent;
         VkRenderPass m_vkRenderPass;
+		VkDescriptorSetLayout m_vkDescriptorSetLayout;
+		VkDescriptorPool m_vkDescriptorPool;
+		std::vector<VkDescriptorSet> m_vkDescriptorSets;
         VkPipelineLayout m_vkPipelineLayout;
         VkPipeline m_vkGraphicsPipeline;
         
@@ -98,9 +119,13 @@ namespace vk {
         VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
         VkShaderModule createShaderModule(const std::vector<char>& code);
         std::vector<const char*> getRequiredExtensions();	
+		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
         bool checkValidationLayerSupport();
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         int rateDeviceSuitability(VkPhysicalDevice device);
+		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+			VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         //-----------------------------------
 
         //Initializer functions
@@ -112,9 +137,15 @@ namespace vk {
         void createSwapChain();
         void createImageViews();
         void createRenderPass();
+		void createDescriptorSetLayout();
         void createGraphicsPipeline();
         void createFramebuffers();
         void createCommandPool();
+		void createVertexBuffer();
+		void createIndexBuffer();
+		void createUniformBuffer();
+		void createDescriptorPool();
+		void createDescriptorSets();
         void createCommandBuffers();
         void createSyncObjects();
         //---------------------
@@ -145,7 +176,11 @@ namespace vk {
         std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
         std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
         std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }
+		std::vector<VkBuffer>* getUniformBuffers() { return &m_vkUniformBuffers; }
+		std::vector<VkDeviceMemory>* getUniformBufferMemory() { return &m_vkUniformBuffersMemory; }
+		VkExtent2D* getVkExtent() { return &m_vkSwapChainExtent; }
         size_t* getCurrentFrame() { return &m_currentFrame; }
+
 
         //---------------------
 

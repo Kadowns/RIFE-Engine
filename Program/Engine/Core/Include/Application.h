@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VkUtilities.h>
+#include <GraphicsIncludes.h>
 #include <Clock.h>
 #include "Scene.h"
 
