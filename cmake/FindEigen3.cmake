@@ -95,9 +95,9 @@ else (EIGEN3_INCLUDE_DIR)
 
 endif(EIGEN3_INCLUDE_DIR)
 
-add_library(Eigen3::Eigen SHARED IMPORTED)
-target_include_directories(Eigen3::Eigen
-        INTERFACE
-        ${EIGEN3_INCLUDE_DIR}
-        )
+#add_library(Eigen3::Eigen SHARED IMPORTED)
+#target_include_directories(Eigen3::Eigen
+#        INTERFACE
+#        ${EIGEN3_INCLUDE_DIR}
+#        )
 message("Including ${EIGEN3_INCLUDE_DIR}!")

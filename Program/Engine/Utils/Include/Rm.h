@@ -1,7 +1,7 @@
 #include <Types.h>
 #include <math.h>
 #include <algorithm>
-#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/Core>
 
 namespace rm {
 
@@ -20,7 +20,6 @@ namespace rm {
         vec2f();
         vec2f(const vec2f &vec);
         vec2f(float64 x, float64 y);
-
 
         //Getters
         float64 x() { return m_x; }
