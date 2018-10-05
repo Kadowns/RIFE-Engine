@@ -21,16 +21,17 @@ namespace rm {
 
 		assert(aspect > 0);
 		assert(zFar > zNear);
-	
-
-		double tanHalfFovy = tan(fovy / 2.0);
-		Matrix4 res = Matrix4::Zero();
-		res(0, 0) = 1.0 / (aspect * tanHalfFovy);
-		res(1, 1) = 1.0 / (tanHalfFovy);
-		res(2, 2) = -(zFar + zNear) / (zFar - zNear);
-		res(3, 2) = -1.0;
-		res(2, 3) = -(2.0 * zFar * zNear) / (zFar - zNear);
-		return res;
+  
+        T h = (T)tan((double)(fovy / T(2)));
+   
+        Matrix4 res = Matrix4::Zero();
+        res(0, 0) = T(1) / (h * aspect);
+        res(1, 1) = T(1) / h;
+        res(2, 2) = -(zFar + zNear) / (zFar - zNear);
+        res(2, 3) = -T(1);
+        res(3, 2) = -(T(2) * zFar * zNear) / (zFar - zNear);
+       
+        return res;
 	}
 
 	template<class T>
@@ -39,18 +40,34 @@ namespace rm {
 		typedef Eigen::Matrix<T, 4, 4> Matrix4;
 		typedef Eigen::Matrix<T, 3, 1> Vector3;
 
-		Vector3 f = (center - eye).normalized();
-		Vector3 u = up.normalized();
-		Vector3 s = f.cross(u).normalized();
-		u = s.cross(f);
+        Vector3 X, Y, Z;
 
-		Matrix4 res;
-		res <<
-			s.x(),    s.y(),  s.z(),   -s.dot(eye),
-			u.x(),    u.y(),  u.z(),   -u.dot(eye),
-			-f.x(),   -f.y(), -f.z(),  f.dot(eye),
-			0,        0,      0,       1;
+        Z = (eye - center).normalized();
+        Y = up.normalized();
+        X = Y.cross(Z);
+        Y = Z.cross(X);
+        X.normalize();
+        Y.normalize();
 
-		return res;
+        Matrix4 matrix;
+
+        matrix(0, 0) = X.x();
+        matrix(1,0) = X.y();
+        matrix(2,0) = X.z();
+        matrix(3,0) = -X.dot(eye);
+        matrix(0,1) = Y.x();
+        matrix(1,1) = Y.y();
+        matrix(2,1) = Y.z();
+        matrix(3,1) = -Y.dot(eye);
+        matrix(0,2) = Z.x();
+        matrix(1,2) = Z.y();
+        matrix(2,2) = Z.z();
+        matrix(3,2) = -Z.dot(eye);
+        matrix(0,3) = T(0);
+        matrix(1,3) = T(0);
+        matrix(2,3) = T(0);
+        matrix(3,3) = T(1);
+
+		return matrix;
 	}
 };

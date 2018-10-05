@@ -10,6 +10,8 @@ private:
     int m_frames = 0;
     float m_fpsUpdateRate = 1.5f;
     double m_frameRate = 30;
+    double m_time = 0;
+    double m_lastFrameTime;
     double m_dt = 0;
 
     double clockToMilliseconds(clock_t clocks);
@@ -20,6 +22,7 @@ public:
     static Clock* getInstance();
 
     int getTotalFrames();
+    double time();
     double getFPS();	
     double getLastFrameTime();
     void earlyUpdate();

@@ -18,12 +18,16 @@ int Clock::getTotalFrames() {
     return m_frames;
 }
 
+double Clock::time() {
+    return m_time;
+}
+
 double Clock::getFPS() {
     return m_frameRate;
 }
 
 double Clock::getLastFrameTime() {
-    return double(m_deltaClocks) / CLOCKS_PER_SEC;
+    return m_lastFrameTime;
 }
 
 double Clock::clockToMilliseconds(clock_t ticks) {
@@ -38,7 +42,10 @@ void Clock::lateUpdate(){
     
     m_lateClocks = clock();
     m_deltaClocks = m_lateClocks - m_earlyClocks;
-    m_dt += getLastFrameTime();
+
+    m_lastFrameTime = double(m_deltaClocks) / CLOCKS_PER_SEC;
+    m_dt += m_lastFrameTime;
+    m_time += m_lastFrameTime;
     m_frames++;
     if (m_dt > 1.0f / m_fpsUpdateRate) {
         m_frameRate = m_frames / m_dt;
