@@ -4,8 +4,8 @@
 
 namespace gph {
 	struct UniformBufferObject {
-		Eigen::Matrix4f projection;
-		Eigen::Matrix4f view;
-		Eigen::Matrix4f model;
+		glm::mat4 projection;
+        glm::mat4 view;
+        glm::mat4 model;
 	};
 }

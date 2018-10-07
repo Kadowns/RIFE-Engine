@@ -6,8 +6,8 @@
 namespace gph {
 
 	struct Vertex {
-		Eigen::Vector3f position;
-		Eigen::Vector4f color;
+        glm::vec3 position;
+		glm::vec4 color;
 
 		static VkVertexInputBindingDescription getBindingDescription();
 		static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions();

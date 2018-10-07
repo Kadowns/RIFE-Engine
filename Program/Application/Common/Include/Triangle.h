@@ -3,7 +3,6 @@
 #include <Application.h>
 #include <Scene.h>
 
-using namespace Eigen;
 
 class Triangle : public Scene {
 private:

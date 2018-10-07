@@ -1,17 +1,12 @@
 #include <Triangle.h>
 
 void Triangle::updateUniformBuffer(uint32_t currentImage) {
-	Transform <float, 3, Affine> t = Transform <float, 3, Affine >::Identity();
-     t.rotate(AngleAxisf(DEG_TO_RAD * 20 * TIME->time(), Vector3f::UnitZ()));
-     t.translate(Vector3f(0.0f, 0.0f, 0.0f));
-   //  printf("%d \n", TIME->getLastFrameTime());
 	gph::UniformBufferObject ubo = {};
-	ubo.model = t.matrix();
-    Vector3f eye(0.0f, 0.0f, 1.0f), center(0.5f, 0.0f, 0.0f), eyeup(0.0f, 1.0f, 0.0f);
+    ubo.model = glm::rotate<float>(glm::mat4(1.0f), TIME->time() * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     auto extent = *vkWrapper->getVkExtent();
-    ubo.projection = Matrix4f::Identity();//rm::perspective<Matrix4f::Scalar>(DEG_TO_RAD * 45.0f, extent.width /(float)extent.height, 0.1f, 100.0f);
-    ubo.projection(1, 1) *= -1;
-    ubo.view = rm::lookAt<Matrix4f::Scalar>(eye, center, eyeup);
+    ubo.projection = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
+   // ubo.projection[1][1] *= 1;
+    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	auto device = vkWrapper->getDevice();
 	auto ubm = vkWrapper->getUniformBufferMemory();
