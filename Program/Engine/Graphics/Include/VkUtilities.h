@@ -24,7 +24,7 @@ namespace vk {
         VkDebugUtilsMessengerEXT callback,
         const VkAllocationCallbacks* pAllocator);
 
-    static std::vector<char> readFile(const std::string& filename);
+    static std::vector<char> loadShaderFile(const std::string& filename);
 
     const int MAX_FRAMES_IN_FLIGHT = 2;
 

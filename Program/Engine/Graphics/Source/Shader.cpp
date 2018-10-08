@@ -3,14 +3,14 @@
 gph::Shader gph::Shader::bindDevice(VkDevice* vkdevice) {
     if (m_this == nullptr) {
         if (vkdevice == nullptr) {
-            return;
+            return *m_this;
         }
         m_this = new Shader();
     }
     
     if (vkdevice == nullptr) {
         Shader::unbindDevice();
-        return;
+        return *m_this;
     }
     m_this->p_vkDevice = vkdevice;
     return *m_this;

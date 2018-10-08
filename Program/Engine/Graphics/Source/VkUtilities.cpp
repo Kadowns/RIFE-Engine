@@ -663,8 +663,8 @@ void vk::Wrapper::createDescriptorSetLayout() {
 void vk::Wrapper::createGraphicsPipeline() {
 
     //OS BINÁRIOS DO SHADER PRECISAM ESTAR NA MESMA PASTA DO EXECUTAVEL, FICA LÁ EM CMAKE/BUILDS/BLABLABLA
-    auto vertShaderCode = readFile(VERT_SHADER);
-    auto fragShaderCode = readFile(FRAG_SHADER);
+    auto vertShaderCode = loadShaderFile(VERT_SHADER);
+    auto fragShaderCode = loadShaderFile(FRAG_SHADER);
 
     VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
     VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -1196,7 +1196,7 @@ void vk::DestroyDebugUtilsMessengerEXT(VkInstance instance,
 }
 
 //Le arquivos (TO DO-> criar uma classe de funções uteis
-std::vector<char> vk::readFile(const std::string& filename) {
+std::vector<char> vk::loadShaderFile(const std::string& filename) {
     //abre o arquivo, começa a ler pelo final e em binario
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
