@@ -2,11 +2,11 @@
 
 void Triangle::updateUniformBuffer(uint32_t currentImage) {
 	gph::UniformBufferObject ubo = {};
-    ubo.model = glm::rotate<float>(glm::mat4(1.0f), TIME->time() * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = glm::rotate<float>(glm::mat4(1.0f), TIME->time() * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     auto extent = *vkWrapper->getVkExtent();
     ubo.projection = glm::perspective(glm::radians(45.0f), extent.width / (float)extent.height, 0.1f, 10.0f);
-   // ubo.projection[1][1] *= 1;
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    ubo.projection[1][1] *= -1;
+    ubo.view = glm::lookAt(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	auto device = vkWrapper->getDevice();
 	auto ubm = vkWrapper->getUniformBufferMemory();

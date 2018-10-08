@@ -15,10 +15,11 @@ private:
     double m_dt = 0;
 
     double clockToMilliseconds(clock_t clocks);
-
+    
 public:
     Clock();
     ~Clock();
+    
     static Clock* getInstance();
 
     int getTotalFrames();

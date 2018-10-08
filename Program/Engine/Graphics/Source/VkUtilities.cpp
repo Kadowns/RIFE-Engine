@@ -6,25 +6,35 @@ vk::Wrapper::Wrapper(GLFWwindow *window) : m_glfwWindow(window){}
 //Inicializa a vulkan
 void vk::Wrapper::initializeVulkan() {
 
+    //Initial base
     createVkInstance();//Cria e configura a instancia
     setupDebugCallback();//caso seja no modo debug, cria e configura o debug callback
     createSurface();//Cria uma "superficie" na janela onde podemos desenhar
     pickPhysicalDevice();//escolhe a melhor GPU disponivel
     createLogicalDevice();//faz uns bagulho com queue e sei l� o que
+    createDescriptorSetLayout();
+    //---------------------------------
+    //todo---configuravel VVVV
     createSwapChain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
     createImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
     createRenderPass();//Cria o render pass que eu n faço ideia do que é
-	createDescriptorSetLayout();
+   
+   
+    
     createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE
+   
     createFramebuffers();//Frame buffers
+    //one time only  
     createCommandPool();
 	createVertexBuffer();
 	createIndexBuffer();
 	createUniformBuffer();
 	createDescriptorPool();
 	createDescriptorSets();
-    createCommandBuffers();
     createSyncObjects();
+    //-----------------------
+
+    createCommandBuffers();
 }
 
 void vk::Wrapper::recreateSwapChain(){
@@ -743,7 +753,7 @@ void vk::Wrapper::createGraphicsPipeline() {
     rasterizer.lineWidth = 1.0f;
 
     //Esses ai é intuitivo né
-    rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
+    rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
     rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
     rasterizer.depthBiasEnable = VK_FALSE;

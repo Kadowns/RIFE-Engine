@@ -1,28 +1,22 @@
 #include "Shader.h"
 
-gph::Shader gph::Shader::bindDevice(VkDevice* vkdevice) {
-    if (m_this == nullptr) {
-        if (vkdevice == nullptr) {
-            return *m_this;
-        }
-        m_this = new Shader();
-    }
-    
+gph::ShaderModule* gph::ShaderModule::bindDevice(VkDevice* vkdevice) {
+   
     if (vkdevice == nullptr) {
-        Shader::unbindDevice();
-        return *m_this;
+        this->unbindDevice();
+        return this;
     }
-    m_this->p_vkDevice = vkdevice;
-    return *m_this;
+    p_vkDevice = vkdevice;
+    return this;
 }
 
-gph::Shader gph::Shader::bindShader(const std::string& filename, VkShaderStageFlagBits shaderType) {
-    if (m_this == nullptr || m_this->p_vkDevice == nullptr) {
+gph::ShaderModule* gph::ShaderModule::bindShader(const std::string& filename, VkShaderStageFlagBits shaderType) {
+    if (p_vkDevice == nullptr) {
         throw std::runtime_error("No Device was bound!");
     }
 
     //OS BINÁRIOS DO SHADER PRECISAM ESTAR NA MESMA PASTA DO EXECUTAVEL, FICA LÁ EM CMAKE/BUILDS/BLABLABLA
-    auto shaderCode = Shader::loadShaderFile(filename);
+    auto shaderCode = ShaderModule::loadShaderFile(filename);
 
     VkShaderModule shaderModule = createShaderModule(shaderCode);
 
@@ -33,30 +27,35 @@ gph::Shader gph::Shader::bindShader(const std::string& filename, VkShaderStageFl
     shaderStageInfo.module = shaderModule;
     shaderStageInfo.pName = "main";
     //--------
-    m_this->m_shadersInfo.push_back(shaderStageInfo);
+    m_shadersInfo.push_back(shaderStageInfo);
 
-    return *m_this;
+    return this;
+    
 }
 
-void gph::Shader::unbindDevice() {
-    for (int i = 0; i < m_this->m_shadersInfo.size(); i++) {
-        vkDestroyShaderModule(*m_this->p_vkDevice, m_this->m_shadersInfo[i].module, nullptr);
+gph::ShaderModule* gph::ShaderModule::unbindDevice() {
+    for (int i = 0; i < m_shadersInfo.size(); i++) {
+        vkDestroyShaderModule(*p_vkDevice, m_shadersInfo[i].module, nullptr);
     }
-    m_this->m_shadersInfo.clear();
-    delete m_this;
-    m_this = nullptr;
+    m_shadersInfo.clear();
+    p_vkDevice = nullptr;
+    return this;
 }
 
-std::vector<VkPipelineShaderStageCreateInfo>* gph::Shader::getShadersInfo() {
-    if (m_this == nullptr) {
+std::vector<VkPipelineShaderStageCreateInfo>* gph::ShaderModule::getShadersInfo() {
+    if (p_vkDevice == nullptr) {
         throw std::runtime_error("Device was not bound!");
     }
 
-    return &m_this->m_shadersInfo;
+    return &m_shadersInfo;
 }
 
 
-VkShaderModule gph::Shader::createShaderModule(const std::vector<char>& code) {
+VkShaderModule gph::ShaderModule::createShaderModule(const std::vector<char>& code) {
+
+    if (p_vkDevice == nullptr) {
+        throw std::runtime_error("Device was not bound!");
+    }
 
     VkShaderModuleCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -65,14 +64,14 @@ VkShaderModule gph::Shader::createShaderModule(const std::vector<char>& code) {
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(*(m_this->p_vkDevice), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+    if (vkCreateShaderModule(*(p_vkDevice), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
         throw std::runtime_error("failed to create shader module!");
     }
     return shaderModule;
 }
 
 
-std::vector<char> gph::Shader::loadShaderFile(const std::string & filename) {
+std::vector<char> gph::ShaderModule::loadShaderFile(const std::string & filename) {
 
     //abre o arquivo, começa a ler pelo final e em binario
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
