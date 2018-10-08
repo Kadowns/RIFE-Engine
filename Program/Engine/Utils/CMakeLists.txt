@@ -3,7 +3,7 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 find_package(GLM REQUIRED)
 
 
-set(UTILS_INCLUDE Include/Rm.h Include/Types.h)
+set(UTILS_INCLUDE Include/Rm.h Include/Types.h ${CMAKE_HOME_DIRECTORY}/libs/stb/stb.h)
 set(UTILS_SOURCE Source/Rm.cpp)
 set(UTILS_ALL ${UTILS_INCLUDE} ${UTILS_SOURCE})
 CreateModule(Utils "${UTILS_ALL}")

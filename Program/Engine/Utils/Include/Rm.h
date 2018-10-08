@@ -5,6 +5,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <stb.h>
 
 #define DEG_TO_RAD (M_PI / 180)
 #define RAD_TO_DEG (180 / M_PI)
