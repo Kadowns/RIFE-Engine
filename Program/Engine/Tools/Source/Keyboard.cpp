@@ -8,10 +8,10 @@ Keyboard::~Keyboard(){
 }
 
 //Singleton-
-Keyboard* Keyboard::m_instance = nullptr;
+Keyboard* Keyboard::s_instance = nullptr;
 
 Keyboard* Keyboard::getInstance() {
-    return m_instance != nullptr ? m_instance :(m_instance = new Keyboard());
+    return s_instance != nullptr ? s_instance :(s_instance = new Keyboard());
 }
 //----------
 

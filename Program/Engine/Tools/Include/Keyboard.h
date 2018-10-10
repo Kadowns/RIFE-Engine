@@ -20,7 +20,7 @@ public:
 
 private:
     Keyboard();
-    static Keyboard *m_instance;
+    static Keyboard *s_instance;
     std::set<int> m_pressedKeys, m_downKeys, m_releasedKeys;
 };
 

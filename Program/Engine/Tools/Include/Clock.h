@@ -5,7 +5,7 @@
 
 class Clock {
 private:
-    static Clock* m_instance;
+    static Clock* s_instance;
     clock_t m_earlyClocks, m_lateClocks, m_deltaClocks;
     int m_frames = 0;
     float m_fpsUpdateRate = 1.5f;

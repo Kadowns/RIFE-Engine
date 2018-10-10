@@ -22,7 +22,7 @@
 class Application {
 private :
 
-    static Application *m_instance;
+    static Application *s_instance;
 
     int m_width;
     int m_height;

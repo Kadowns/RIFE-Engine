@@ -6,8 +6,8 @@ class MeshRenderer : Renderer {
 	void draw();
 	void recordCmdBuffer();
 public:
-	MeshRenderer(vk::Wrapper* wrapper);
+	MeshRenderer();
 private:
-	vk::Wrapper *p_vkWrapper;
+	
 
 };

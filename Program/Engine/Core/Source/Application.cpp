@@ -1,10 +1,10 @@
 #include <Application.h>
 
 //--------------------------Singleton
-Application *Application::m_instance = nullptr;
+Application *Application::s_instance = nullptr;
 
 Application *Application::getInstance() {
-    return m_instance != nullptr ? m_instance : (m_instance = new Application());
+    return s_instance != nullptr ? s_instance : (s_instance = new Application());
 }
 //----------------------------------
 void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int height) {
@@ -35,7 +35,7 @@ Application::Application(Scene *scene, const std::string &title, int width, int 
     m_title = title;
     m_width = width;
     m_height = height;
-    m_instance = this;
+    s_instance = this;
 }
 
 Application::Application(Scene *scene, const std::string &title) : Application(scene, title, 800, 600) {}

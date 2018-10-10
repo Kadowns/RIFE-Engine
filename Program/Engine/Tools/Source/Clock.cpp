@@ -1,6 +1,6 @@
 #include <Clock.h>
 
-Clock* Clock::m_instance = nullptr;
+Clock* Clock::s_instance = nullptr;
 
 Clock::Clock(){
 }
@@ -11,7 +11,7 @@ Clock::~Clock()
 }
 
 Clock* Clock::getInstance(){
-    return m_instance != nullptr ? m_instance : (m_instance = new Clock());
+    return s_instance != nullptr ? s_instance : (s_instance = new Clock());
 }
 
 int Clock::getTotalFrames() {
