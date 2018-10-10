@@ -1,10 +1,16 @@
 #include "vkUtilities.h"
 
 
-vk::Wrapper::Wrapper(GLFWwindow *window) : m_glfwWindow(window){}
+vk::Wrapper::Wrapper(GLFWwindow *window) : m_glfwWindow(window){
+	s_instance = this;
+}
+
+vk::Wrapper * vk::Wrapper::getInstance() {
+	return s_instance;
+}
 
 //Inicializa a vulkan
-void vk::Wrapper::initializeVulkan() {
+void vk::Wrapper::initialSetup() {
 
     //Initial base
     createVkInstance();//Cria e configura a instancia
@@ -17,24 +23,22 @@ void vk::Wrapper::initializeVulkan() {
     //todo---configuravel VVVV
     createSwapChain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
     createImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
-    createRenderPass();//Cria o render pass que eu n faço ideia do que é
-   
-   
-    
+    createRenderPass();//Cria o render pass que eu n faço ideia do que é  
     createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE
-   
-    createFramebuffers();//Frame buffers
-    //one time only  
-    createCommandPool();
+	createFramebuffers();//Frame buffers  
+	createCommandPool();
+}
+
+void vk::Wrapper::finalSetup() {
 	createVertexBuffer();
-	createIndexBuffer();
+	createIndexBuffer();	
 	createUniformBuffer();
 	createDescriptorPool();
 	createDescriptorSets();
-    createSyncObjects();
-    //-----------------------
+	createSyncObjects();
+	//-----------------------
 
-    createCommandBuffers();
+	createCommandBuffers();
 }
 
 void vk::Wrapper::recreateSwapChain(){
@@ -68,12 +72,14 @@ void vk::Wrapper::terminateVulkan() {
 		vkDestroyBuffer(m_vkDevice, m_vkUniformBuffers[i], nullptr);
 		vkFreeMemory(m_vkDevice, m_vkUniformBuffersMemory[i], nullptr);
 	}
-
+	
 	vkDestroyBuffer(m_vkDevice, m_vkIndexBuffer, nullptr);
 	vkFreeMemory(m_vkDevice, m_vkIndexBufferMemory, nullptr);
 
 	vkDestroyBuffer(m_vkDevice, m_vkVertexBuffer, nullptr);
 	vkFreeMemory(m_vkDevice, m_vkVertexBufferMemory, nullptr);
+	
+	
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(m_vkDevice, m_vkRenderFinishedSemaphores[i], nullptr);
@@ -93,6 +99,10 @@ void vk::Wrapper::terminateVulkan() {
     vkDestroyInstance(m_vkInstance, nullptr);
 }
 
+void vk::Wrapper::addNewModel(Model & model){
+	m_models.push_back(model);
+}
+
 VKAPI_ATTR VkBool32 VKAPI_CALL vk::Wrapper::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
     const VkDebugUtilsMessengerCallbackDataEXT * pCallbackData,
@@ -102,6 +112,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vk::Wrapper::debugCallback(VkDebugUtilsMessageSev
 
         return VK_FALSE;
 }
+
+
 
 vk::QueueFamilyIndices vk::Wrapper::findQueueFamilies(VkPhysicalDevice device) {
     QueueFamilyIndices indices;
@@ -882,68 +894,71 @@ void vk::Wrapper::createCommandPool() {
 }
 
 void vk::Wrapper::createVertexBuffer() {
-
-	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
+	VkDeviceSize bufferSize = (sizeof(m_models[0].m_vertices[0]) * m_models[0].m_vertices.size());
 	createBuffer(
-		bufferSize,
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		stagingBuffer,
-		stagingBufferMemory
-	);
-
-	void* data;
-	vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, vertices.data(), (size_t)bufferSize);//copia os dados da memoria dos vertices pra gpu
-	vkUnmapMemory(m_vkDevice, stagingBufferMemory);
-
-	createBuffer(
-		bufferSize,
+		bufferSize * m_models.size(),
 		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 		m_vkVertexBuffer,
 		m_vkVertexBufferMemory
 	);
 
-	copyBuffer(stagingBuffer, m_vkVertexBuffer, bufferSize);
+	for (size_t i = 0; i < m_models.size(); i++) {
+		
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		createBuffer(
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			stagingBuffer,
+			stagingBufferMemory
+		);
 
-	vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
-	vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
+		void* data;
+		vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, m_models[0].m_vertices.data(), (size_t)bufferSize);//copia os dados da memoria dos vertices pra gpu
+		vkUnmapMemory(m_vkDevice, stagingBufferMemory);
+
+		copyBuffer(stagingBuffer, m_vkVertexBuffer, bufferSize, bufferSize * i);
+
+		vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
+		vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
+	}
 }
 
 void vk::Wrapper::createIndexBuffer() {
 
-	VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
+	VkDeviceSize bufferSize = sizeof(m_models[0].m_indices[0]) * m_models[0].m_indices.size();
 	createBuffer(
-		bufferSize,
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		stagingBuffer,
-		stagingBufferMemory
-	);
-
-	void* data;
-	vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, indices.data(), (size_t)bufferSize);
-	vkUnmapMemory(m_vkDevice, stagingBufferMemory);
-
-	createBuffer(
-		bufferSize,
+		bufferSize * m_models.size(),
 		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		m_vkIndexBuffer, 
+		m_vkIndexBuffer,
 		m_vkIndexBufferMemory
 	);
 
-	copyBuffer(stagingBuffer, m_vkIndexBuffer, bufferSize);
+	for (size_t i = 0; i < m_models.size(); i++) {
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		createBuffer(
+			bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			stagingBuffer,
+			stagingBufferMemory
+		);
 
-	vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
-	vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
+		void* data;
+		vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, m_models[i].m_indices.data(), (size_t)bufferSize);
+		vkUnmapMemory(m_vkDevice, stagingBufferMemory);
+
+		copyBuffer(stagingBuffer, m_vkIndexBuffer, bufferSize, bufferSize * i);
+
+		vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
+		vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
+	}
 }
 
 void vk::Wrapper::createUniformBuffer() {
@@ -1045,7 +1060,7 @@ void vk::Wrapper::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 	vkBindBufferMemory(m_vkDevice, buffer, bufferMemory, 0);
 }
 
-void vk::Wrapper::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+void vk::Wrapper::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset) {
 
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -1064,7 +1079,7 @@ void vk::Wrapper::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSiz
 
 	VkBufferCopy copyRegion = {};
 	copyRegion.srcOffset = 0; // Optional
-	copyRegion.dstOffset = 0; // Optional
+	copyRegion.dstOffset = offset; // Optional
 	copyRegion.size = size;
 	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
@@ -1091,7 +1106,7 @@ void vk::Wrapper::createCommandBuffers() {
     allocInfo.commandBufferCount = (uint32_t)m_vkCommandBuffers.size();
 
     if (vkAllocateCommandBuffers(m_vkDevice, &allocInfo, m_vkCommandBuffers.data()) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate command buffers!");
+        throw std::runtime_error("failed to allocate command buffers!");	
     }
 
     for (size_t i = 0; i < m_vkCommandBuffers.size(); i++) {
@@ -1123,14 +1138,19 @@ void vk::Wrapper::createCommandBuffers() {
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_vkCommandBuffers[i], 0, 1, vertexBuffers, offsets);
 
-		vkCmdBindIndexBuffer(m_vkCommandBuffers[i], m_vkIndexBuffer, 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindIndexBuffer(m_vkCommandBuffers[i], m_vkIndexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(
 			m_vkCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_vkPipelineLayout, 0, 1, &m_vkDescriptorSets[i], 0, nullptr
 		);
+
+		uint32_t indices = 0;
+		for (int i = 0; i < m_models.size(); i++) {
+			indices += m_models[i].m_indices.size();
+		}
 		
-		vkCmdDrawIndexed(m_vkCommandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(m_vkCommandBuffers[i], indices, 1, 0, 0, 0);
 
         vkCmdEndRenderPass(m_vkCommandBuffers[i]);
 

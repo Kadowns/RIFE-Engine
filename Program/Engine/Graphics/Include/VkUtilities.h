@@ -10,6 +10,8 @@
 #include <set>
 #include <map>
 
+#define VK_WRAPPER vk::Wrapper::getInstance()
+
 #define VERT_SHADER std::string("triVert.spv")
 #define FRAG_SHADER std::string("triFrag.spv")
 
@@ -28,46 +30,12 @@ namespace vk {
 
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
-    const std::vector<gph::Vertex> vertices = {
-    {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
 
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{-0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
+	struct Model {
+		std::vector<gph::Vertex> m_vertices;
+		std::vector<uint32_t> m_indices;
+	};
 
-    {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
-
-    {{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
-
-    {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
-
-    {{-0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}}
-    };
-
-    const std::vector<uint16_t> indices = {
-    0, 1, 2, 2, 3, 0,
-    4, 5, 6, 6, 7, 4,
-    8, 9, 10, 10, 11, 8,
-    12, 13, 14, 14, 15, 12,
-    16, 17, 18, 18, 19, 16,
-    20, 21, 22, 22, 23, 20
-    };
 
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_LUNARG_standard_validation"
@@ -100,6 +68,9 @@ namespace vk {
     class Wrapper {
 
     private:
+
+		static Wrapper* s_instance;
+
         uint32_t m_width, m_height;
         size_t m_currentFrame = 0;
 
@@ -114,10 +85,12 @@ namespace vk {
         VkSwapchainKHR m_vkSwapChain;
         VkCommandPool m_vkCommandPool;
 
-		VkBuffer m_vkVertexBuffer;
-		VkDeviceMemory m_vkVertexBufferMemory;
+		std::vector<Model> m_models;
 
+		VkBuffer m_vkVertexBuffer;
 		VkBuffer m_vkIndexBuffer;
+
+		VkDeviceMemory m_vkVertexBufferMemory;
 		VkDeviceMemory m_vkIndexBufferMemory;
 
 		std::vector<VkBuffer> m_vkUniformBuffers;
@@ -154,7 +127,7 @@ namespace vk {
         int rateDeviceSuitability(VkPhysicalDevice device);
 		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 			VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset);
         //-----------------------------------
 
         //Initializer functions
@@ -189,12 +162,16 @@ namespace vk {
             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
             void* pUserData);
 
+		static Wrapper* getInstance();
+
+		
 
         Wrapper(GLFWwindow *window);
-        void initializeVulkan();
+        void initialSetup();
+		void finalSetup();
 		void recreateSwapChain();
         void terminateVulkan();
-
+		void addNewModel(Model& model);
 
         //Getters
         VkDevice* getDevice() { return &m_vkDevice; }
@@ -202,6 +179,7 @@ namespace vk {
         VkQueue* getGraphicsQueue() { return &m_vkGraphicsQueue; }
         VkQueue* getPresentQueue() { return &m_vkPresentQueue; }
         VkSwapchainKHR* getSwapChain() { return &m_vkSwapChain; }
+		VkCommandPool* getCommandPool() { return &m_vkCommandPool; }
         std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
         std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
         std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }

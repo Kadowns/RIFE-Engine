@@ -28,6 +28,16 @@ Triangle::~Triangle() {
 
 void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
+//	vk::Model cube1{};
+//	cube1.m_vertices = vertices;
+//	cube1.m_indices = indices;
+	//vkWrapper->addNewModel(cube1);
+	vk::Model cube2{};
+	cube2.m_vertices = vertices2;
+	cube2.m_indices = indices2;
+
+	vkWrapper->addNewModel(cube2);
+	vkWrapper->finalSetup();
 }
 
 void Triangle::update(float secs) {

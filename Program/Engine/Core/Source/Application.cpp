@@ -81,7 +81,7 @@ void Application::initGlfw() {
 //Inicializa a vulkan
 void Application::initVulkan() {
     m_vkWrapper = new vk::Wrapper(m_window);
-    m_vkWrapper->initializeVulkan();
+    m_vkWrapper->initialSetup();
 }
 
 //loop principal, n tem segredo n�

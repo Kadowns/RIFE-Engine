@@ -5,6 +5,9 @@ find_package(GLFW REQUIRED)
 
 set(GRAPHICS_INCLUDE 
 	Include/Vertex.h
+	Include/Renderer.h
+	Include/Mesh.h
+	Include/MeshRenderer.h
 	Include/VkUtilities.h 
 	Include/Shader.h
 	Include/GraphicsPipeline.h
@@ -14,6 +17,8 @@ set(GRAPHICS_INCLUDE
 
 set(GRAPHICS_SOURCE
 	Source/Vertex.cpp 
+	Source/Mesh.cpp
+	Source/MeshRenderer.cpp
 	Source/VkUtilities.cpp
 	Source/Shader.cpp
 	Source/GraphicsPipeline.cpp)
