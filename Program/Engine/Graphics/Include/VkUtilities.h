@@ -30,13 +30,6 @@ namespace vk {
 
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
-
-	struct Model {
-		std::vector<gph::Vertex> m_vertices;
-		std::vector<uint32_t> m_indices;
-	};
-
-
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_LUNARG_standard_validation"
     };
@@ -85,7 +78,6 @@ namespace vk {
         VkSwapchainKHR m_vkSwapChain;
         VkCommandPool m_vkCommandPool;
 
-		std::vector<Model> m_models;
 
 		VkBuffer m_vkVertexBuffer;
 		VkBuffer m_vkIndexBuffer;
@@ -143,9 +135,7 @@ namespace vk {
         void createGraphicsPipeline();
         void createFramebuffers();
         void createCommandPool();
-		void createVertexBuffer();
-		void createIndexBuffer();
-		void createUniformBuffer();
+		
 		void createDescriptorPool();
 		void createDescriptorSets();
         void createCommandBuffers();
@@ -171,7 +161,10 @@ namespace vk {
 		void finalSetup();
 		void recreateSwapChain();
         void terminateVulkan();
-		void addNewModel(Model& model);
+
+        void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
+        void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
+        void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
 
         //Getters
         VkDevice* getDevice() { return &m_vkDevice; }

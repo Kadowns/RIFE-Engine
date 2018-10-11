@@ -17,4 +17,6 @@ void MeshRenderer::recordCmdBuffer() {
 	}
 }
 
-MeshRenderer::MeshRenderer() {}
+MeshRenderer::MeshRenderer(Mesh * mesh) {
+    p_mesh = mesh;
+}

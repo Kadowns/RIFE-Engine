@@ -30,9 +30,9 @@ void vk::Wrapper::initialSetup() {
 }
 
 void vk::Wrapper::finalSetup() {
-	createVertexBuffer();
-	createIndexBuffer();	
-	createUniformBuffer();
+    for (int i = 0; i < m_vkSwapChainImages.size(); i++) {
+        createUniformBuffer();
+    }
 	createDescriptorPool();
 	createDescriptorSets();
 	createSyncObjects();
@@ -99,9 +99,6 @@ void vk::Wrapper::terminateVulkan() {
     vkDestroyInstance(m_vkInstance, nullptr);
 }
 
-void vk::Wrapper::addNewModel(Model & model){
-	m_models.push_back(model);
-}
 
 VKAPI_ATTR VkBool32 VKAPI_CALL vk::Wrapper::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -816,13 +813,20 @@ void vk::Wrapper::createGraphicsPipeline() {
     dynamicState.dynamicStateCount = 2;
     dynamicState.pDynamicStates = dynamicStates;
 
+    //subindo as matriz pro shader
+    VkPushConstantRange pushConstantRange = {};
+    pushConstantRange.stageFlags = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+    pushConstantRange.size = sizeof(glm::mat4);
+    pushConstantRange.offset = 0;
+
+
     //serve pra alguma coisa que vou ver no futuro
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 1; // Optional
     pipelineLayoutInfo.pSetLayouts = &m_vkDescriptorSetLayout; // Optional
-    pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
-    pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+    pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
+    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Optional
 
     if (vkCreatePipelineLayout(m_vkDevice, &pipelineLayoutInfo, nullptr, &m_vkPipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("failed to create pipeline layout!");
@@ -893,90 +897,82 @@ void vk::Wrapper::createCommandPool() {
     }
 }
 
-void vk::Wrapper::createVertexBuffer() {
-	VkDeviceSize bufferSize = (sizeof(m_models[0].m_vertices[0]) * m_models[0].m_vertices.size());
-	createBuffer(
-		bufferSize * m_models.size(),
-		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		m_vkVertexBuffer,
-		m_vkVertexBufferMemory
-	);
+void vk::Wrapper::createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData) {
 
-	for (size_t i = 0; i < m_models.size(); i++) {
-		
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory
-		);
+    createBuffer(
+        bufferSize,
+        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        buffer,
+        memory
+    );
 
-		void* data;
-		vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, m_models[0].m_vertices.data(), (size_t)bufferSize);//copia os dados da memoria dos vertices pra gpu
-		vkUnmapMemory(m_vkDevice, stagingBufferMemory);
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(
+        bufferSize,
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        stagingBuffer,
+        stagingBufferMemory
+    );
 
-		copyBuffer(stagingBuffer, m_vkVertexBuffer, bufferSize, bufferSize * i);
+    void* data;
+    vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, verticesData, (size_t)bufferSize);//copia os dados da memoria dos vertices pra gpu
+    vkUnmapMemory(m_vkDevice, stagingBufferMemory);
 
-		vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
-		vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
-	}
+    copyBuffer(stagingBuffer, buffer, bufferSize, 0);
+
+    vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
+    vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
+
 }
 
-void vk::Wrapper::createIndexBuffer() {
+void vk::Wrapper::createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData) {
 
-	VkDeviceSize bufferSize = sizeof(m_models[0].m_indices[0]) * m_models[0].m_indices.size();
-	createBuffer(
-		bufferSize * m_models.size(),
-		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		m_vkIndexBuffer,
-		m_vkIndexBufferMemory
-	);
+    createBuffer(
+        bufferSize,
+        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        buffer,
+        memory
+    );
 
-	for (size_t i = 0; i < m_models.size(); i++) {
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory
-		);
 
-		void* data;
-		vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, m_models[i].m_indices.data(), (size_t)bufferSize);
-		vkUnmapMemory(m_vkDevice, stagingBufferMemory);
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(
+        bufferSize,
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        stagingBuffer,
+        stagingBufferMemory
+    );
 
-		copyBuffer(stagingBuffer, m_vkIndexBuffer, bufferSize, bufferSize * i);
+    void* data;
+    vkMapMemory(m_vkDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, indicesData, (size_t)bufferSize);
+    vkUnmapMemory(m_vkDevice, stagingBufferMemory);
 
-		vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
-		vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
-	}
+    copyBuffer(stagingBuffer, buffer, bufferSize, 0);
+
+    vkDestroyBuffer(m_vkDevice, stagingBuffer, nullptr);
+    vkFreeMemory(m_vkDevice, stagingBufferMemory, nullptr);
+
 }
 
-void vk::Wrapper::createUniformBuffer() {
+void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize) {
 
-	VkDeviceSize bufferSize = sizeof(gph::UniformBufferObject);
+  
+    createBuffer(
+        bufferSize,
+        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        buffer,
+        memory
+    );
 
-	m_vkUniformBuffers.resize(m_vkSwapChainImages.size());
-	m_vkUniformBuffersMemory.resize(m_vkSwapChainImages.size());
-
-	for (size_t i = 0; i < m_vkSwapChainImages.size(); i++) {
-		createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			m_vkUniformBuffers[i],
-			m_vkUniformBuffersMemory[i]
-		);
-	}
 }
 
 void vk::Wrapper::createDescriptorPool() {
@@ -1144,11 +1140,6 @@ void vk::Wrapper::createCommandBuffers() {
 			m_vkCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_vkPipelineLayout, 0, 1, &m_vkDescriptorSets[i], 0, nullptr
 		);
-
-		uint32_t indices = 0;
-		for (int i = 0; i < m_models.size(); i++) {
-			indices += m_models[i].m_indices.size();
-		}
 		
 		vkCmdDrawIndexed(m_vkCommandBuffers[i], indices, 1, 0, 0, 0);
 
