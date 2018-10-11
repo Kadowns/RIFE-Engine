@@ -1,3 +1,4 @@
+#pragma once
 #include <GraphicsDependencys.h>
 #include <fstream>
 #include <vector>

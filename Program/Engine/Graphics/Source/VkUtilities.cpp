@@ -975,6 +975,10 @@ void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, 
 
 }
 
+void vk::Wrapper::bindCmdBuffer(std::vector<VkCommandBuffer>* cmdBuffers) {
+	m_secondaryCommandBuffers.push_back(cmdBuffers);
+}
+
 void vk::Wrapper::createDescriptorPool() {
 
 	VkDescriptorPoolSize poolSize = {};
@@ -1093,25 +1097,25 @@ void vk::Wrapper::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSiz
 }
 
 void vk::Wrapper::createCommandBuffers() {
-    m_vkCommandBuffers.resize(m_vkSwapChainFramebuffers.size());
+    m_primaryCommandBuffers.resize(m_vkSwapChainFramebuffers.size());
 
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = m_vkCommandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = (uint32_t)m_vkCommandBuffers.size();
+    allocInfo.commandBufferCount = (uint32_t)m_primaryCommandBuffers.size();
 
-    if (vkAllocateCommandBuffers(m_vkDevice, &allocInfo, m_vkCommandBuffers.data()) != VK_SUCCESS) {
+    if (vkAllocateCommandBuffers(m_vkDevice, &allocInfo, m_primaryCommandBuffers.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate command buffers!");	
     }
 
-    for (size_t i = 0; i < m_vkCommandBuffers.size(); i++) {
+    for (size_t i = 0; i < m_primaryCommandBuffers.size(); i++) {
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
         beginInfo.pInheritanceInfo = nullptr; // Optional
 
-        if (vkBeginCommandBuffer(m_vkCommandBuffers[i], &beginInfo) != VK_SUCCESS) {
+        if (vkBeginCommandBuffer(m_primaryCommandBuffers[i], &beginInfo) != VK_SUCCESS) {
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
@@ -1127,25 +1131,19 @@ void vk::Wrapper::createCommandBuffers() {
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
 
-        vkCmdBeginRenderPass(m_vkCommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBeginRenderPass(m_primaryCommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        vkCmdBindPipeline(m_vkCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_vkGraphicsPipeline);
-		VkBuffer vertexBuffers[] = { m_vkVertexBuffer };
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(m_vkCommandBuffers[i], 0, 1, vertexBuffers, offsets);
-
-		vkCmdBindIndexBuffer(m_vkCommandBuffers[i], m_vkIndexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		vkCmdBindDescriptorSets(
-			m_vkCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_vkPipelineLayout, 0, 1, &m_vkDescriptorSets[i], 0, nullptr
-		);
+        vkCmdBindPipeline(m_primaryCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_vkGraphicsPipeline);
 		
-		vkCmdDrawIndexed(m_vkCommandBuffers[i], indices, 1, 0, 0, 0);
+		for (size_t objCount = 0; objCount < m_secondaryCommandBuffers[objCount][i].size(); objCount++) {
+			vkCmdExecuteCommands(m_primaryCommandBuffers[i],
+				m_secondaryCommandBuffers[objCount][i].size(),
+				m_secondaryCommandBuffers[objCount][i].data());
+		}
 
-        vkCmdEndRenderPass(m_vkCommandBuffers[i]);
+        vkCmdEndRenderPass(m_primaryCommandBuffers[i]);
 
-        if (vkEndCommandBuffer(m_vkCommandBuffers[i]) != VK_SUCCESS) {
+        if (vkEndCommandBuffer(m_primaryCommandBuffers[i]) != VK_SUCCESS) {
             throw std::runtime_error("failed to record command buffer!");
         }
     }
@@ -1179,7 +1177,7 @@ void vk::Wrapper::cleanupSwapChain() {
         vkDestroyFramebuffer(m_vkDevice, m_vkSwapChainFramebuffers[i], nullptr);
     }
 
-    vkFreeCommandBuffers(m_vkDevice, m_vkCommandPool, static_cast<uint32_t>(m_vkCommandBuffers.size()), m_vkCommandBuffers.data());
+    vkFreeCommandBuffers(m_vkDevice, m_vkCommandPool, static_cast<uint32_t>(m_primaryCommandBuffers.size()), m_primaryCommandBuffers.data());
 
     vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);
     vkDestroyPipelineLayout(m_vkDevice, m_vkPipelineLayout, nullptr);

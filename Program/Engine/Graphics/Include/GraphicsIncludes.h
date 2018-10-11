@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GRAPHICS_INCLUDES
 #define GRAPHICS_INCLUDES
 

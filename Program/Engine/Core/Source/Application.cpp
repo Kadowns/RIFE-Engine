@@ -50,6 +50,8 @@ void Application::init() {
 
     initGlfw();
     initVulkan();
+	m_camera = new gph::Camera(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
+		45.0f, (float)m_width / (float)m_height, 0.01f, 100.0f);
     m_initialized = true;
 }
 
@@ -87,6 +89,7 @@ void Application::initVulkan() {
 //loop principal, n tem segredo n�
 void Application::loop() {
     m_scene->init();
+	m_vkWrapper->finalSetup();
     do {
         TIME->earlyUpdate();
 

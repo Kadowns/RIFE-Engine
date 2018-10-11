@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GRAPHICS_DEP
 #define GRAPHICS_DEP
 

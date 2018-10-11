@@ -2,6 +2,7 @@
 
 #include <Application.h>
 #include <Scene.h>
+#include <SolidObject.h>
 
 const std::vector<gph::Vertex> vertices = {
 	{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
@@ -57,11 +58,9 @@ const std::vector<uint32_t> indices = {
 
 class Triangle : public Scene {
 private:
-
-
-
     vk::Wrapper* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
+	Entity::SolidObject* cube;
 
 public:
     Triangle();

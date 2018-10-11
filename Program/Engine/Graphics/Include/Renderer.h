@@ -1,11 +1,17 @@
+#pragma once
 #include <GraphicsDependencys.h>
+#include <Object.h>
+#include <Camera.h>
 
 class Renderer {
 public:
 	virtual void draw() = 0;
 	virtual void recordCmdBuffer() = 0;
+	virtual void setMVP(glm::mat4& vp) = 0;
 protected:
-	VkCommandBuffer m_vkCommandBuffer;
+	Entity::Object* p_father;
+	Entity::FinalTransform m_finalTransform;
 	
+	std::vector<VkCommandBuffer> m_commandBuffers;
 
 };
