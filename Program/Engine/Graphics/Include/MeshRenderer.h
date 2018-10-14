@@ -1,7 +1,5 @@
 #pragma once
-#include <GraphicsDependencys.h>
 #include <VkUtilities.h>
-#include <Transform.h>
 #include <Mesh.h>
 #include <Renderer.h>
 

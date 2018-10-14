@@ -1,5 +1,6 @@
 #pragma once
 #include <Object.h>
+#include <MeshRenderer.h>
 
 
 namespace Entity {

@@ -1,3 +1,7 @@
+#pragma once
+#ifndef RM
+#define RM
+
 #include <Types.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -19,3 +23,7 @@ namespace rm {
     }
 
 };
+
+#endif // !RM
+
+

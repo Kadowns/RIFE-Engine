@@ -2,7 +2,6 @@
 
 #include <GraphicsIncludes.h>
 #include <Clock.h>
-#include <Camera.h>
 #include "Scene.h"
 
 #include <iostream>
@@ -25,7 +24,7 @@ private :
 
     static Application *s_instance;
 
-	gph::Camera* m_camera;
+    Graphics::Camera* m_camera;
 
     int m_width;
     int m_height;

@@ -16,21 +16,35 @@ void MeshRenderer::recordCmdBuffer() {
 	if (vkAllocateCommandBuffers(*VK_WRAPPER->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate command buffers!");
 	}
+
+   
+
 	for (int i = 0; i < m_commandBuffers.size(); i++) {
+
+        VkCommandBufferInheritanceInfo inheritanceInfo = {};
+        inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+        inheritanceInfo.pNext = nullptr;
+        inheritanceInfo.renderPass = *VK_WRAPPER->getRenderPass();
+        inheritanceInfo.framebuffer = (*VK_WRAPPER->getFramebuffers())[i];
+        inheritanceInfo.subpass = 0;
+
 
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-		beginInfo.pInheritanceInfo = nullptr; // Optional
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT | VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+		beginInfo.pInheritanceInfo = &inheritanceInfo;
 
 		if (vkBeginCommandBuffer(m_commandBuffers[i], &beginInfo) != VK_SUCCESS) {
 			throw std::runtime_error("failed to begin recording command buffer!");
 		}
 
+        vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *VK_WRAPPER->getGraphicsPipeline());
+
 		VkBuffer vertexBuffers[] = { m_vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
+        
 		vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(
@@ -47,7 +61,7 @@ void MeshRenderer::recordCmdBuffer() {
 			throw std::runtime_error("failed to record command buffer!");
 		}
 	}
-
+   
 	VK_WRAPPER->bindCmdBuffer(&m_commandBuffers);
 }
 
@@ -65,5 +79,5 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
 	VK_WRAPPER->createVertexBuffer(m_vertexBuffer, m_vertexBufferMemory, bufferSize, mesh->getVertices().data());
 
 	bufferSize = sizeof(mesh->getIndices()[0]) * mesh->getIndices().size();
-	VK_WRAPPER->createVertexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, mesh->getIndices().data());
+	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, mesh->getIndices().data());
 }

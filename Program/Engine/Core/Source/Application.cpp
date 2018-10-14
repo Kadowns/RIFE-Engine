@@ -50,7 +50,7 @@ void Application::init() {
 
     initGlfw();
     initVulkan();
-	m_camera = new gph::Camera(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
+	m_camera = new Graphics::Camera(glm::vec3(0.0f, 2.0f, 2.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
 		45.0f, (float)m_width / (float)m_height, 0.01f, 100.0f);
     m_initialized = true;
 }

@@ -2,7 +2,7 @@
 #include <GraphicsDependencys.h>
 #include <Shader.h>
 
-namespace gph {
+namespace Graphics {
 
     class GraphicsPipeline {
     public:

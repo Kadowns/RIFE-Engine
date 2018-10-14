@@ -1,6 +1,8 @@
 #include <Camera.h>
 
-gph::Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float aspect, float near, float far) {
+Graphics::Camera* Graphics::Camera::s_instance = nullptr;
+
+Graphics::Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float aspect, float near, float far) {
 	m_position = position;
 	m_target = target;
 	m_up = up;
@@ -10,8 +12,9 @@ gph::Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fo
 	m_far = far;
 	m_projection = glm::perspective(glm::radians(fov), aspect, near, far);
 	m_view = glm::lookAt(position, target, up);
+    s_instance = this;
 }
 
-gph::Camera * gph::Camera::getInstance() {
-	return m_instance;
+Graphics::Camera* Graphics::Camera::getInstance() {
+    return s_instance;
 }

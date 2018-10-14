@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-gph::ShaderModule* gph::ShaderModule::bindDevice(VkDevice* vkdevice) {
+Graphics::ShaderModule* Graphics::ShaderModule::bindDevice(VkDevice* vkdevice) {
    
     if (vkdevice == nullptr) {
         this->unbindDevice();
@@ -10,7 +10,7 @@ gph::ShaderModule* gph::ShaderModule::bindDevice(VkDevice* vkdevice) {
     return this;
 }
 
-gph::ShaderModule* gph::ShaderModule::bindShader(const std::string& filename, VkShaderStageFlagBits shaderType) {
+Graphics::ShaderModule* Graphics::ShaderModule::bindShader(const std::string& filename, VkShaderStageFlagBits shaderType) {
     if (p_vkDevice == nullptr) {
         throw std::runtime_error("No Device was bound!");
     }
@@ -33,7 +33,7 @@ gph::ShaderModule* gph::ShaderModule::bindShader(const std::string& filename, Vk
     
 }
 
-gph::ShaderModule* gph::ShaderModule::unbindDevice() {
+Graphics::ShaderModule* Graphics::ShaderModule::unbindDevice() {
     for (int i = 0; i < m_shadersInfo.size(); i++) {
         vkDestroyShaderModule(*p_vkDevice, m_shadersInfo[i].module, nullptr);
     }
@@ -42,7 +42,7 @@ gph::ShaderModule* gph::ShaderModule::unbindDevice() {
     return this;
 }
 
-std::vector<VkPipelineShaderStageCreateInfo>* gph::ShaderModule::getShadersInfo() {
+std::vector<VkPipelineShaderStageCreateInfo>* Graphics::ShaderModule::getShadersInfo() {
     if (p_vkDevice == nullptr) {
         throw std::runtime_error("Device was not bound!");
     }
@@ -51,7 +51,7 @@ std::vector<VkPipelineShaderStageCreateInfo>* gph::ShaderModule::getShadersInfo(
 }
 
 
-VkShaderModule gph::ShaderModule::createShaderModule(const std::vector<char>& code) {
+VkShaderModule Graphics::ShaderModule::createShaderModule(const std::vector<char>& code) {
 
     if (p_vkDevice == nullptr) {
         throw std::runtime_error("Device was not bound!");
@@ -71,7 +71,7 @@ VkShaderModule gph::ShaderModule::createShaderModule(const std::vector<char>& co
 }
 
 
-std::vector<char> gph::ShaderModule::loadShaderFile(const std::string & filename) {
+std::vector<char> Graphics::ShaderModule::loadShaderFile(const std::string & filename) {
 
     //abre o arquivo, começa a ler pelo final e em binario
     std::ifstream file(filename, std::ios::ate | std::ios::binary);

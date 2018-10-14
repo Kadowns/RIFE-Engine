@@ -1,6 +1,6 @@
 #include <Vertex.h>
 
-VkVertexInputBindingDescription gph::Vertex::getBindingDescription() {
+VkVertexInputBindingDescription Graphics::Vertex::getBindingDescription() {
 
 	VkVertexInputBindingDescription bindingDescription = {};
 	bindingDescription.binding = 0;
@@ -10,7 +10,7 @@ VkVertexInputBindingDescription gph::Vertex::getBindingDescription() {
 	return bindingDescription;
 }
 
-std::array<VkVertexInputAttributeDescription, 2> gph::Vertex::getAttributeDescriptions() {
+std::array<VkVertexInputAttributeDescription, 2> Graphics::Vertex::getAttributeDescriptions() {
 
 	std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions = {};
 

@@ -1,7 +1,9 @@
 #pragma once
+#ifndef VK_WRAPPER
 
 #include <GraphicsDependencys.h>
 #include <Vertex.h>
+#include <Transform.h>
 #include <UniformBufferObject.h>
 #include <iostream>
 #include <cstring>
@@ -176,13 +178,16 @@ namespace vk {
         VkQueue* getPresentQueue() { return &m_vkPresentQueue; }
         VkSwapchainKHR* getSwapChain() { return &m_vkSwapChain; }	
 		VkPipelineLayout* getPipelineLayout() { return &m_vkPipelineLayout; }
+        VkRenderPass* getRenderPass() { return &m_vkRenderPass; }
 		VkCommandPool* getCommandPool() { return &m_vkCommandPool; }
+        VkPipeline* getGraphicsPipeline() { return &m_vkGraphicsPipeline; }
 		std::vector<VkDescriptorSet>* getDescriptorSets() { return &m_vkDescriptorSets; }
         std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
         std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
         std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }
 		std::vector<VkBuffer>* getUniformBuffers() { return &m_vkUniformBuffers; }
 		std::vector<VkDeviceMemory>* getUniformBufferMemory() { return &m_vkUniformBuffersMemory; }
+        std::vector<VkFramebuffer>* getFramebuffers() { return &m_vkSwapChainFramebuffers; }
 		VkExtent2D* getVkExtent() { return &m_vkSwapChainExtent; }
         size_t* getCurrentFrame() { return &m_currentFrame; }
 		uint32_t getSwapChainImagesCount() { return m_vkSwapChainImages.size(); }
@@ -192,3 +197,4 @@ namespace vk {
 
     };
 };
+#endif // !VK_WRAPPER

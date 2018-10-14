@@ -21,6 +21,7 @@ void Triangle::init() {
 
 void Triangle::update(float secs) {
 	cube->update(TIME->time());
+    printf("\nTime: %d", TIME->time());
 }
 
 void Triangle::draw() {

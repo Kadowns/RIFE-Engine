@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 
-namespace gph {
+namespace Graphics {
 
     class ShaderModule {
     public:

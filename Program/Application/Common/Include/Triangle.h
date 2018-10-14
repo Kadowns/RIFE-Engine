@@ -4,7 +4,7 @@
 #include <Scene.h>
 #include <SolidObject.h>
 
-const std::vector<gph::Vertex> vertices = {
+const std::vector<Graphics::Vertex> vertices = {
 	{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}},
 	{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f, 1.0f}},
 	{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}},
@@ -36,7 +36,7 @@ const std::vector<gph::Vertex> vertices = {
 	{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}}
 };
 
-const std::vector<gph::Vertex> vertices2 = {
+const std::vector<Graphics::Vertex> vertices2 = {
 	{{-0.9f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
 	{{0.9f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
 	{{0.9f, 0.5f, 0.5f}, {0.5f, 0.5f, 1.0f, 1.0f}},

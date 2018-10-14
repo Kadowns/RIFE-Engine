@@ -2,7 +2,7 @@
 
 #include <GraphicsDependencys.h>
 
-namespace gph {
+namespace Graphics {
 	struct UniformBufferObject {
 		glm::mat4 projection;
         glm::mat4 view;

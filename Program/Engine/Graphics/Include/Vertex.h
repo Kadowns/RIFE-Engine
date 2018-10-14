@@ -3,7 +3,7 @@
 #include <GraphicsDependencys.h>
 #include <array>
 
-namespace gph {
+namespace Graphics {
 
 	struct Vertex {
         glm::vec3 position;

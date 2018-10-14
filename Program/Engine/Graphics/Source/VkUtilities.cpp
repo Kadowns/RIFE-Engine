@@ -1,12 +1,13 @@
 #include "vkUtilities.h"
 
+vk::Wrapper* vk::Wrapper::s_instance = nullptr;
 
 vk::Wrapper::Wrapper(GLFWwindow *window) : m_glfwWindow(window){
 	s_instance = this;
 }
 
-vk::Wrapper * vk::Wrapper::getInstance() {
-	return s_instance;
+vk::Wrapper* vk::Wrapper::getInstance() {
+    return s_instance;
 }
 
 //Inicializa a vulkan
@@ -27,15 +28,20 @@ void vk::Wrapper::initialSetup() {
     createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE
 	createFramebuffers();//Frame buffers  
 	createCommandPool();
+    m_vkUniformBuffers.resize(m_vkSwapChainImages.size());
+    m_vkUniformBuffersMemory.resize(m_vkSwapChainImages.size());
+    VkDeviceSize size = sizeof(Graphics::UniformBufferObject);
+    for (int i = 0; i < m_vkSwapChainImages.size(); i++) {
+        createUniformBuffer(m_vkUniformBuffers[i], m_vkUniformBuffersMemory[i], size);
+    }
+    createDescriptorPool();
+    createDescriptorSets();
+    createSyncObjects();
 }
 
 void vk::Wrapper::finalSetup() {
-    for (int i = 0; i < m_vkSwapChainImages.size(); i++) {
-        createUniformBuffer();
-    }
-	createDescriptorPool();
-	createDescriptorSets();
-	createSyncObjects();
+
+    
 	//-----------------------
 
 	createCommandBuffers();
@@ -105,7 +111,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vk::Wrapper::debugCallback(VkDebugUtilsMessageSev
     const VkDebugUtilsMessengerCallbackDataEXT * pCallbackData,
     void * pUserData) {
 
-        std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+        std::cerr << "\n validation layer: " << pCallbackData->pMessage << std::endl;
 
         return VK_FALSE;
 }
@@ -710,8 +716,8 @@ void vk::Wrapper::createGraphicsPipeline() {
     //Define como será passado a informação dos vertices
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 
-	auto bindingDescription = gph::Vertex::getBindingDescription();
-	auto attributeDescriptions = gph::Vertex::getAttributeDescriptions();
+	auto bindingDescription = Graphics::Vertex::getBindingDescription();
+	auto attributeDescriptions = Graphics::Vertex::getAttributeDescriptions();
 
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 1;
@@ -815,8 +821,8 @@ void vk::Wrapper::createGraphicsPipeline() {
 
     //subindo as matriz pro shader
     VkPushConstantRange pushConstantRange = {};
-    pushConstantRange.stageFlags = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-    pushConstantRange.size = sizeof(glm::mat4);
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    pushConstantRange.size = sizeof(Entity::FinalTransform);
     pushConstantRange.offset = 0;
 
 
@@ -976,7 +982,7 @@ void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, 
 }
 
 void vk::Wrapper::bindCmdBuffer(std::vector<VkCommandBuffer>* cmdBuffers) {
-	m_secondaryCommandBuffers.push_back(cmdBuffers);
+	m_secondaryCommandBuffers.push_back(cmdBuffers);    
 }
 
 void vk::Wrapper::createDescriptorPool() {
@@ -1015,7 +1021,7 @@ void vk::Wrapper::createDescriptorSets() {
 		VkDescriptorBufferInfo bufferInfo = {};
 		bufferInfo.buffer = m_vkUniformBuffers[i];
 		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(gph::UniformBufferObject);
+		bufferInfo.range = sizeof(Graphics::UniformBufferObject);
 
 		VkWriteDescriptorSet descriptorWrite = {};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -1131,14 +1137,10 @@ void vk::Wrapper::createCommandBuffers() {
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
 
-        vkCmdBeginRenderPass(m_primaryCommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-        vkCmdBindPipeline(m_primaryCommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_vkGraphicsPipeline);
+        vkCmdBeginRenderPass(m_primaryCommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 		
-		for (size_t objCount = 0; objCount < m_secondaryCommandBuffers[objCount][i].size(); objCount++) {
-			vkCmdExecuteCommands(m_primaryCommandBuffers[i],
-				m_secondaryCommandBuffers[objCount][i].size(),
-				m_secondaryCommandBuffers[objCount][i].data());
+		for (size_t objCount = 0; objCount < m_secondaryCommandBuffers.size(); objCount++) {         
+                vkCmdExecuteCommands(m_primaryCommandBuffers[i], 1, &m_secondaryCommandBuffers[objCount]->at(i));         
 		}
 
         vkCmdEndRenderPass(m_primaryCommandBuffers[i]);
