@@ -28,14 +28,7 @@ void vk::Wrapper::initialSetup() {
     createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE
 	createFramebuffers();//Frame buffers  
 	createCommandPool();
-    m_vkUniformBuffers.resize(m_vkSwapChainImages.size());
-    m_vkUniformBuffersMemory.resize(m_vkSwapChainImages.size());
-    VkDeviceSize size = sizeof(Graphics::UniformBufferObject);
-    for (int i = 0; i < m_vkSwapChainImages.size(); i++) {
-        createUniformBuffer(m_vkUniformBuffers[i], m_vkUniformBuffersMemory[i], size);
-    }
-    createDescriptorPool();
-    createDescriptorSets();
+
     createSyncObjects();
 }
 
@@ -70,20 +63,20 @@ void vk::Wrapper::recreateSwapChain(){
 void vk::Wrapper::terminateVulkan() {
 	cleanupSwapChain();
 
-	vkDestroyDescriptorPool(m_vkDevice, m_vkDescriptorPool, nullptr);
+	//vkDestroyDescriptorPool(m_vkDevice, m_vkDescriptorPool, nullptr);
 
 	vkDestroyDescriptorSetLayout(m_vkDevice, m_vkDescriptorSetLayout, nullptr);
 
-	for (size_t i = 0; i < m_vkSwapChainImages.size(); i++) {
-		vkDestroyBuffer(m_vkDevice, m_vkUniformBuffers[i], nullptr);
-		vkFreeMemory(m_vkDevice, m_vkUniformBuffersMemory[i], nullptr);
-	}
+	//for (size_t i = 0; i < m_vkSwapChainImages.size(); i++) {
+	//	vkDestroyBuffer(m_vkDevice, m_vkUniformBuffers[i], nullptr);
+	//	vkFreeMemory(m_vkDevice, m_vkUniformBuffersMemory[i], nullptr);
+	//}
 	
-	vkDestroyBuffer(m_vkDevice, m_vkIndexBuffer, nullptr);
-	vkFreeMemory(m_vkDevice, m_vkIndexBufferMemory, nullptr);
+	//vkDestroyBuffer(m_vkDevice, m_vkIndexBuffer, nullptr);
+	//vkFreeMemory(m_vkDevice, m_vkIndexBufferMemory, nullptr);
 
-	vkDestroyBuffer(m_vkDevice, m_vkVertexBuffer, nullptr);
-	vkFreeMemory(m_vkDevice, m_vkVertexBufferMemory, nullptr);
+	//vkDestroyBuffer(m_vkDevice, m_vkVertexBuffer, nullptr);
+	//vkFreeMemory(m_vkDevice, m_vkVertexBufferMemory, nullptr);
 	
 	
 
@@ -819,20 +812,15 @@ void vk::Wrapper::createGraphicsPipeline() {
     dynamicState.dynamicStateCount = 2;
     dynamicState.pDynamicStates = dynamicStates;
 
-    //subindo as matriz pro shader
-    VkPushConstantRange pushConstantRange = {};
-    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-    pushConstantRange.size = sizeof(Entity::FinalTransform);
-    pushConstantRange.offset = 0;
-
+  
 
     //serve pra alguma coisa que vou ver no futuro
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 1; // Optional
     pipelineLayoutInfo.pSetLayouts = &m_vkDescriptorSetLayout; // Optional
-    pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Optional
+    pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
+    pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
     if (vkCreatePipelineLayout(m_vkDevice, &pipelineLayoutInfo, nullptr, &m_vkPipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("failed to create pipeline layout!");
@@ -983,58 +971,6 @@ void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, 
 
 void vk::Wrapper::bindCmdBuffer(std::vector<VkCommandBuffer>* cmdBuffers) {
 	m_secondaryCommandBuffers.push_back(cmdBuffers);    
-}
-
-void vk::Wrapper::createDescriptorPool() {
-
-	VkDescriptorPoolSize poolSize = {};
-	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSize.descriptorCount = static_cast<uint32_t>(m_vkSwapChainImages.size());
-
-	VkDescriptorPoolCreateInfo poolInfo = {};
-	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = 1;
-	poolInfo.pPoolSizes = &poolSize;
-
-	poolInfo.maxSets = static_cast<uint32_t>(m_vkSwapChainImages.size());
-
-	if (vkCreateDescriptorPool(m_vkDevice, &poolInfo, nullptr, &m_vkDescriptorPool) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create descriptor pool!");
-	}
-}
-
-void vk::Wrapper::createDescriptorSets() {
-
-	std::vector<VkDescriptorSetLayout> layouts(m_vkSwapChainImages.size(), m_vkDescriptorSetLayout);
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_vkDescriptorPool;
-	allocInfo.descriptorSetCount = static_cast<uint32_t>(m_vkSwapChainImages.size());
-	allocInfo.pSetLayouts = layouts.data();
-
-	m_vkDescriptorSets.resize(m_vkSwapChainImages.size());
-	if (vkAllocateDescriptorSets(m_vkDevice, &allocInfo, m_vkDescriptorSets.data()) != VK_SUCCESS) {
-		throw std::runtime_error("failed to allocate descriptor sets!");
-	}
-
-	for (size_t i = 0; i < m_vkSwapChainImages.size(); i++) {
-		VkDescriptorBufferInfo bufferInfo = {};
-		bufferInfo.buffer = m_vkUniformBuffers[i];
-		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(Graphics::UniformBufferObject);
-
-		VkWriteDescriptorSet descriptorWrite = {};
-		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite.dstSet = m_vkDescriptorSets[i];
-		descriptorWrite.dstBinding = 0;
-		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pBufferInfo = &bufferInfo;
-		descriptorWrite.pImageInfo = nullptr; // Optional
-		descriptorWrite.pTexelBufferView = nullptr; // Optional
-		vkUpdateDescriptorSets(m_vkDevice, 1, &descriptorWrite, 0, nullptr);
-	}
 }
 
 void vk::Wrapper::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,

@@ -8,9 +8,4 @@ namespace Entity {
 		glm::vec3 position;
 		glm::vec3 rotation;
 	};
-
-	struct FinalTransform {
-		glm::mat4 mvp;
-	};
-
 }

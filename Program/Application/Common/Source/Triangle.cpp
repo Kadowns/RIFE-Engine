@@ -1,7 +1,8 @@
 #include <Triangle.h>
 
 void Triangle::updateUniformBuffer(uint32_t currentImage) {
-	
+	glm::mat4 vp = CAMERA->getView() * CAMERA->getProjection();
+	cube->getMeshRenderer()->updateTransformInformation(vp, currentImage);
 }
 
 Triangle::Triangle(){
@@ -21,7 +22,7 @@ void Triangle::init() {
 
 void Triangle::update(float secs) {
 	cube->update(TIME->time());
-    printf("\nTime: %d", TIME->time());
+  //  printf("\nTime: %d", TIME->time());
 }
 
 void Triangle::draw() {

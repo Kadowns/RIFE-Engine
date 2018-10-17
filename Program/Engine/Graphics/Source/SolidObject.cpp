@@ -19,7 +19,4 @@ void Entity::SolidObject::setup() {
 
 void Entity::SolidObject::update(float secs) {
 	m_transform->position = glm::vec3(0.0f, 0.0f, 0.0f);
-
-	glm::mat4 vp = CAMERA->getView() * CAMERA->getProjection();
-	m_renderer->setMVP(vp);
 }

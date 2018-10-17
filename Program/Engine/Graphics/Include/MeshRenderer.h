@@ -9,13 +9,22 @@ public:
 
 	void draw();
 	void recordCmdBuffer();
-	void setMVP(glm::mat4& vp);
+	void updateTransformInformation(glm::mat4& vp, uint32_t imageIndex);
 	MeshRenderer(Mesh *mesh, Entity::Object* father);
+	~MeshRenderer();
 
 private:
 
+	void createDescriptorPool();
+	void createDescriptorSets();
+
+
 	Mesh* p_mesh;
-	VkBuffer m_vertexBuffer, m_indexBuffer, m_uniformBuffer;
-	VkDeviceMemory m_vertexBufferMemory, m_indexBufferMemory, m_uniformBufferMemory;
+	VkBuffer m_vertexBuffer, m_indexBuffer;
+	VkDeviceMemory m_vertexBufferMemory, m_indexBufferMemory;
+	std::vector<VkBuffer> m_uniformBuffers;
+	std::vector<VkDeviceMemory> m_uniformBuffersMemory;
+	std::vector<VkDescriptorSet> m_descriptorSets;
+	VkDescriptorPool m_descriptorPool;
 
 };

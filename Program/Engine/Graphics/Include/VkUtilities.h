@@ -80,16 +80,6 @@ namespace vk {
         VkSwapchainKHR m_vkSwapChain;
         VkCommandPool m_vkCommandPool;
 
-
-		VkBuffer m_vkVertexBuffer;
-		VkBuffer m_vkIndexBuffer;
-
-		VkDeviceMemory m_vkVertexBufferMemory;
-		VkDeviceMemory m_vkIndexBufferMemory;
-
-		std::vector<VkBuffer> m_vkUniformBuffers;
-		std::vector<VkDeviceMemory> m_vkUniformBuffersMemory;
-
         std::vector<VkImage> m_vkSwapChainImages;
         std::vector<VkImageView> m_vkSwapChainImageViews;
         std::vector<VkFramebuffer> m_vkSwapChainFramebuffers;
@@ -102,8 +92,6 @@ namespace vk {
         VkExtent2D m_vkSwapChainExtent;
         VkRenderPass m_vkRenderPass;
 		VkDescriptorSetLayout m_vkDescriptorSetLayout;
-		VkDescriptorPool m_vkDescriptorPool;
-		std::vector<VkDescriptorSet> m_vkDescriptorSets;
         VkPipelineLayout m_vkPipelineLayout;
         VkPipeline m_vkGraphicsPipeline;
         
@@ -139,8 +127,6 @@ namespace vk {
         void createFramebuffers();
         void createCommandPool();
 		
-		void createDescriptorPool();
-		void createDescriptorSets();
         void createCommandBuffers();
         void createSyncObjects();
         //---------------------
@@ -181,12 +167,11 @@ namespace vk {
         VkRenderPass* getRenderPass() { return &m_vkRenderPass; }
 		VkCommandPool* getCommandPool() { return &m_vkCommandPool; }
         VkPipeline* getGraphicsPipeline() { return &m_vkGraphicsPipeline; }
-		std::vector<VkDescriptorSet>* getDescriptorSets() { return &m_vkDescriptorSets; }
+		VkDescriptorSetLayout* getDescriptorSetLayout() { return &m_vkDescriptorSetLayout; }
         std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
         std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
         std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }
-		std::vector<VkBuffer>* getUniformBuffers() { return &m_vkUniformBuffers; }
-		std::vector<VkDeviceMemory>* getUniformBufferMemory() { return &m_vkUniformBuffersMemory; }
+		
         std::vector<VkFramebuffer>* getFramebuffers() { return &m_vkSwapChainFramebuffers; }
 		VkExtent2D* getVkExtent() { return &m_vkSwapChainExtent; }
         size_t* getCurrentFrame() { return &m_currentFrame; }

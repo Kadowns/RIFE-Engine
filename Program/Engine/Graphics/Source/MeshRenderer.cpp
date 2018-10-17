@@ -49,11 +49,8 @@ void MeshRenderer::recordCmdBuffer() {
 
 		vkCmdBindDescriptorSets(
 			m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			*VK_WRAPPER->getPipelineLayout(), 0, 1, &(*VK_WRAPPER->getDescriptorSets())[i], 0, nullptr
+			*VK_WRAPPER->getPipelineLayout(), 0, 1, &m_descriptorSets[i], 0, nullptr
 		);
-
-		vkCmdPushConstants(m_commandBuffers[i], *VK_WRAPPER->getPipelineLayout(),
-			VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Entity::FinalTransform), (void *)&m_finalTransform);
 
 		vkCmdDrawIndexed(m_commandBuffers[i], p_mesh->getIndices().size(), 1, 0, 0, 0);
 
@@ -61,14 +58,18 @@ void MeshRenderer::recordCmdBuffer() {
 			throw std::runtime_error("failed to record command buffer!");
 		}
 	}
-   
 	VK_WRAPPER->bindCmdBuffer(&m_commandBuffers);
 }
 
-void MeshRenderer::setMVP(glm::mat4& vp) {
+void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex) {
 	glm::mat4 model(1);
 	glm::translate(model, p_father->getTransform()->position);
-	m_finalTransform.mvp = model * vp;
+	m_ubo.mvp = model * vp;
+
+	void* data;
+	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);
+	memcpy(data, &m_ubo, sizeof(m_ubo));
+	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 }
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
@@ -80,4 +81,75 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
 
 	bufferSize = sizeof(mesh->getIndices()[0]) * mesh->getIndices().size();
 	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, mesh->getIndices().data());
+
+
+	bufferSize = sizeof(Graphics::UniformBufferObject);
+	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
+	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
+	for (int i = 0; i < m_uniformBuffers.size(); i++) {
+		VK_WRAPPER->createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
+	}	
+	createDescriptorPool();
+	createDescriptorSets();
+}
+
+MeshRenderer::~MeshRenderer() {
+	vkDestroyDescriptorPool(*VK_WRAPPER->getDevice(), m_descriptorPool, nullptr);
+
+}
+
+void MeshRenderer::createDescriptorPool() {
+	VkDescriptorPoolSize poolSize = {};
+	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSize.descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+
+	VkDescriptorPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes = &poolSize;
+	poolInfo.maxSets = static_cast<uint32_t>(poolSize.descriptorCount);
+
+	if (vkCreateDescriptorPool(*VK_WRAPPER->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create descriptor pool!");
+	}
+}
+
+void MeshRenderer::createDescriptorSets() {
+
+	std::vector<VkDescriptorSetLayout> layouts(VK_WRAPPER->getSwapChainImagesCount(), *VK_WRAPPER->getDescriptorSetLayout());
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = m_descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(VK_WRAPPER->getSwapChainImagesCount());
+	allocInfo.pSetLayouts = layouts.data();
+
+	m_descriptorSets.resize(VK_WRAPPER->getSwapChainImagesCount());
+	if (vkAllocateDescriptorSets(*VK_WRAPPER->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
+		throw std::runtime_error("failed to allocate descriptor sets!");
+	}
+
+	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
+
+		VkDescriptorBufferInfo bufferInfo = {};
+		bufferInfo.buffer = m_uniformBuffers[i];
+		bufferInfo.offset = 0;
+		bufferInfo.range = sizeof(Graphics::UniformBufferObject);
+
+		VkWriteDescriptorSet descriptorWrite = {};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstSet = m_descriptorSets[i];
+		descriptorWrite.dstBinding = 0;
+		descriptorWrite.dstArrayElement = 0;
+
+		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrite.descriptorCount = 1;
+
+		descriptorWrite.pBufferInfo = &bufferInfo;
+		descriptorWrite.pImageInfo = nullptr; // Optional
+		descriptorWrite.pTexelBufferView = nullptr; // Optional
+
+		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), 1, &descriptorWrite, 0, nullptr);
+	}
+
+
 }
