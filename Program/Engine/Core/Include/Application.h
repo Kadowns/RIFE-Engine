@@ -24,7 +24,7 @@ private :
 
     static Application *s_instance;
 
-    Graphics::Camera* m_camera;
+    
 
     int m_width;
     int m_height;

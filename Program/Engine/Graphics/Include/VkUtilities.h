@@ -4,7 +4,7 @@
 #include <GraphicsDependencys.h>
 #include <Vertex.h>
 #include <Transform.h>
-#include <UniformBufferObject.h>
+#include <Renderer.h>
 #include <iostream>
 #include <cstring>
 #include <fstream>
@@ -80,6 +80,10 @@ namespace vk {
         VkSwapchainKHR m_vkSwapChain;
         VkCommandPool m_vkCommandPool;
 
+		VkImage m_vkDepthImage;
+		VkDeviceMemory m_vkDepthImageMemory;
+		VkImageView m_vkDepthImageView;
+
         std::vector<VkImage> m_vkSwapChainImages;
         std::vector<VkImageView> m_vkSwapChainImageViews;
         std::vector<VkFramebuffer> m_vkSwapChainFramebuffers;
@@ -94,23 +98,32 @@ namespace vk {
 		VkDescriptorSetLayout m_vkDescriptorSetLayout;
         VkPipelineLayout m_vkPipelineLayout;
         VkPipeline m_vkGraphicsPipeline;
-        
+		std::vector<Renderer*> m_renderers;
 
         //Helper Functions-------------------
+		VkCommandBuffer beginSingleTimeCommands();	
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
         VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+		VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+		VkFormat findDepthFormat();
+		VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
         VkShaderModule createShaderModule(const std::vector<char>& code);
         std::vector<const char*> getRequiredExtensions();	
 		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+		bool hasStencilComponent(VkFormat format);
         bool checkValidationLayerSupport();
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         int rateDeviceSuitability(VkPhysicalDevice device);
+		void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+		void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 			VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset);
+		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+			VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
         //-----------------------------------
 
         //Initializer functions
@@ -126,8 +139,9 @@ namespace vk {
         void createGraphicsPipeline();
         void createFramebuffers();
         void createCommandPool();
+		void createDepthResources();
 		
-        void createCommandBuffers();
+        void createCommandBuffer();
         void createSyncObjects();
         //---------------------
 
@@ -143,8 +157,6 @@ namespace vk {
 
 		static Wrapper* getInstance();
 
-		
-
         Wrapper(GLFWwindow *window);
         void initialSetup();
 		void finalSetup();
@@ -155,7 +167,8 @@ namespace vk {
         void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
         void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
 
-		void bindCmdBuffer(std::vector<VkCommandBuffer>*);
+		void bindCommandBuffer(std::vector<VkCommandBuffer>*);
+		void bindRenderer(Renderer*);
 
         //Getters
         VkDevice* getDevice() { return &m_vkDevice; }

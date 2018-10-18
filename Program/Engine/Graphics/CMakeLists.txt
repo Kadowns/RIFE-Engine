@@ -14,7 +14,6 @@ set(GRAPHICS_INCLUDE
 	Include/Shader.h
 	Include/GraphicsPipeline.h
 	Include/UniformBufferObject.h
-	Include/Object.h
 	Include/SolidObject.h
 	Include/GraphicsDependencys.h 
 	Include/GraphicsIncludes.h)

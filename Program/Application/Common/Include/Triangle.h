@@ -58,9 +58,14 @@ const std::vector<uint32_t> indices = {
 
 class Triangle : public Scene {
 private:
+
+	const uint32_t numberOfCubes = 5;
+
     vk::Wrapper* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
     std::vector<Entity::SolidObject*> cubes;
+
+	Graphics::Camera* m_camera;
 
 public:
     Triangle();

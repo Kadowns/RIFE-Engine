@@ -8,8 +8,9 @@ class MeshRenderer : Renderer {
 public:
 
 	void draw();
-	void recordCmdBuffer();
-	void updateTransformInformation(glm::mat4& vp, uint32_t imageIndex);
+	void createCommandBuffers();
+	void freeCommandBuffer();
+	void updateTransformInformation(glm::mat4& vp, uint32_t imageIndex, float time);
 	MeshRenderer(Mesh *mesh, Entity::Object* father);
 	~MeshRenderer();
 

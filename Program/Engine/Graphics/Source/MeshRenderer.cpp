@@ -4,7 +4,7 @@ void MeshRenderer::draw() {
 
 }
 
-void MeshRenderer::recordCmdBuffer() {
+void MeshRenderer::createCommandBuffers() {
 	m_commandBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
 
 	VkCommandBufferAllocateInfo allocInfo = {};
@@ -16,8 +16,6 @@ void MeshRenderer::recordCmdBuffer() {
 	if (vkAllocateCommandBuffers(*VK_WRAPPER->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate command buffers!");
 	}
-
-   
 
 	for (int i = 0; i < m_commandBuffers.size(); i++) {
 
@@ -67,20 +65,24 @@ void MeshRenderer::recordCmdBuffer() {
 			throw std::runtime_error("failed to record command buffer!");
 		}
 	}
-	VK_WRAPPER->bindCmdBuffer(&m_commandBuffers);
+	VK_WRAPPER->bindCommandBuffer(&m_commandBuffers);
 }
 
-void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex) {
+void MeshRenderer::freeCommandBuffer() {
+
+}
+
+void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex, float time) {
 	glm::mat4 model(1);
 	model = glm::translate(model, p_father->getTransform()->position);
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(45.0f * time), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	m_ubo.mvp = CAMERA->getProjection() * CAMERA->getView() * model;
 
-	/*void* data;
+	void* data;
 	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);
 	memcpy(data, &m_ubo, sizeof(m_ubo));
-	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);*/
+	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 }
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
@@ -102,10 +104,24 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
 	}	
 	createDescriptorPool();
 	createDescriptorSets();
+	VK_WRAPPER->bindRenderer(this);
 }
+
 
 MeshRenderer::~MeshRenderer() {
 	vkDestroyDescriptorPool(*VK_WRAPPER->getDevice(), m_descriptorPool, nullptr);
+
+	vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_vertexBuffer, nullptr);
+	vkFreeMemory(*VK_WRAPPER->getDevice(), m_vertexBufferMemory, nullptr);
+
+	vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_indexBuffer, nullptr);
+	vkFreeMemory(*VK_WRAPPER->getDevice(), m_indexBufferMemory, nullptr);
+
+	for (int i = 0; i < m_uniformBuffers.size(); i++) {
+		vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_uniformBuffers[i], nullptr);
+		vkFreeMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
+	}
+	
 
 }
 

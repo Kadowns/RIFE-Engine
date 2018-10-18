@@ -2,8 +2,8 @@
 
 void Triangle::updateUniformBuffer(uint32_t currentImage) {
 	glm::mat4 vp = CAMERA->getView() * CAMERA->getProjection();
-    for (int i = 0; i < 5; i++) {
-        cubes[i]->getMeshRenderer()->updateTransformInformation(vp, currentImage);
+    for (int i = 0; i < numberOfCubes; i++) {
+        cubes[i]->getMeshRenderer()->updateTransformInformation(vp, currentImage, TIME->time());
     }
 }
 
@@ -19,17 +19,22 @@ Triangle::~Triangle() {
 void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
-    for (int i = 0; i < 5; i++) {
+	m_camera = new Graphics::Camera(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
+		45.0f, (float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(), 0.01f, 100.0f);
+
+    for (int i = 0; i < numberOfCubes; i++) {
         cubes.push_back(new Entity::SolidObject(new Mesh(vertices, indices)));
     }
+
+	cubes[0]->getTransform()->position = glm::vec3(1.5f, -0.5f, -0.5f);
+	cubes[1]->getTransform()->position = m_camera->getPosition() + glm::vec3(0.0f, -0.5f, -4.0f);
+	cubes[2]->getTransform()->position = glm::vec3(0.5f, -0.5f, -1.5f);
+	cubes[3]->getTransform()->position = glm::vec3(1.5f, -0.5f, 1.5f);
+	cubes[4]->getTransform()->position = glm::vec3(1.5f, -0.5f, 0.5f);
 }
 
 void Triangle::update(float secs) {
-    cubes[0]->getTransform()->position = glm::vec3(0.5f, -0.5f, 0.5f);
-    cubes[1]->getTransform()->position = glm::vec3(-0.5f, -0.5f, 0.5f);
-    cubes[2]->getTransform()->position = glm::vec3(-0.5f, -0.5f, -0.5f);
-    cubes[3]->getTransform()->position = glm::vec3(-1.5f, -0.5f, -0.5f);
-    cubes[4]->getTransform()->position = glm::vec3(-1.5f, -0.5f, 0.5f);
+    
 }
 
 void Triangle::draw() {
@@ -102,5 +107,7 @@ void Triangle::draw() {
 }
 
 void Triangle::deinit() {
-
+	for (int i = 0; i < numberOfCubes; i++) {
+		delete cubes[i];
+	}
 }

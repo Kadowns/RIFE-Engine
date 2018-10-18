@@ -4,7 +4,6 @@ Entity::SolidObject::SolidObject(Mesh* mesh) {
 	m_mesh = mesh;
 	m_transform = new Transform();
 	m_renderer = new MeshRenderer(m_mesh, this);
-	m_renderer->recordCmdBuffer();
 }
 
 Entity::SolidObject::~SolidObject() {
