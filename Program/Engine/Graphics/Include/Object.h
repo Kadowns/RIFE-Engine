@@ -11,8 +11,7 @@ namespace Entity {
 		virtual void update(float secs) = 0;
 
 		Transform* getTransform() { return m_transform; }
-
-	protected:
+    protected:
 		Transform* m_transform;
 	};
 }

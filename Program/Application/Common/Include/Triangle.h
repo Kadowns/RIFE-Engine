@@ -61,6 +61,7 @@ private:
     vk::Wrapper* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
 	Entity::SolidObject* cube;
+    Entity::SolidObject* cube2;
 
 public:
     Triangle();

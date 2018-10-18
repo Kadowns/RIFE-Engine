@@ -11,6 +11,7 @@ Graphics::Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, flo
 	m_near = near;
 	m_far = far;
 	m_projection = glm::perspective(glm::radians(fov), aspect, near, far);
+    m_projection[1][1] *= -1;
 	m_view = glm::lookAt(position, target, up);
     s_instance = this;
 }

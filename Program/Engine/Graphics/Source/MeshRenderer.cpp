@@ -63,8 +63,10 @@ void MeshRenderer::recordCmdBuffer() {
 
 void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex) {
 	glm::mat4 model(1);
-	glm::translate(model, p_father->getTransform()->position);
-	m_ubo.mvp = model * vp;
+	model = glm::translate(model, p_father->getTransform()->position);
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_ubo.mvp = CAMERA->getProjection() * CAMERA->getView() * model;
 
 	void* data;
 	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);

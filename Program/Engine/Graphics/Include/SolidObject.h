@@ -5,7 +5,7 @@
 
 namespace Entity {
 
-	class SolidObject : Object {
+	class SolidObject : public Object {
 	public:
 		SolidObject(Mesh* mesh);
 		~SolidObject();

@@ -3,6 +3,7 @@
 void Triangle::updateUniformBuffer(uint32_t currentImage) {
 	glm::mat4 vp = CAMERA->getView() * CAMERA->getProjection();
 	cube->getMeshRenderer()->updateTransformInformation(vp, currentImage);
+    cube2->getMeshRenderer()->updateTransformInformation(vp, currentImage);
 }
 
 Triangle::Triangle(){
@@ -18,10 +19,12 @@ void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
 	cube = new Entity::SolidObject(new Mesh(vertices, indices));
+    cube2 = new Entity::SolidObject(new Mesh(vertices, indices));
 }
 
 void Triangle::update(float secs) {
-	cube->update(TIME->time());
+    cube->getTransform()->position = glm::vec3(0.5f, -0.5f, 0.0f);
+    cube2->getTransform()->position = glm::vec3(-0.5f, 0.0f, -0.2f);
   //  printf("\nTime: %d", TIME->time());
 }
 
