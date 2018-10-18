@@ -6,6 +6,7 @@ find_package(GLM REQUIRED)
 set(UTILS_INCLUDE
 	Include/Rm.h
 	Include/Types.h
+	Include/Component.h
 	Include/Object.h
 	)
 set(UTILS_SOURCE Source/Rm.cpp)

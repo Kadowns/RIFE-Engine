@@ -1,17 +1,18 @@
 #pragma once
-#include <GraphicsDependencys.h>
-#include <Transform.h>
+#ifndef INCLUDE_OBJECT
+#define INCLUDE_OBJECT
 
+#include <iostream>
 
-namespace Entity {
+namespace Rife::Base {
 
 	class Object {
 	public:
-		virtual void setup() = 0;
-		virtual void update(float secs) = 0;
-
-		Transform* getTransform() { return m_transform; }
+		Object();
+		~Object();
+		std::string getName();
     protected:
-		Transform* m_transform;
+		std::string m_name;
 	};
 }
+#endif // !INCLUDE_OBJECT

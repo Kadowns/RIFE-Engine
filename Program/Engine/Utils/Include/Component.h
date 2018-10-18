@@ -2,13 +2,11 @@
 #ifndef INCLUDE_COMPONENT
 #define INCLUDE_COMPONENT
 
-namespace rifebase {
+namespace Rife::Base {
 	class Component {
 	public:
 		
-		virtual void awake() = 0;
-		virtual void setup() = 0;
-		virtual void update() = 0;
+
 	protected:
 
 	};

@@ -9,7 +9,7 @@ namespace Entity {
 	public:
 		SolidObject(Mesh* mesh);
 		~SolidObject();
-		void setup();
+		void awake();
 		void update(float secs);
 
 		Mesh* getMesh() { return m_mesh; }
