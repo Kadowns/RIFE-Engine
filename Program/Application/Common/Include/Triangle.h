@@ -60,8 +60,7 @@ class Triangle : public Scene {
 private:
     vk::Wrapper* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
-	Entity::SolidObject* cube;
-    Entity::SolidObject* cube2;
+    std::vector<Entity::SolidObject*> cubes;
 
 public:
     Triangle();
