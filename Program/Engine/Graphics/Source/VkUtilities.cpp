@@ -852,8 +852,8 @@ void vk::Wrapper::createGraphicsPipeline() {
     //Define como será passado a informação dos vertices
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 
-	auto bindingDescription = Graphics::Vertex::getBindingDescription();
-	auto attributeDescriptions = Graphics::Vertex::getAttributeDescriptions();
+	auto bindingDescription = Rife::Graphics::Vertex::getBindingDescription();
+	auto attributeDescriptions = Rife::Graphics::Vertex::getAttributeDescriptions();
 
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 1;
@@ -970,18 +970,18 @@ void vk::Wrapper::createGraphicsPipeline() {
     dynamicState.pDynamicStates = dynamicStates;
 
   
-    VkPushConstantRange pushConstantRange = {};
-    pushConstantRange.size = sizeof(Graphics::UniformBufferObject);
+    /*VkPushConstantRange pushConstantRange = {};
+    pushConstantRange.size = sizeof(Rife::Graphics::Ubo);
     pushConstantRange.offset = 0;
-    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;*/
 
     //serve pra alguma coisa que vou ver no futuro
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 1; // Optional
     pipelineLayoutInfo.pSetLayouts = &m_vkDescriptorSetLayout; // Optional
-    pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Optional
+    pipelineLayoutInfo.pushConstantRangeCount = 0;// 1; // Optional
+    pipelineLayoutInfo.pPushConstantRanges = nullptr;//&pushConstantRange; // Optional
 
     if (vkCreatePipelineLayout(m_vkDevice, &pipelineLayoutInfo, nullptr, &m_vkPipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("failed to create pipeline layout!");
@@ -1154,7 +1154,13 @@ void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, 
 
 }
 
-void vk::Wrapper::bindRenderer(Renderer* renderer) {
+void vk::Wrapper::updateUbos(uint32_t imageIndex, glm::mat4 vp, float time) {
+    for (int i = 0; i < m_renderers.size(); i++) {
+        m_renderers[i]->updateTransformInformation(vp, imageIndex, time);
+    }
+}
+
+void vk::Wrapper::bindRenderer(Rife::Graphics::Renderer* renderer) {
 	m_renderers.push_back(renderer);
 }
 

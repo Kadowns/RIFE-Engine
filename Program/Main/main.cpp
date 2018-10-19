@@ -13,7 +13,7 @@ int main() {
     }
 
     //s� ta aqui pra dar pra ler os debug callback dps que destruiu o vkinstance e vkcallback
-    system("pause");
+    std::cin.get();
 
     delete scene;
     delete app;

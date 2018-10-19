@@ -11,7 +11,7 @@ set(MATH_SOURCE
 	)
 set(MATH_ALL ${MATH_INCLUDE} ${MATH_SOURCE})
 
-CreateModule(Math "${MATH_ALL}" Engine/Math)
+CreateModule(Engine/Core Math "${MATH_ALL}")
 
 target_link_libraries(Math glm)
 

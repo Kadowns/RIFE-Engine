@@ -13,9 +13,8 @@ set(GRAPHICS_INCLUDE
 	Include/Shader.h
 	Include/GraphicsPipeline.h
 	Include/UniformBufferObject.h
-	Include/SolidObject.h
 	Include/GraphicsDependencys.h 
-	Include/GraphicsIncludes.h)
+	Include/RifeGraphics.h)
 
 set(GRAPHICS_SOURCE
 	Source/Vertex.cpp 
@@ -24,11 +23,10 @@ set(GRAPHICS_SOURCE
 	Source/MeshRenderer.cpp
 	Source/VkUtilities.cpp
 	Source/Shader.cpp
-	Source/SolidObject.cpp
 	Source/GraphicsPipeline.cpp)
 
 set(GRAPHICS_ALL "${GRAPHICS_INCLUDE}" "${GRAPHICS_SOURCE}")
 
-CreateModule(Graphics "${GRAPHICS_ALL}" Engine)
+CreateModule(Engine Graphics "${GRAPHICS_ALL}")
 
 target_link_libraries(Graphics GLFW Vulkan::Vulkan Base)

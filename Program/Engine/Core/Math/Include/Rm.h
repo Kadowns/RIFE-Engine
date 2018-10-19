@@ -1,8 +1,5 @@
 #pragma once
-#ifndef RM
-#define RM
 
-#include <Types.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <algorithm>
@@ -24,7 +21,5 @@ namespace rm {
     }
 
 };
-
-#endif // !RM
 
 

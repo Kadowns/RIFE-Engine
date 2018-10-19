@@ -1,9 +1,10 @@
 #pragma once
-#ifndef INCLUDE_COMPONENT
-#define INCLUDE_COMPONENT
 #include <Object.h>
 
+class GameObject;
+
 namespace Rife::Base {
+
 	class Component : Object {
 
 	public:
@@ -14,14 +15,13 @@ namespace Rife::Base {
 
 	protected:
 
-        Object* p_parentObject;
+        GameObject* p_gameObject;
 
     private:
 
-        void setParentObject(Object*);
+        void setParentObject(GameObject*);
 
         bool m_setup = false, m_awake = false;
 
 	};
 }
-#endif //INCLUDE_COMPONENT

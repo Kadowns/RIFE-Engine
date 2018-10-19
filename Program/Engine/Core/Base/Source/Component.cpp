@@ -9,6 +9,6 @@ void Rife::Base::Component::update() {
     }
 }
 
-void Rife::Base::Component::setParentObject(Object* parent) {
-    p_parentObject = parent;
+void Rife::Base::Component::setParentObject(GameObject* parent) {
+    p_gameObject = parent;
 }

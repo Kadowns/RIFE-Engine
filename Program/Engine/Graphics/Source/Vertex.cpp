@@ -1,6 +1,7 @@
 #include <Vertex.h>
+using namespace Rife::Graphics;
 
-VkVertexInputBindingDescription Graphics::Vertex::getBindingDescription() {
+VkVertexInputBindingDescription Vertex::getBindingDescription() {
 
 	VkVertexInputBindingDescription bindingDescription = {};
 	bindingDescription.binding = 0;
@@ -10,14 +11,14 @@ VkVertexInputBindingDescription Graphics::Vertex::getBindingDescription() {
 	return bindingDescription;
 }
 
-std::array<VkVertexInputAttributeDescription, 2> Graphics::Vertex::getAttributeDescriptions() {
+std::array<VkVertexInputAttributeDescription, 2> Vertex::getAttributeDescriptions() {
 
 	std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions = {};
 
 	attributeDescriptions[0].binding = 0;
 	attributeDescriptions[0].location = 0;
 	attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-	attributeDescriptions[0].offset = offsetof(Graphics::Vertex, position);
+	attributeDescriptions[0].offset = offsetof(Vertex, position);
 
 	attributeDescriptions[1].binding = 0;
 	attributeDescriptions[1].location = 1;

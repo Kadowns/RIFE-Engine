@@ -1,4 +1,5 @@
 #include <MeshRenderer.h>
+using namespace Rife::Graphics;
 
 void MeshRenderer::draw() {
 
@@ -45,15 +46,6 @@ void MeshRenderer::createCommandBuffers() {
         
 		vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-        glm::mat4 model(1);
-        model = glm::translate(model, p_father->getTransform()->position);
-        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-        m_ubo.mvp = CAMERA->getProjection() * CAMERA->getView() * model;
-
-        vkCmdPushConstants(m_commandBuffers[i], *VK_WRAPPER->getPipelineLayout(),
-            VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Graphics::UniformBufferObject), (void*)&m_ubo);
-
 		vkCmdBindDescriptorSets(
 			m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
 			*VK_WRAPPER->getPipelineLayout(), 0, 1, &m_descriptorSets[i], 0, nullptr
@@ -73,11 +65,8 @@ void MeshRenderer::freeCommandBuffer() {
 }
 
 void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex, float time) {
-	glm::mat4 model(1);
-	model = glm::translate(model, p_father->getTransform()->position);
-    model = glm::rotate(model, glm::radians(45.0f * time), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	m_ubo.mvp = CAMERA->getProjection() * CAMERA->getView() * model;
+    m_ubo.mvp = vp * p_gameObject->getTransform()->matrix;
 
 	void* data;
 	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);
@@ -85,9 +74,8 @@ void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex
 	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 }
 
-MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
+MeshRenderer::MeshRenderer(Mesh* mesh) {
     p_mesh = mesh;
-	p_father = father;
 
 	VkDeviceSize bufferSize = sizeof(mesh->getVertices()[0]) * mesh->getVertices().size();
 	VK_WRAPPER->createVertexBuffer(m_vertexBuffer, m_vertexBufferMemory, bufferSize, mesh->getVertices().data());
@@ -96,7 +84,7 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Entity::Object *father) {
 	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, mesh->getIndices().data());
 
 
-	bufferSize = sizeof(Graphics::UniformBufferObject);
+	bufferSize = sizeof(Ubo::Mvp);
 	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
 	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
@@ -160,7 +148,7 @@ void MeshRenderer::createDescriptorSets() {
 		VkDescriptorBufferInfo bufferInfo = {};
 		bufferInfo.buffer = m_uniformBuffers[i];
 		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(Graphics::UniformBufferObject);
+		bufferInfo.range = sizeof(Ubo::Mvp);
 
 		VkWriteDescriptorSet descriptorWrite = {};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

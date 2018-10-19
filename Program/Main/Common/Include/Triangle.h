@@ -2,9 +2,10 @@
 
 #include <Application.h>
 #include <Scene.h>
-#include <SolidObject.h>
+#include <RifeCore.h>
+#include <RifeGraphics.h>
 
-const std::vector<Graphics::Vertex> vertices = {
+const std::vector<Rife::Graphics::Vertex> vertices = {
 	{{-0.5f, -0.5f, 0.5f}, {0.3f, 1.0f, 1.0f, 1.0f}},
 	{{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 1.0f, 1.0f}},
 	{{0.5f, 0.5f, 0.5f}, {0.3f, 0.5f, 1.0f, 1.0f}},
@@ -36,16 +37,6 @@ const std::vector<Graphics::Vertex> vertices = {
 	{{-0.5f, 0.5f, -0.5f}, {0.3f, 1.0f, 1.0f, 1.0f}}
 };
 
-const std::vector<Graphics::Vertex> vertices2 = {
-	{{-0.9f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
-	{{0.9f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}},
-	{{0.9f, 0.5f, 0.5f}, {0.5f, 0.5f, 1.0f, 1.0f}},
-	{{-0.9f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}}
-};
-
-const std::vector<uint32_t> indices2 = {
-	0, 1, 2, 2, 3, 0
-};
 
 const std::vector<uint32_t> indices = {
 0, 1, 2, 2, 3, 0,
@@ -63,15 +54,16 @@ private:
 
     vk::Wrapper* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
-    std::vector<Entity::SolidObject*> cubes;
+    std::vector<Rife::Base::GameObject*> gameObjects;
 
-	Graphics::Camera* m_camera;
+	Rife::Graphics::Camera* m_camera;
 
 public:
     Triangle();
     ~Triangle();
 
     void init();
+    void awake();
     void update(float secs);
     void draw();
     void deinit();

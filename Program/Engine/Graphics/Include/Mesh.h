@@ -3,16 +3,18 @@
 #include <Vertex.h>
 #include <vector>
 
-class Mesh {
+namespace Rife::Graphics {
+    class Mesh {
 
-public:
-	Mesh(std::vector<Graphics::Vertex> vertices, std::vector<uint32_t> indices);
-	std::vector<Graphics::Vertex>& getVertices() { return m_vertices; }
-	std::vector<uint32_t>& getIndices() { return m_indices; }
+    public:
+        Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
+        std::vector<Vertex>& getVertices() { return m_vertices; }
+        std::vector<uint32_t>& getIndices() { return m_indices; }
 
-private:
-	
-	std::vector<Graphics::Vertex> m_vertices;
-	std::vector<uint32_t> m_indices;
+    private:
 
-};
+        std::vector<Vertex> m_vertices;
+        std::vector<uint32_t> m_indices;
+
+    };
+}

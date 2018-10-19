@@ -98,7 +98,7 @@ namespace vk {
 		VkDescriptorSetLayout m_vkDescriptorSetLayout;
         VkPipelineLayout m_vkPipelineLayout;
         VkPipeline m_vkGraphicsPipeline;
-		std::vector<Renderer*> m_renderers;
+		std::vector<Rife::Graphics::Renderer*> m_renderers;
 
         //Helper Functions-------------------
 		VkCommandBuffer beginSingleTimeCommands();	
@@ -167,8 +167,10 @@ namespace vk {
         void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
         void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
 
+        void updateUbos(uint32_t imageIndex, glm::mat4 vp, float time);
+
 		void bindCommandBuffer(std::vector<VkCommandBuffer>*);
-		void bindRenderer(Renderer*);
+		void bindRenderer(Rife::Graphics::Renderer*);
 
         //Getters
         VkDevice* getDevice() { return &m_vkDevice; }

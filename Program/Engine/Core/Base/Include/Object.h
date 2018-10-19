@@ -1,6 +1,4 @@
 #pragma once
-#ifndef INCLUDE_OBJECT
-#define INCLUDE_OBJECT
 
 #include <iostream>
 
@@ -15,4 +13,3 @@ namespace Rife::Base {
 		std::string m_name;
 	};
 }
-#endif // !INCLUDE_OBJECT

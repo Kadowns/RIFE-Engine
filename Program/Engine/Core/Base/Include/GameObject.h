@@ -1,6 +1,4 @@
 #pragma once
-#ifndef INCLUDE_GAMEOBJECT
-#define INCLUDE_GAMEOBJECT
 
 #include <Component.h>
 #include <Transform.h>
@@ -30,8 +28,9 @@ namespace Rife::Base {
 
     private:
 
+        void updateTransform();
+
         std::vector<Component*> m_components;
 
     };
 }
-#endif // !INCLUDE_GAMEOBJECT

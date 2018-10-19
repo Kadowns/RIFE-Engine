@@ -1,10 +1,11 @@
 #pragma once
 #ifndef CAMERA
+#define CAMERA
 #include <Rm.h>
 
-#define CAMERA Graphics::Camera::getInstance()
+#define CAMERA Rife::Graphics::Camera::getInstance()
 
-namespace Graphics {
+namespace Rife::Graphics {
 
     class Camera {
 

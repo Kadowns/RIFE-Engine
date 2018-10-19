@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GraphicsIncludes.h>
+#include <RifeGraphics.h>
 #include <Clock.h>
 #include "Scene.h"
 
