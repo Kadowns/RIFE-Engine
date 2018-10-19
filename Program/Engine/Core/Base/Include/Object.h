@@ -9,8 +9,8 @@ namespace Rife::Base {
 	class Object {
 	public:
 		Object();
-		~Object();
-		std::string getName();
+		virtual ~Object();
+        std::string getName() { return m_name; };
     protected:
 		std::string m_name;
 	};

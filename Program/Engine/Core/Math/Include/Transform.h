@@ -1,10 +1,11 @@
 #pragma once
-#include <GraphicsDependencys.h>
+#include <Rm.h>
 
 
-namespace Entity {
+namespace Rife::Base {
 
 	struct Transform {
+        glm::mat4 matrix;
 		glm::vec3 position;
 		glm::vec3 rotation;
 	};

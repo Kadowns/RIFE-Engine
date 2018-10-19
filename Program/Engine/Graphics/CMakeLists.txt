@@ -7,7 +7,6 @@ set(GRAPHICS_INCLUDE
 	Include/Camera.h
 	Include/Vertex.h
 	Include/Renderer.h
-	Include/Transform.h
 	Include/Mesh.h
 	Include/MeshRenderer.h
 	Include/VkUtilities.h 
@@ -30,6 +29,6 @@ set(GRAPHICS_SOURCE
 
 set(GRAPHICS_ALL "${GRAPHICS_INCLUDE}" "${GRAPHICS_SOURCE}")
 
-CreateModule(Graphics "${GRAPHICS_ALL}")
+CreateModule(Graphics "${GRAPHICS_ALL}" Engine)
 
-target_link_libraries(Graphics GLFW Vulkan::Vulkan Utils)
+target_link_libraries(Graphics GLFW Vulkan::Vulkan Base)

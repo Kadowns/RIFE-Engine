@@ -9,5 +9,5 @@ set(COMMON_SOURCE
         )
 
 set(COMMON_ALL ${COMMON_INCLUDE} ${COMMON_SOURCE})
-CreateModule(Common "${COMMON_ALL}")
-target_link_libraries(Common Core)
+CreateModule(Common "${COMMON_ALL}" Application)
+target_link_libraries(Common Application)
