@@ -8,7 +8,8 @@ namespace Rife::Graphics {
     public:
         virtual void draw() = 0;
         virtual void createCommandBuffers() = 0;
-        virtual void updateTransformInformation(glm::mat4& vp, uint32_t imageIndex, float time) = 0;
+        virtual void updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex) = 0;
+        virtual void freeCommandBuffers() = 0;
     protected:
 
         Ubo::Mvp m_ubo;

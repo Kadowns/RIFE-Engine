@@ -60,13 +60,20 @@ void MeshRenderer::createCommandBuffers() {
 	VK_WRAPPER->bindCommandBuffer(&m_commandBuffers);
 }
 
-void MeshRenderer::freeCommandBuffer() {
+void MeshRenderer::freeCommandBuffers() {
 
+    vkFreeCommandBuffers(
+        *VK_WRAPPER->getDevice(),
+        *VK_WRAPPER->getCommandPool(),
+        static_cast<uint32_t>(m_commandBuffers.size()),
+        m_commandBuffers.data()
+    );
+    
 }
 
-void MeshRenderer::updateTransformInformation(glm::mat4& vp, uint32_t imageIndex, float time) {
+void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex) {
 
-    m_ubo.mvp = vp * p_gameObject->getTransform()->matrix;
+    m_ubo.mvp = vp * reinterpret_cast<Rife::Base::GameObject*>(p_gameObject)->getTransform()->matrix;
 
 	void* data;
 	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);
@@ -110,7 +117,7 @@ MeshRenderer::~MeshRenderer() {
 		vkFreeMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
 	}
 	
-
+    freeCommandBuffers();
 }
 
 void MeshRenderer::createDescriptorPool() {

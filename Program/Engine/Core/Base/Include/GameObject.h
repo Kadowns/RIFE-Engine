@@ -8,7 +8,7 @@ namespace Rife::Base {
 
     class GameObject : Object {
 
-    public :
+    public:
         
         GameObject();
         ~GameObject();

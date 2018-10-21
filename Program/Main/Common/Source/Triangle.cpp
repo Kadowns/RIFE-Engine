@@ -38,7 +38,9 @@ void Triangle::awake() {
 }
 
 void Triangle::update(float secs) {
-    
+    for (int i = 0; i < numberOfCubes; i++) {
+        gameObjects[i]->update();
+    }
 }
 
 void Triangle::draw() {
@@ -112,6 +114,6 @@ void Triangle::draw() {
 
 void Triangle::deinit() {
 	for (int i = 0; i < numberOfCubes; i++) {
-		delete cubes[i];
+		delete gameObjects[i];
 	}
 }

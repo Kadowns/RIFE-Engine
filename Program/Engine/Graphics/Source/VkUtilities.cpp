@@ -54,6 +54,11 @@ void vk::Wrapper::recreateSwapChain(){
 
 	vkDeviceWaitIdle(m_vkDevice);
 
+    for (int i = 0; i < m_renderers.size(); i++) {
+        m_renderers[i]->freeCommandBuffers();
+    }
+    m_secondaryCommandBuffers.clear();
+
     cleanupSwapChain();
 
     createSwapChain();
@@ -223,10 +228,10 @@ VkExtent2D vk::Wrapper::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabi
 		m_height = static_cast<uint32_t>(height);
 
 		VkExtent2D actualExtent = { m_width, m_height };
-        actualExtent.width = rm::clamp<uint32_t>(m_width,
+        actualExtent.width = Rife::Math::clamp<uint32_t>(m_width,
             capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 
-        actualExtent.height = rm::clamp<uint32_t>(m_height,
+        actualExtent.height = Rife::Math::clamp<uint32_t>(m_height,
             capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
         return actualExtent;
@@ -1156,7 +1161,7 @@ void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, 
 
 void vk::Wrapper::updateUbos(uint32_t imageIndex, glm::mat4 vp, float time) {
     for (int i = 0; i < m_renderers.size(); i++) {
-        m_renderers[i]->updateTransformInformation(vp, imageIndex, time);
+        m_renderers[i]->updateTransformInformation(vp, imageIndex);
     }
 }
 
@@ -1333,15 +1338,7 @@ void vk::Wrapper::cleanupSwapChain() {
         vkDestroyFramebuffer(m_vkDevice, m_vkSwapChainFramebuffers[i], nullptr);
     }
 
-	for (int i = 0; i < m_secondaryCommandBuffers.size(); i++) {
-		vkFreeCommandBuffers(
-			m_vkDevice,
-			m_vkCommandPool,
-			static_cast<uint32_t>(m_secondaryCommandBuffers[i]->size()),
-			m_secondaryCommandBuffers[i]->data()
-		);
-	}
-	m_secondaryCommandBuffers.clear();
+	
     vkFreeCommandBuffers(m_vkDevice, m_vkCommandPool, static_cast<uint32_t>(m_primaryCommandBuffers.size()), m_primaryCommandBuffers.data());
 	
     vkDestroyPipeline(m_vkDevice, m_vkGraphicsPipeline, nullptr);

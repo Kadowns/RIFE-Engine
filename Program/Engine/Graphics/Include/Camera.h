@@ -1,7 +1,5 @@
 #pragma once
-#ifndef CAMERA
-#define CAMERA
-#include <Rm.h>
+#include <RifeMath.h>
 
 #define CAMERA Rife::Graphics::Camera::getInstance()
 
@@ -36,4 +34,3 @@ namespace Rife::Graphics {
 
     };
 }
-#endif // !CAMERA

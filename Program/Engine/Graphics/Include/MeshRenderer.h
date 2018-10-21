@@ -11,8 +11,8 @@ namespace Rife::Graphics {
 
         void draw();
         void createCommandBuffers();
-        void freeCommandBuffer();
-        void updateTransformInformation(glm::mat4& vp, uint32_t imageIndex, float time);
+        void freeCommandBuffers();
+        void updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex);
         MeshRenderer(Mesh *mesh);
         ~MeshRenderer();
 

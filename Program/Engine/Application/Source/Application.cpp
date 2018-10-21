@@ -104,11 +104,12 @@ void Application::loop() {
     } // se o maluco apertar os bot�o de sair, vc sai
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == GLFW_FALSE);
     vkDeviceWaitIdle(*m_vkWrapper->getDevice());
-    m_scene->deinit();
+   
 }
 
 void Application::terminate() {
 
+    m_scene->deinit();
     m_vkWrapper->terminateVulkan();
     delete m_vkWrapper;
     glfwDestroyWindow(m_window);
