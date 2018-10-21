@@ -10,6 +10,7 @@ Application *Application::getInstance() {
 void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int height) {
 	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 	app->m_framebufferResized = true;
+    app->m_scene->windowResized(width, height);
 }
 
 
@@ -89,11 +90,11 @@ void Application::initVulkan() {
 void Application::loop() {
     m_scene->init();
 	m_vkWrapper->finalSetup();
+    m_scene->awake();
     do {
         TIME->earlyUpdate();
 
-        double time = TIME->getLastFrameTime();
-        m_scene->update(time);
+        m_scene->update();
         m_scene->draw();
 
         KEYBOARD->update();

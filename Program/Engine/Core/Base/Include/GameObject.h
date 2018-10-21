@@ -17,20 +17,13 @@ namespace Rife::Base {
         void awake();
         void update();
         
-
        Component* addComponent(Component*);
 
        Transform* getTransform() { return &m_transform; }
 
-    protected:
-
-        Transform m_transform;
-
     private:
 
-        void updateTransform();
-
+        Transform m_transform;
         std::vector<Component*> m_components;
-
     };
 }

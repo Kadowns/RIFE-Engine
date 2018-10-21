@@ -3,16 +3,23 @@
 
 namespace Rife::Base {
 
+    class GameObject;
+
 	class Component : Object {
 
 	public:
 
-        void setParentObject(void*);
+        virtual void setup();
+        virtual void awake();
+        virtual void update();
+
+        void setParentObject(GameObject*);
 	protected:
 
-        void* p_gameObject;
+        GameObject* p_gameObject;
 
     private:
+        bool m_setup = false, m_awake = false;
 
 	};
 }

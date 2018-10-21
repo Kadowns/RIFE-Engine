@@ -1,7 +1,7 @@
 #pragma once
 #include <GraphicsDependencys.h>
 #include <UniformBufferObject.h>
-#include <Component.h>
+#include <RifeCore.h>
 
 namespace Rife::Graphics {
     class Renderer : public Base::Component {

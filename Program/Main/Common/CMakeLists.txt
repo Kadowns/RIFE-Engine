@@ -2,6 +2,7 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 set(COMMON_INCLUDE
         Include/Test.h 
         Include/Triangle.h	
+		Include/RotatingCube.h
         )
 set(COMMON_SOURCE
         Source/Test.cpp

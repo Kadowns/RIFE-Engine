@@ -73,7 +73,7 @@ void MeshRenderer::freeCommandBuffers() {
 
 void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex) {
 
-    m_ubo.mvp = vp * reinterpret_cast<Rife::Base::GameObject*>(p_gameObject)->getTransform()->matrix;
+    m_ubo.mvp = vp * p_gameObject->getTransform()->getModelMatrix();
 
 	void* data;
 	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);

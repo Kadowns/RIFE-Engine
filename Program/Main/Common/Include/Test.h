@@ -5,7 +5,7 @@ class Test : public Scene {
 public:
     void init();
     void awake();
-    void update(float time);
+    void update();
     void draw();
     void deinit();
 };

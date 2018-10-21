@@ -5,6 +5,8 @@
 #include <RifeCore.h>
 #include <RifeGraphics.h>
 
+#include <RotatingCube.h>
+
 const std::vector<Rife::Graphics::Vertex> vertices = {
 	{{-0.5f, -0.5f, 0.5f}, {0.3f, 1.0f, 1.0f, 1.0f}},
 	{{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 1.0f, 1.0f}},
@@ -64,8 +66,10 @@ public:
 
     void init();
     void awake();
-    void update(float secs);
+    void update();
     void draw();
     void deinit();
+
+    void windowResized(const uint32_t& width, const uint32_t& height);
 };
 

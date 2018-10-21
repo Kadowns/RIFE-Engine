@@ -20,25 +20,30 @@ void Triangle::init() {
 	m_camera = new Rife::Graphics::Camera(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
 		45.0f, (float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(), 0.01f, 100.0f);
 
-    for (int i = 0; i < numberOfCubes; i++) {
-        gameObjects.push_back(new Rife::Base::GameObject());
+    gameObjects.resize(5);
+    for (int i = 0; i < gameObjects.size(); i++) {
+        gameObjects[i] = new Rife::Base::GameObject();
         gameObjects[i]->addComponent(new Rife::Graphics::MeshRenderer(new Rife::Graphics::Mesh(vertices, indices)));
+        gameObjects[i]->addComponent(new Script::RotatingCube());
         gameObjects[i]->setup();
     }
 
-    gameObjects[0]->getTransform()->position = glm::vec3(1.5f, -0.5f, -0.5f);
-    gameObjects[1]->getTransform()->position = m_camera->getPosition() + glm::vec3(0.0f, -0.5f, -4.0f);
-    gameObjects[2]->getTransform()->position = glm::vec3(0.5f, -0.5f, -1.5f);
-    gameObjects[3]->getTransform()->position = glm::vec3(1.5f, -0.5f, 1.5f);
-    gameObjects[4]->getTransform()->position = glm::vec3(1.5f, -0.5f, 0.5f);
+    gameObjects[0]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, -1.0f);
+    gameObjects[1]->getTransform()->m_position = m_camera->getPosition() + glm::vec3(0.0f, -1.5f, -6.0f);
+    gameObjects[2]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
+    gameObjects[3]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
+    gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
+    
 }
 
 void Triangle::awake() {
-
+    for (int i = 0; i < gameObjects.size(); i++) {
+        gameObjects[i]->awake();
+    }
 }
 
-void Triangle::update(float secs) {
-    for (int i = 0; i < numberOfCubes; i++) {
+void Triangle::update() {
+    for (int i = 0; i < gameObjects.size(); i++) {
         gameObjects[i]->update();
     }
 }
@@ -116,4 +121,8 @@ void Triangle::deinit() {
 	for (int i = 0; i < numberOfCubes; i++) {
 		delete gameObjects[i];
 	}
+}
+
+void Triangle::windowResized(const uint32_t& width, const uint32_t& height) {
+    m_camera->updateProjection(m_camera->getFov(), (float)width / (float)height, m_camera->getNear(), m_camera->getFar());
 }

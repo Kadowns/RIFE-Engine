@@ -30,20 +30,17 @@ double Clock::getLastFrameTime() {
     return m_lastFrameTime;
 }
 
-double Clock::clockToMilliseconds(clock_t ticks) {
-    return (ticks / (double)CLOCKS_PER_SEC)*1000.0;
-}
+
 
 void Clock::earlyUpdate() {
-    m_earlyClocks = clock();
+    m_startTime = std::chrono::high_resolution_clock::now();
 }
 
 void Clock::lateUpdate(){
     
-    m_lateClocks = clock();
-    m_deltaClocks = m_lateClocks - m_earlyClocks;
-
-    m_lastFrameTime = double(m_deltaClocks) / CLOCKS_PER_SEC;
+   
+    m_endTime = std::chrono::high_resolution_clock::now();
+    m_lastFrameTime = std::chrono::duration<double, std::chrono::seconds::period>(m_endTime - m_startTime).count();
     m_dt += m_lastFrameTime;
     m_time += m_lastFrameTime;
     m_frames++;

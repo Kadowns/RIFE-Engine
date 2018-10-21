@@ -3,7 +3,7 @@
 void Test::init() {
 
 }
-void Test::update(float time) {
+void Test::update() {
 
 }
 void Test::draw() {

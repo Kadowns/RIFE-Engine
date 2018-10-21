@@ -1,7 +1,8 @@
 #pragma once
 
+#include <RifeCore.h>
 #include <RifeGraphics.h>
-#include <Clock.h>
+
 #include "Scene.h"
 
 #include <iostream>

@@ -639,6 +639,7 @@ void vk::Wrapper::createLogicalDevice() {
 
     //soon
     VkPhysicalDeviceFeatures deviceFeatures = {};
+    deviceFeatures.fillModeNonSolid = VK_TRUE;
 
     VkDeviceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -904,7 +905,7 @@ void vk::Wrapper::createGraphicsPipeline() {
     //se for true, basicamente desabilita o processo de rasterização e a geometria não vai se desenhada ):
     rasterizer.rasterizerDiscardEnable = VK_FALSE;
     //Define o modo de desenho do poligono (pode ser completo, linhas ou pontos)
-    rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+    rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
     //Define quantos fragments vão compor a expessura de uma linha
     rasterizer.lineWidth = 1.0f;
 
