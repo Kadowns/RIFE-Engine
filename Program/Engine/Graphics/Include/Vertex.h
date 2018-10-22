@@ -1,6 +1,7 @@
 #pragma once
 
-#include <GraphicsDependencys.h>
+#include <RifeMath.h>
+#include <GraphicsLibs.h>
 #include <array>
 
 namespace Rife::Graphics {

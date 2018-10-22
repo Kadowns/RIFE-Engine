@@ -1,7 +1,7 @@
 #pragma once
 #ifndef INCLUDE_UBO
 #define INCLUDE_UBO
-#include <GraphicsDependencys.h>
+#include <GraphicsLibs.h>
 
 namespace Rife::Graphics {
     namespace Ubo {

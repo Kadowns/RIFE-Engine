@@ -1,5 +1,6 @@
 #pragma once
 #include <GraphicsLibs.h>
+#include <VkUtilities.h>
 #include <RifeCore.h>
 #include <array>
 
@@ -10,7 +11,7 @@ namespace Rife::Graphics {
     class Material : public Base::Object {
     public:
 
-        Material(VkPipelineLayout* , VkPipeline*, VkGraphicsPipelineCreateInfo*);
+        Material(VkPipelineLayoutCreateInfo& , VkGraphicsPipelineCreateInfo&);
         ~Material();
 
     private:

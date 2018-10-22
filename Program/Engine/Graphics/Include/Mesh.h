@@ -1,5 +1,5 @@
 #pragma once
-#include <GraphicsDependencys.h>
+#include <GraphicsLibs.h>
 #include <Vertex.h>
 #include <vector>
 
