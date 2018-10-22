@@ -1,7 +1,7 @@
 #pragma once
 #ifndef VK_WRAPPER
 
-#include <GraphicsDependencys.h>
+#include <GraphicsLibs.h>
 #include <Vertex.h>
 #include <Transform.h>
 #include <Renderer.h>
