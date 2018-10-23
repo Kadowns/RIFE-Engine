@@ -37,7 +37,7 @@ void MeshRenderer::createCommandBuffers() {
 			throw std::runtime_error("failed to begin recording command buffer!");
 		}
 
-        vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *VK_WRAPPER->getGraphicsPipeline());
+        vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *p_material->getPipeline());
 
 		VkBuffer vertexBuffers[] = { m_vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
@@ -48,7 +48,7 @@ void MeshRenderer::createCommandBuffers() {
 
 		vkCmdBindDescriptorSets(
 			m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			*VK_WRAPPER->getPipelineLayout(), 0, 1, &m_descriptorSets[i], 0, nullptr
+			*p_material->getPipelineLayout(), 0, 1, &m_descriptorSets[i], 0, nullptr
 		);
 
 		vkCmdDrawIndexed(m_commandBuffers[i], p_mesh->getIndices().size(), 1, 0, 0, 0);
@@ -67,9 +67,9 @@ void MeshRenderer::freeCommandBuffers() {
         *VK_WRAPPER->getCommandPool(),
         static_cast<uint32_t>(m_commandBuffers.size()),
         m_commandBuffers.data()
-    );
-    
+    );  
 }
+
 
 void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex) {
 
@@ -81,14 +81,15 @@ void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const uint32_
 	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 }
 
-MeshRenderer::MeshRenderer(Mesh* mesh) {
+MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
     p_mesh = mesh;
+    p_material = material;
 
-	VkDeviceSize bufferSize = sizeof(mesh->getVertices()[0]) * mesh->getVertices().size();
-	VK_WRAPPER->createVertexBuffer(m_vertexBuffer, m_vertexBufferMemory, bufferSize, mesh->getVertices().data());
+	VkDeviceSize bufferSize = sizeof(p_mesh->getVertices()[0]) * p_mesh->getVertices().size();
+	VK_WRAPPER->createVertexBuffer(m_vertexBuffer, m_vertexBufferMemory, bufferSize, p_mesh->getVertices().data());
 
-	bufferSize = sizeof(mesh->getIndices()[0]) * mesh->getIndices().size();
-	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, mesh->getIndices().data());
+	bufferSize = sizeof(p_mesh->getIndices()[0]) * p_mesh->getIndices().size();
+	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, p_mesh->getIndices().data());
 
 
 	bufferSize = sizeof(Ubo::Mvp);
@@ -116,6 +117,10 @@ MeshRenderer::~MeshRenderer() {
 		vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_uniformBuffers[i], nullptr);
 		vkFreeMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
 	}
+
+    if (p_material != nullptr) {
+        p_material->~Material();
+    }
 	
     freeCommandBuffers();
 }
@@ -138,7 +143,7 @@ void MeshRenderer::createDescriptorPool() {
 
 void MeshRenderer::createDescriptorSets() {
 
-	std::vector<VkDescriptorSetLayout> layouts(VK_WRAPPER->getSwapChainImagesCount(), *VK_WRAPPER->getDescriptorSetLayout());
+	std::vector<VkDescriptorSetLayout> layouts(VK_WRAPPER->getSwapChainImagesCount(), *(p_material->getDescriptorSetLayouts())->data());
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_descriptorPool;
@@ -172,6 +177,4 @@ void MeshRenderer::createDescriptorSets() {
 
 		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), 1, &descriptorWrite, 0, nullptr);
 	}
-
-
 }

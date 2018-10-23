@@ -1,5 +1,6 @@
 #pragma once
 #ifndef VK_WRAPPER
+#define VK_WRAPPER vk::Wrapper::getInstance()
 
 #include <GraphicsLibs.h>
 #include <Vertex.h>
@@ -11,8 +12,6 @@
 #include <vector>
 #include <set>
 #include <map>
-
-#define VK_WRAPPER vk::Wrapper::getInstance()
 
 #define VERT_SHADER std::string("triVert.spv")
 #define FRAG_SHADER std::string("triFrag.spv")
@@ -95,9 +94,7 @@ namespace vk {
         VkFormat m_vkSwapChainImageFormat;
         VkExtent2D m_vkSwapChainExtent;
         VkRenderPass m_vkRenderPass;
-		VkDescriptorSetLayout m_vkDescriptorSetLayout;
-        VkPipelineLayout m_vkPipelineLayout;
-        VkPipeline m_vkGraphicsPipeline;
+
 		std::vector<Rife::Graphics::Renderer*> m_renderers;
 
         //Helper Functions-------------------
@@ -135,8 +132,6 @@ namespace vk {
         void createSwapChain();
         void createImageViews();
         void createRenderPass();
-		void createDescriptorSetLayout();
-        void createGraphicsPipeline();
         void createFramebuffers();
         void createCommandPool();
 		void createDepthResources();
@@ -178,11 +173,8 @@ namespace vk {
         VkQueue* getGraphicsQueue() { return &m_vkGraphicsQueue; }
         VkQueue* getPresentQueue() { return &m_vkPresentQueue; }
         VkSwapchainKHR* getSwapChain() { return &m_vkSwapChain; }	
-		VkPipelineLayout* getPipelineLayout() { return &m_vkPipelineLayout; }
         VkRenderPass* getRenderPass() { return &m_vkRenderPass; }
 		VkCommandPool* getCommandPool() { return &m_vkCommandPool; }
-        VkPipeline* getGraphicsPipeline() { return &m_vkGraphicsPipeline; }
-		VkDescriptorSetLayout* getDescriptorSetLayout() { return &m_vkDescriptorSetLayout; }
         std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
         std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
         std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }

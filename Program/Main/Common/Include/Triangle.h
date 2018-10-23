@@ -7,7 +7,11 @@
 
 #include <RotatingCube.h>
 
-const std::vector<Rife::Graphics::Vertex> vertices = {
+using namespace Rife::Graphics;
+using namespace Rife::Base;
+using namespace Rife::Math;
+
+const std::vector<Vertex> vertices = {
 	{{-0.5f, -0.5f, 0.5f}, {0.3f, 1.0f, 1.0f, 1.0f}},
 	{{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 1.0f, 1.0f}},
 	{{0.5f, 0.5f, 0.5f}, {0.3f, 0.5f, 1.0f, 1.0f}},
@@ -56,7 +60,7 @@ private:
 
     vk::Wrapper* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
-    std::vector<Rife::Base::GameObject*> gameObjects;
+    std::vector<GameObject*> gameObjects;
 
 	Rife::Graphics::Camera* m_camera;
 

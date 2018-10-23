@@ -6,17 +6,29 @@
 
 namespace Rife::Graphics {
 
-
-
     class Material : public Base::Object {
+
     public:
 
-        Material(VkPipelineLayoutCreateInfo& , VkGraphicsPipelineCreateInfo&);
+        Material() {}
+        Material(std::vector<VkDescriptorSetLayoutCreateInfo>&, std::vector<VkPushConstantRange>&, VkGraphicsPipelineCreateInfo&);
         ~Material();
+
+        void clearPipeline();
+
+        std::vector<VkDescriptorSetLayout>* getDescriptorSetLayouts() { return &m_descriptorSetLayouts; }
+        VkDescriptorSet* getDescriptorSet() { return &m_descriptorSet; }
+
+        VkPipelineLayout* getPipelineLayout() { return &m_pipelineLayout; }
+        VkPipeline* getPipeline() { return &m_pipeline; }
+
+        bool isCleared() { return m_clear; }
 
     private:
 
-        VkDescriptorSetLayout m_descriptorSetLayout;
+        bool m_clear;
+
+        std::vector<VkDescriptorSetLayout> m_descriptorSetLayouts;
         VkDescriptorSet m_descriptorSet;
 
         VkPipelineLayout m_pipelineLayout;

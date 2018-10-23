@@ -2,6 +2,9 @@
 #include <Triangle.h>
 
 int main() {
+
+    srand(time(0));
+
     Scene *scene = new Triangle();
     Application *app = new Application(scene, "Test", 800, 600);
     try {

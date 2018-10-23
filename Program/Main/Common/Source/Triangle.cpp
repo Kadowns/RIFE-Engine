@@ -17,13 +17,15 @@ Triangle::~Triangle() {
 void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
-	m_camera = new Rife::Graphics::Camera(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
+	m_camera = new Camera(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
 		45.0f, (float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(), 0.01f, 100.0f);
 
-    gameObjects.resize(5);
+    gameObjects.resize(7);
+    auto mat = MaterialFactory::defaultMaterial("triVert.spv", "triFrag.spv");
+    auto mesh = new Mesh(vertices, indices);
     for (int i = 0; i < gameObjects.size(); i++) {
-        gameObjects[i] = new Rife::Base::GameObject();
-        gameObjects[i]->addComponent(new Rife::Graphics::MeshRenderer(new Rife::Graphics::Mesh(vertices, indices)));
+        gameObjects[i] = new GameObject();
+        gameObjects[i]->addComponent(new MeshRenderer(mesh, mat));
         gameObjects[i]->addComponent(new Script::RotatingCube());
         gameObjects[i]->setup();
     }
@@ -33,6 +35,8 @@ void Triangle::init() {
     gameObjects[2]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
     gameObjects[3]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
     gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
+    gameObjects[5]->getTransform()->m_position = glm::vec3(4.0f, -0.5f, -4.0f);
+    gameObjects[6]->getTransform()->m_position = glm::vec3(-4.0f, -0.5f, -4.0f);
     
 }
 
@@ -118,7 +122,7 @@ void Triangle::draw() {
 }
 
 void Triangle::deinit() {
-	for (int i = 0; i < numberOfCubes; i++) {
+	for (int i = 0; i < gameObjects.size(); i++) {
 		delete gameObjects[i];
 	}
 }

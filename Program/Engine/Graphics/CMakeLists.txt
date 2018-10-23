@@ -11,6 +11,7 @@ set(GRAPHICS_INCLUDE
 	Include/MeshRenderer.h
 	Include/Material.h
 	Include/MaterialBuilder.h
+	Include/MaterialFactory.h
 	Include/VkUtilities.h 
 	Include/Shader.h
 	Include/GraphicsPipeline.h
@@ -25,6 +26,7 @@ set(GRAPHICS_SOURCE
 	Source/MeshRenderer.cpp
 	Source/Material.cpp
 	Source/MaterialBuilder.cpp
+	Source/MaterialFactory.cpp
 	Source/VkUtilities.cpp
 	Source/Shader.cpp
 	Source/GraphicsPipeline.cpp)
