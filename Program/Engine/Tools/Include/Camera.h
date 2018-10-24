@@ -1,11 +1,12 @@
 #pragma once
 #include <RifeMath.h>
+#include <RifeCore.h>
 
-#define CAMERA Rife::Graphics::Camera::getInstance()
+#define CAMERA Rife::Tools::Camera::getInstance()
 
-namespace Rife::Graphics {
+namespace Rife::Tools {
 
-    class Camera {
+    class Camera : Base::Component {
 
     public:
         Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float aspect, float near, float far);

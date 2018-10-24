@@ -3,11 +3,13 @@
 #include <Application.h>
 #include <Scene.h>
 #include <RifeCore.h>
+#include <RifeTools.h>
 #include <RifeGraphics.h>
 
 #include <RotatingCube.h>
 
 using namespace Rife::Graphics;
+using namespace Rife::Tools;
 using namespace Rife::Base;
 using namespace Rife::Math;
 
@@ -62,7 +64,8 @@ private:
 	void updateUniformBuffer(uint32_t currentImage);
     std::vector<GameObject*> gameObjects;
 
-	Rife::Graphics::Camera* m_camera;
+    Keyboard *keys;
+	Camera* m_camera;
 
 public:
     Triangle();

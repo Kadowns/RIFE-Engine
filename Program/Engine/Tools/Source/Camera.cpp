@@ -1,5 +1,5 @@
 #include <Camera.h>
-namespace Rife::Graphics {
+namespace Rife::Tools {
     Camera* Camera::s_instance = nullptr;
 
     Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float aspect, float near, float far) {

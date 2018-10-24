@@ -1,10 +1,8 @@
 #pragma once
 
-#include <Keyboard.h>
-
 class Scene {
-protected:
-    Keyboard *keys = KEYBOARD;
+private:
+
 public:
     virtual void init() = 0;
     virtual void awake() = 0;

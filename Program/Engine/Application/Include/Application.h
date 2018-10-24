@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RifeCore.h>
+#include <RifeTools.h>
 #include <RifeGraphics.h>
 
 #include "Scene.h"
