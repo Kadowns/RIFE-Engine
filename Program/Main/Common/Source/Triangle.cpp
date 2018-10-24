@@ -20,7 +20,7 @@ void Triangle::init() {
 	m_camera = new Camera(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
 		45.0f, (float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(), 0.01f, 100.0f);
 
-    gameObjects.resize(7);
+    gameObjects.resize(8);
     auto mat = MaterialFactory::defaultMaterial("triVert.spv", "triFrag.spv");
     auto mesh = new Mesh(vertices, indices);
     for (int i = 0; i < gameObjects.size(); i++) {
@@ -37,6 +37,7 @@ void Triangle::init() {
     gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
     gameObjects[5]->getTransform()->m_position = glm::vec3(4.0f, -0.5f, -4.0f);
     gameObjects[6]->getTransform()->m_position = glm::vec3(-4.0f, -0.5f, -4.0f);
+	gameObjects[7]->getTransform()->m_position = glm::vec3(-5.0f, -0.5f, -4.0f);
     
 }
 
@@ -50,6 +51,7 @@ void Triangle::update() {
     for (int i = 0; i < gameObjects.size(); i++) {
         gameObjects[i]->update();
     }
+	//printf("\nFPS:%d", TIME->getLastFrameTime());
 }
 
 void Triangle::draw() {
@@ -113,6 +115,7 @@ void Triangle::draw() {
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || *frameBufferResized) {
 		*frameBufferResized = false;
         vkWrapper->recreateSwapChain();
+		windowResized(APPLICATION->getWidth(), APPLICATION->getHeight());
     }
     else if (result != VK_SUCCESS) {
         throw std::runtime_error("failed to present swap chain image!");

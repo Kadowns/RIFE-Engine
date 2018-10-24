@@ -1,5 +1,6 @@
 #pragma once
 #include <GraphicsLibs.h>
+#include <Light.h>
 #include <VkUtilities.h>
 #include <RifeCore.h>
 #include <array>

@@ -9,8 +9,9 @@ Application *Application::getInstance() {
 //----------------------------------
 void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int height) {
 	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+	app->m_width = width;
+	app->m_height = height;
 	app->m_framebufferResized = true;
-    app->m_scene->windowResized(width, height);
 }
 
 

@@ -16,6 +16,7 @@ namespace Rife::Graphics {
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.pNext = nullptr;
         pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(m_descriptorSetLayouts.size());
         pipelineLayoutInfo.pSetLayouts = m_descriptorSetLayouts.data();
         pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRangeInfos.size());
@@ -31,6 +32,7 @@ namespace Rife::Graphics {
         pipelineCreateInfo.renderPass = *VK_WRAPPER->getRenderPass();
         pipelineCreateInfo.subpass = 0;
         pipelineCreateInfo.layout = m_pipelineLayout;
+		
 
         if (vkCreateGraphicsPipelines(*VK_WRAPPER->getDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
             throw std::runtime_error("failed to create graphics pipeline!");

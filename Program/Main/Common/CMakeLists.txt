@@ -9,6 +9,6 @@ set(COMMON_SOURCE
         Source/Triangle.cpp
         )
 
-set(COMMON_ALL ${COMMON_INCLUDE} ${COMMON_SOURCE})
+SeT(COMMON_ALL ${COMMON_INCLUDE} ${COMMON_SOURCE})
 CreateModule(Main Common "${COMMON_ALL}" )
-target_link_libraries(Common Application)
+target_LINK_libraries(Common Application)

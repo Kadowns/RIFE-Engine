@@ -26,8 +26,6 @@ private :
 
     static Application *s_instance;
 
-    
-
     int m_width;
     int m_height;
     std::string m_title;

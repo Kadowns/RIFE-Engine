@@ -38,7 +38,7 @@ void Clock::earlyUpdate() {
 
 void Clock::lateUpdate(){
     
-   
+
     m_endTime = std::chrono::high_resolution_clock::now();
     m_lastFrameTime = std::chrono::duration<double, std::chrono::seconds::period>(m_endTime - m_startTime).count();
     m_dt += m_lastFrameTime;

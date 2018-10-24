@@ -163,7 +163,14 @@ namespace Rife::Graphics {
         dynamicState.dynamicStateCount = 2;
         dynamicState.pDynamicStates = dynamicStates;
 
+		VkPushConstantRange pushConstantRange = {};
+		pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		pushConstantRange.size = sizeof(Light);
+		pushConstantRange.offset = 0;
+		
+
         auto material = MaterialBuilder()
+			.addPushConstantRange(pushConstantRange)
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .setShaderStages(shaderStages, 2)
             .setVertexInputState(vertexInputInfo)

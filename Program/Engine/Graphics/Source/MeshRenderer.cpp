@@ -43,6 +43,20 @@ void MeshRenderer::createCommandBuffers() {
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
+		Light light = {};
+		light.position = glm::vec3(1.0f, 10.0f, 2.0f);
+		light.direction = glm::normalize(glm::vec3(-1.0f));
+		light.ambient = glm::vec3(0.2f);
+		light.diffuse = glm::vec3(0.7f);
+
+		vkCmdPushConstants(
+			m_commandBuffers[i],
+			*p_material->getPipelineLayout(),
+			VK_SHADER_STAGE_FRAGMENT_BIT,
+			0,
+			sizeof(Light),
+			(void*)&light
+		);
         
 		vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 

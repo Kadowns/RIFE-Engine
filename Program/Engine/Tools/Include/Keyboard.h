@@ -1,7 +1,7 @@
 #pragma once
 
 #include <set>
-#include <GLFW/glfw3.h>
+#include <GraphicsLibs.h>
 
 
 #define KEYBOARD Rife::Tools::Keyboard::getInstance()

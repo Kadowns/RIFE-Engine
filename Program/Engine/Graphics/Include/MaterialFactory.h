@@ -2,6 +2,7 @@
 
 #include <MaterialBuilder.h>
 
+
 namespace Rife::Graphics {
 
     class MaterialFactory {
