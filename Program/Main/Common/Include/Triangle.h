@@ -7,6 +7,7 @@
 #include <RifeGraphics.h>
 
 #include <RotatingCube.h>
+#include <Movable.h>
 
 using namespace Rife::Graphics;
 using namespace Rife::Tools;

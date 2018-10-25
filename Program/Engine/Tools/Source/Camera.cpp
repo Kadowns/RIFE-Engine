@@ -4,9 +4,8 @@ namespace Rife::Tools {
 
     Camera* Camera::s_instance = nullptr;
 
-    Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float aspect, float near, float far) {
+    Camera::Camera(float fov, float aspect, float near, float far) {
        
-        updateView(position, target, up);
         updateProjection(fov, aspect, near, far);
         s_instance = this;
     }
@@ -21,11 +20,11 @@ namespace Rife::Tools {
         return this;
     }
 
-    Camera* Camera::updateView(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
-        m_position = position;
-        m_target = target;
-        m_up = up;
-        m_view = glm::lookAt(position, target, up);
+    Camera* Camera::updateView() {
+        m_position = p_gameObject->getTransform()->m_position;
+        m_target = m_position + glm::vec3(0.0f, 0.0f, -1.0f);
+        m_up = glm::vec3(0.0f, 1.0f, 0.0f);
+        m_view = glm::lookAt(m_position, m_target, m_up);
         return this;
     }
 

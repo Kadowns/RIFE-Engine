@@ -13,6 +13,7 @@ namespace Rife::Tools {
 
         ~Keyboard();
         static Keyboard* getInstance();
+
         bool isPressed(int key);
         bool isDown(int key);
         bool isReleased(int key);

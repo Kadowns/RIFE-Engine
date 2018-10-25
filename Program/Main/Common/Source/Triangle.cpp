@@ -17,27 +17,38 @@ Triangle::~Triangle() {
 void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
-	m_camera = new Camera(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f),
-		45.0f, (float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(), 0.01f, 100.0f);
-
-    gameObjects.resize(8);
+    
     auto mat = MaterialFactory::defaultMaterial("triVert.spv", "triFrag.spv");
     auto mesh = new Mesh(vertices, indices);
-    for (int i = 0; i < gameObjects.size(); i++) {
-        gameObjects[i] = new GameObject();
+
+	gameObjects.push_back(new GameObject());
+	gameObjects[0]->getTransform()->m_position = glm::vec3(4.0f, 1.0f, 6.0f);
+	m_camera = (Camera*)gameObjects[0]->addComponent(new Camera());
+	m_camera->updateProjection(
+		45.0f,
+		(float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(),
+		0.01f,
+		100.0f
+	);
+	gameObjects[0]->addComponent(new Script::Movable());
+
+
+	int newSize = gameObjects.size() + 5;
+    for (int i = gameObjects.size(); i < newSize; i++) {
+        gameObjects.push_back(new GameObject());
         gameObjects[i]->addComponent(new MeshRenderer(mesh, mat));
         gameObjects[i]->addComponent(new Script::RotatingCube());
         gameObjects[i]->setup();
     }
+	
 
     gameObjects[0]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, -1.0f);
-    gameObjects[1]->getTransform()->m_position = m_camera->getPosition() + glm::vec3(0.0f, -1.5f, -6.0f);
+    gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -1.5f, -6.0f);
     gameObjects[2]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
     gameObjects[3]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
     gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
-    gameObjects[5]->getTransform()->m_position = glm::vec3(4.0f, -0.5f, -4.0f);
-    gameObjects[6]->getTransform()->m_position = glm::vec3(-4.0f, -0.5f, -4.0f);
-	gameObjects[7]->getTransform()->m_position = glm::vec3(-5.0f, -0.5f, -4.0f);
+
+	
     
 }
 
@@ -78,6 +89,7 @@ void Triangle::draw() {
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
+	m_camera->updateView();
     glm::mat4 vp = CAMERA->getProjection() * CAMERA->getView();
     VK_WRAPPER->updateUbos(imageIndex, vp, CAMERA->getPosition());
 	VkSubmitInfo submitInfo = {};

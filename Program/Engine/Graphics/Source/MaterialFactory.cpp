@@ -185,7 +185,7 @@ namespace Rife::Graphics {
 		MaterialProperties properties = {};
 		properties.ambient = glm::vec4(0.5f, 0.0f, 0.5f, 0.0f);
 		properties.diffuse = glm::vec4(0.5f, 0.0f, 0.5f, 0.0f);
-		properties.specular = glm::vec4(1.0f, 1.0f, 1.0f, 256.0f);
+		properties.specular = glm::vec4(1.0f, 1.0f, 1.0f, 64.0f);
 
 		auto material = MaterialBuilder()
 			.addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)

@@ -3,6 +3,7 @@ set(COMMON_INCLUDE
         Include/Test.h 
         Include/Triangle.h	
 		Include/RotatingCube.h
+		Include/Movable.h
         )
 set(COMMON_SOURCE
         Source/Test.cpp

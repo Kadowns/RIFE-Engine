@@ -6,22 +6,23 @@
 
 namespace Rife::Tools {
 
-    class Camera : Base::Component {
+    class Camera : public Base::Component {
 
     public:
-        Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float aspect, float near, float far);
+		Camera() { s_instance = this; }
+        Camera(float fov, float aspect, float near, float far);
 
         float getFov() { return m_fov; }
         float getAspect() { return m_aspect; }
         float getNear() { return m_near; }
         float getFar() { return m_far; }
 
-        glm::vec3 getPosition() { return m_position; }
+        glm::vec3 getPosition() { return p_gameObject->getTransform()->m_position; }
         glm::vec3 getTarget() { return m_target; }
         glm::vec3 getUp() { return m_up; }
 
         Camera* updateProjection(float fov, float aspect, float near, float far);
-        Camera* updateView(glm::vec3 position, glm::vec3 target, glm::vec3 up);
+        Camera* updateView();
         glm::mat4 getProjection() { return m_projection; }
         glm::mat4 getView() { return m_view; }
 

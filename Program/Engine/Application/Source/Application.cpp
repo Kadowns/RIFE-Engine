@@ -14,6 +14,10 @@ void Application::frameBufferResizedCallback(GLFWwindow * window, int width, int
 	app->m_framebufferResized = true;
 }
 
+void Application::keyboardCallback(GLFWwindow * window, int key, int scancode, int action, int mods) {
+	KEYBOARD->set(key, action);
+}
+
 
 int Application::getWidth() {
     return m_width;
@@ -78,6 +82,7 @@ void Application::initGlfw() {
     glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
+	glfwSetKeyCallback(m_window, keyboardCallback);
    
 }
 
