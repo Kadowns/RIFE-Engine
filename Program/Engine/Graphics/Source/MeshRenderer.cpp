@@ -42,21 +42,6 @@ void MeshRenderer::createCommandBuffers() {
 		VkBuffer vertexBuffers[] = { m_vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, vertexBuffers, offsets);
-
-		Light light = {};
-		light.position = glm::vec3(1.0f, 10.0f, 2.0f);
-		light.direction = glm::normalize(glm::vec3(-1.0f));
-		light.ambient = glm::vec3(0.2f);
-		light.diffuse = glm::vec3(0.7f);
-
-		vkCmdPushConstants(
-			m_commandBuffers[i],
-			*p_material->getPipelineLayout(),
-			VK_SHADER_STAGE_FRAGMENT_BIT,
-			0,
-			sizeof(Light),
-			(void*)&light
-		);
         
 		vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
@@ -93,6 +78,16 @@ void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const uint32_
 	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], 0, sizeof(m_ubo), 0, &data);
 	memcpy(data, &m_ubo, sizeof(m_ubo));
 	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
+
+    data = nullptr;
+
+    Light light = {};
+    light.direction = glm::vec3(-1);
+
+    size_t size = sizeof(Light) + sizeof(m_ubo);
+    vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], sizeof(m_ubo), sizeof(Light), 0, &data);
+    memcpy(data, &light, sizeof(Light));
+    vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 }
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
@@ -106,7 +101,7 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
 	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, p_mesh->getIndices().data());
 
 
-	bufferSize = sizeof(Ubo::Mvp);
+	bufferSize = sizeof(Ubo::Mvp) + sizeof(Light);
 	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
 	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
@@ -140,15 +135,18 @@ MeshRenderer::~MeshRenderer() {
 }
 
 void MeshRenderer::createDescriptorPool() {
-	VkDescriptorPoolSize poolSize = {};
-	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSize.descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[1].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = 1;
-	poolInfo.pPoolSizes = &poolSize;
-	poolInfo.maxSets = static_cast<uint32_t>(poolSize.descriptorCount);
+	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	poolInfo.pPoolSizes = poolSizes.data();
+	poolInfo.maxSets = static_cast<uint32_t>(poolSizes[0].descriptorCount);
 
 	if (vkCreateDescriptorPool(*VK_WRAPPER->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create descriptor pool!");
@@ -171,24 +169,33 @@ void MeshRenderer::createDescriptorSets() {
 
 	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
 
-		VkDescriptorBufferInfo bufferInfo = {};
-		bufferInfo.buffer = m_uniformBuffers[i];
-		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(Ubo::Mvp);
+		std::array<VkDescriptorBufferInfo, 2> bufferInfos = {};
+		bufferInfos[0].buffer = m_uniformBuffers[i];
+		bufferInfos[0].offset = 0;
+		bufferInfos[0].range = sizeof(Ubo::Mvp);
 
-		VkWriteDescriptorSet descriptorWrite = {};
-		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite.dstSet = m_descriptorSets[i];
-		descriptorWrite.dstBinding = 0;
-		descriptorWrite.dstArrayElement = 0;
+        bufferInfos[1].buffer = m_uniformBuffers[i];
+        bufferInfos[1].offset = 0;
+        bufferInfos[1].range = sizeof(Light);
 
-		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite.descriptorCount = 1;
 
-		descriptorWrite.pBufferInfo = &bufferInfo;
-		descriptorWrite.pImageInfo = nullptr; // Optional
-		descriptorWrite.pTexelBufferView = nullptr; // Optional
+		std::array<VkWriteDescriptorSet, 2> descriptorWrite = {};
+		descriptorWrite[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite[0].dstSet = m_descriptorSets[i];
+		descriptorWrite[0].dstBinding = 0;
+		descriptorWrite[0].dstArrayElement = 0;
+		descriptorWrite[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrite[0].descriptorCount = 1;
+		descriptorWrite[0].pBufferInfo = &bufferInfos[0];
+		
+        descriptorWrite[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite[1].dstSet = m_descriptorSets[i];
+        descriptorWrite[1].dstBinding = 1;
+        descriptorWrite[1].dstArrayElement = 0;
+        descriptorWrite[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrite[1].descriptorCount = 1;
+        descriptorWrite[1].pBufferInfo = &bufferInfos[1];
 
-		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), 1, &descriptorWrite, 0, nullptr);
+		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
 	}
 }
