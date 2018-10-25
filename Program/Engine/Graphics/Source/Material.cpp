@@ -3,8 +3,10 @@
 namespace Rife::Graphics {
 
 
-    Material::Material(std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
+    Material::Material(MaterialProperties& properties, std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
         std::vector<VkPushConstantRange>& pushConstantRangeInfos, VkGraphicsPipelineCreateInfo& pipelineCreateInfo) {
+
+		m_properties = properties;
 
         m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
         for (int i = 0; i < m_descriptorSetLayouts.size(); i++) {

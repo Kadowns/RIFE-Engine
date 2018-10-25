@@ -8,11 +8,11 @@ namespace Rife::Graphics {
     public:
         virtual void draw() = 0;
         virtual void createCommandBuffers() = 0;
-        virtual void updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex) = 0;
+        virtual void updateTransformInformation(const glm::mat4& vp,const glm::vec3& cameraPos, const uint32_t& imageIndex) = 0;
         virtual void freeCommandBuffers() = 0;
     protected:
 
-        Ubo::Mvp m_ubo;
+        Ubo::Transform m_ubo;
         std::vector<VkCommandBuffer> m_commandBuffers;
 
     };

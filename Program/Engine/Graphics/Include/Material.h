@@ -1,6 +1,7 @@
 #pragma once
 #include <GraphicsLibs.h>
 #include <Light.h>
+#include <MaterialProperties.h>
 #include <VkUtilities.h>
 #include <RifeCore.h>
 #include <array>
@@ -12,10 +13,17 @@ namespace Rife::Graphics {
     public:
 
         Material() {}
-        Material(std::vector<VkDescriptorSetLayoutCreateInfo>&, std::vector<VkPushConstantRange>&, VkGraphicsPipelineCreateInfo&);
+        Material(
+			MaterialProperties&,
+			std::vector<VkDescriptorSetLayoutCreateInfo>&,
+			std::vector<VkPushConstantRange>&,
+			VkGraphicsPipelineCreateInfo&
+		);
         ~Material();
 
         void clearPipeline();
+
+		MaterialProperties& getProperties() { return m_properties; }
 
         std::vector<VkDescriptorSetLayout>* getDescriptorSetLayouts() { return &m_descriptorSetLayouts; }
         VkDescriptorSet* getDescriptorSet() { return &m_descriptorSet; }
@@ -28,6 +36,8 @@ namespace Rife::Graphics {
     private:
 
         bool m_clear;
+
+		MaterialProperties m_properties;
 
         std::vector<VkDescriptorSetLayout> m_descriptorSetLayouts;
         VkDescriptorSet m_descriptorSet;

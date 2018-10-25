@@ -5,8 +5,10 @@
 
 namespace Rife::Graphics {
     namespace Ubo {
-        struct Mvp {
-            glm::mat4 mvp;
+        struct Transform {
+            glm::mat4 vp;
+			glm::mat4 m;
+			glm::vec4 cameraPos;
         };
     }
 }

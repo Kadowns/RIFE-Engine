@@ -162,7 +162,7 @@ namespace vk {
         void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
         void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
 
-        void updateUbos(uint32_t imageIndex, glm::mat4 vp, float time);
+        void updateUbos(uint32_t imageIndex, glm::mat4 vp, glm::vec3 cameraPos);
 
 		void bindCommandBuffer(std::vector<VkCommandBuffer>*);
 		void bindRenderer(Rife::Graphics::Renderer*);

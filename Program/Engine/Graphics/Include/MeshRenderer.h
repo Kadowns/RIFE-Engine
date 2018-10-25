@@ -13,7 +13,7 @@ namespace Rife::Graphics {
         void draw();
         void createCommandBuffers();
         void freeCommandBuffers();
-        void updateTransformInformation(const glm::mat4& vp, const uint32_t& imageIndex);
+        void updateTransformInformation(const glm::mat4& vp, const glm::vec3& cameraPos, const uint32_t& imageIndex);
         MeshRenderer(Mesh* mesh, Material* material);
         ~MeshRenderer();
 

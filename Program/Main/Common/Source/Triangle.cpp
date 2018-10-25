@@ -79,7 +79,7 @@ void Triangle::draw() {
 	}
 
     glm::mat4 vp = CAMERA->getProjection() * CAMERA->getView();
-    VK_WRAPPER->updateUbos(imageIndex, vp, TIME->time());
+    VK_WRAPPER->updateUbos(imageIndex, vp, CAMERA->getPosition());
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 

@@ -42,8 +42,12 @@ namespace Rife::Graphics {
         m_pipelineInfo.pColorBlendState = &colorBlending;
         return *this;
     }
+	MaterialBuilder& MaterialBuilder::setMaterialProperties(MaterialProperties& properties) {
+		m_properties = properties;
+		return *this;
+	}
     Material* MaterialBuilder::createMaterial() {
-        return new Material(m_descriptorSetLayoutInfos, m_pushConstantRanges, m_pipelineInfo);
+        return new Material(m_properties, m_descriptorSetLayoutInfos, m_pushConstantRanges, m_pipelineInfo);
     }
 }
 

@@ -18,10 +18,12 @@ namespace Rife::Graphics {
         MaterialBuilder& setMultisampleState(VkPipelineMultisampleStateCreateInfo& multisampling);
         MaterialBuilder& setDepthStencilState(VkPipelineDepthStencilStateCreateInfo& depthStencil);
         MaterialBuilder& setColorBlendState(VkPipelineColorBlendStateCreateInfo& colorBlending);
+		MaterialBuilder& setMaterialProperties(MaterialProperties& properties);
         Material* createMaterial();
 
     private:
 
+		MaterialProperties m_properties;
         std::vector<VkDescriptorSetLayoutCreateInfo> m_descriptorSetLayoutInfos;
         std::vector<VkPushConstantRange> m_pushConstantRanges;
         VkGraphicsPipelineCreateInfo m_pipelineInfo;

@@ -11,13 +11,24 @@ namespace Rife::Graphics {
         uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT ;
         uboLayoutBinding.pImmutableSamplers = nullptr;
 
+		VkDescriptorSetLayoutBinding materialLayoutBinding = {};
+		materialLayoutBinding.binding = 2;
+		materialLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		materialLayoutBinding.descriptorCount = 1;
+		materialLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		materialLayoutBinding.pImmutableSamplers = nullptr;
+
         VkDescriptorSetLayoutBinding lightLayoutBinding = {};
         lightLayoutBinding.binding = 1;
         lightLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         lightLayoutBinding.descriptorCount = 1;
         lightLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
         lightLayoutBinding.pImmutableSamplers = nullptr;
-        std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, lightLayoutBinding };
+        std::array<VkDescriptorSetLayoutBinding, 3> bindings = {
+			uboLayoutBinding,
+			lightLayoutBinding,
+			materialLayoutBinding
+		};
 
         VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
         descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -171,16 +182,22 @@ namespace Rife::Graphics {
         dynamicState.dynamicStateCount = 2;
         dynamicState.pDynamicStates = dynamicStates;	
 
-        auto material = MaterialBuilder()
-            .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
-            .setShaderStages(shaderStages, 2)
-            .setVertexInputState(vertexInputInfo)
-            .setInputAssemblyState(inputAssembly)
-            .setViewportState(viewportState)
-            .setRasterizationState(rasterizer)
-            .setMultisampleState(multisampling)
-            .setDepthStencilState(depthStencil)
-            .setColorBlendState(colorBlending)
+		MaterialProperties properties = {};
+		properties.ambient = glm::vec4(0.5f, 0.0f, 0.5f, 0.0f);
+		properties.diffuse = glm::vec4(0.5f, 0.0f, 0.5f, 0.0f);
+		properties.specular = glm::vec4(1.0f, 1.0f, 1.0f, 256.0f);
+
+		auto material = MaterialBuilder()
+			.addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
+			.setShaderStages(shaderStages, 2)
+			.setVertexInputState(vertexInputInfo)
+			.setInputAssemblyState(inputAssembly)
+			.setViewportState(viewportState)
+			.setRasterizationState(rasterizer)
+			.setMultisampleState(multisampling)
+			.setDepthStencilState(depthStencil)
+			.setColorBlendState(colorBlending)
+			.setMaterialProperties(properties)
             .createMaterial();
 
         vkDestroyShaderModule(*VK_WRAPPER->getDevice(), fragShaderModule, nullptr);

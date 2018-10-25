@@ -11,6 +11,7 @@ set(GRAPHICS_INCLUDE
 	Include/Material.h
 	Include/MaterialBuilder.h
 	Include/MaterialFactory.h
+	Include/MaterialProperties.h
 	Include/Light.h
 	Include/VkUtilities.h 
 	Include/UniformBufferObject.h
