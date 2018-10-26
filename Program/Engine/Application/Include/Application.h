@@ -18,8 +18,6 @@
 
 #define APPLICATION Application::getInstance()
 
-
-
 //----------------------------------------------------
 class Application {
 private :
@@ -54,6 +52,8 @@ public:
 	static void frameBufferResizedCallback(GLFWwindow *window, int width, int height);
 
 	static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+    static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 
     static Application *getInstance();
 

@@ -11,7 +11,7 @@ private:
     float m_fpsUpdateRate = 1.5f;
     double m_frameRate = 30;
     double m_time = 0;
-    double m_lastFrameTime;
+    double m_lastFrameTime = 0;
     double m_dt = 0;
     
 public:

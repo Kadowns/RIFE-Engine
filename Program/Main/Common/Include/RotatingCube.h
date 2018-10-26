@@ -19,14 +19,13 @@ namespace Script {
         void awake() {
 
             transform = p_gameObject->getTransform();
-            rotation = glm::vec3(getRand(10), getRand(90), getRand(10));
+            rotation = glm::vec3(getRand(30), getRand(10), getRand(10));
             printf("\nRotation: x:%f, y:%f, z:%f", rotation.x, rotation.y, rotation.z);
         }
 
         void update() {
-
-            transform->m_eulerRotation = rotation * (float)glm::radians(TIME->time());
-            transform->m_rotation = glm::quat(transform->m_eulerRotation);
+            transform->m_rotation *= glm::quat(glm::radians(rotation * (float)TIME->getLastFrameTime()));
+            glm::normalize(transform->m_rotation);
         }
     };
 }

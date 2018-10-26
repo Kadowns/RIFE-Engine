@@ -22,7 +22,7 @@ namespace Rife::Tools {
 
     Camera* Camera::updateView() {
         m_position = p_gameObject->getTransform()->m_position;
-        m_target = m_position + glm::vec3(0.0f, 0.0f, -1.0f);
+        m_target = m_position + p_gameObject->getTransform()->m_front;
         m_up = glm::vec3(0.0f, 1.0f, 0.0f);
         m_view = glm::lookAt(m_position, m_target, m_up);
         return this;

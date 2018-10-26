@@ -18,6 +18,10 @@ void Application::keyboardCallback(GLFWwindow * window, int key, int scancode, i
 	KEYBOARD->set(key, action);
 }
 
+void Application::mouseCallback(GLFWwindow * window, double xpos, double ypos) {
+    MOUSE->updatePosition(xpos, ypos);
+}
+
 
 int Application::getWidth() {
     return m_width;
@@ -73,6 +77,7 @@ void Application::initGlfw() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
+
     m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), NULL, NULL);
 
     if (m_window == nullptr)
@@ -82,7 +87,9 @@ void Application::initGlfw() {
     glfwSetFramebufferSizeCallback(m_window, frameBufferResizedCallback);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(m_window, keyboardCallback);
+    glfwSetCursorPosCallback(m_window, mouseCallback);
    
 }
 

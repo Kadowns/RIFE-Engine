@@ -7,11 +7,13 @@ namespace Rife::Base {
 	struct Transform {
 
 		glm::vec3 m_position;
-        glm::vec3 m_eulerRotation;
+        glm::vec3 m_front;
         glm::quat m_rotation;
         glm::vec3 m_scale;
 
-        Transform() : m_position(glm::vec3(0.0f)), m_eulerRotation(glm::vec3(0.0f)), m_rotation(glm::vec3(0.0f)), m_scale(glm::vec3(1.0f)) {}
+        Transform() : m_position(glm::vec3(0.0f)), m_front(0.0f, 0.0f, -1.0f), m_rotation(glm::vec3(0.0f)), m_scale(glm::vec3(1.0f)) {}
+
+        glm::vec3 getEuler() { return glm::degrees(glm::eulerAngles(m_rotation)); }
 
         glm::mat4 getModelMatrix() {
             glm::mat4 translate = glm::translate(glm::mat4(1.0f), m_position);

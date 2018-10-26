@@ -33,7 +33,7 @@ void Triangle::init() {
 	gameObjects[0]->addComponent(new Script::Movable());
 
 
-	int newSize = gameObjects.size() + 5;
+	int newSize = gameObjects.size() + 4;
     for (int i = gameObjects.size(); i < newSize; i++) {
         gameObjects.push_back(new GameObject());
         gameObjects[i]->addComponent(new MeshRenderer(mesh, mat));
@@ -41,15 +41,12 @@ void Triangle::init() {
         gameObjects[i]->setup();
     }
 	
-
-    gameObjects[0]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, -1.0f);
     gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -1.5f, -6.0f);
+    gameObjects[1]->getTransform()->m_rotation = glm::quat(glm::vec3(0.0f, -1.5f, -6.0f));
     gameObjects[2]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
     gameObjects[3]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
     gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
 
-	
-    
 }
 
 void Triangle::awake() {
