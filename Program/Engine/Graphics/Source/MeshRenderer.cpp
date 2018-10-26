@@ -86,7 +86,7 @@ void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const glm::ve
 	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 	//------------------------
 	//light
-	offset += range;
+	offset += 256;
 	range = sizeof(Light);
     data = nullptr;
 
@@ -101,7 +101,7 @@ void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const glm::ve
     vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 	//-------------------
 	//material
-	offset += range;
+	offset += 256;
 	range = sizeof(MaterialProperties);
 	data = nullptr;
 	
@@ -122,7 +122,7 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
 	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, p_mesh->getIndices().data());
 
 
-	bufferSize = sizeof(Ubo::Transform) + sizeof(Light) + sizeof(MaterialProperties);
+    bufferSize = 256 * 3;//sizeof(Ubo::Transform) + sizeof(Light) + sizeof(MaterialProperties);
 	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
 	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
@@ -196,13 +196,17 @@ void MeshRenderer::createDescriptorSets() {
 		bufferInfos[0].buffer = m_uniformBuffers[i];
 		bufferInfos[0].offset = 0;
 		bufferInfos[0].range = sizeof(Ubo::Transform);
+        auto properties = VK_WRAPPER->getPhysicalDeviceProperties();
+        
 
         bufferInfos[1].buffer = m_uniformBuffers[i];
-        bufferInfos[1].offset = bufferInfos[0].offset + bufferInfos[0].range;
+        bufferInfos[1].offset = (bufferInfos[0].range + bufferInfos[0].offset)
+            + ((properties.limits.minUniformBufferOffsetAlignment * 1) - (bufferInfos[0].range + bufferInfos[0].offset));
         bufferInfos[1].range = sizeof(Light);
 
 		bufferInfos[2].buffer = m_uniformBuffers[i];
-		bufferInfos[2].offset = bufferInfos[1].offset + bufferInfos[1].range;
+        bufferInfos[2].offset = (bufferInfos[1].range + bufferInfos[1].offset)
+            + ((properties.limits.minUniformBufferOffsetAlignment * 2) - (bufferInfos[1].range + bufferInfos[1].offset));
 		bufferInfos[2].range = sizeof(MaterialProperties);
 
 

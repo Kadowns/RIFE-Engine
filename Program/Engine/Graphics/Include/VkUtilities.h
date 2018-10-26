@@ -83,6 +83,8 @@ namespace vk {
 		VkDeviceMemory m_vkDepthImageMemory;
 		VkImageView m_vkDepthImageView;
 
+        VkPhysicalDeviceProperties m_physicalDeviceProperties;
+
         std::vector<VkImage> m_vkSwapChainImages;
         std::vector<VkImageView> m_vkSwapChainImageViews;
         std::vector<VkFramebuffer> m_vkSwapChainFramebuffers;
@@ -169,6 +171,7 @@ namespace vk {
 
         //Getters
         VkDevice* getDevice() { return &m_vkDevice; }
+        VkPhysicalDeviceProperties getPhysicalDeviceProperties() { return m_physicalDeviceProperties; }
         std::vector<VkCommandBuffer>* getCommandBuffers() { return &m_primaryCommandBuffers; }
         VkQueue* getGraphicsQueue() { return &m_vkGraphicsQueue; }
         VkQueue* getPresentQueue() { return &m_vkPresentQueue; }

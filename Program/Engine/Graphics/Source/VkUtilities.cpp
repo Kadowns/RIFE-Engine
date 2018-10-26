@@ -380,8 +380,8 @@ int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {
 
     ///Pega informa��es da GPU
     //propriedades
-    VkPhysicalDeviceProperties deviceProperties;
-    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+   
+    vkGetPhysicalDeviceProperties(device, &m_physicalDeviceProperties);
 
     //features
     VkPhysicalDeviceFeatures deviceFeatures;
@@ -413,11 +413,11 @@ int vk::Wrapper::rateDeviceSuitability(VkPhysicalDevice device) {
     //TODO------------fazer um sistema de scores mais eficiente
     int score = 0;
 
-    if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+    if (m_physicalDeviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
         score += 999;
     }
 
-    score += deviceProperties.limits.maxImageDimension2D;
+    score += m_physicalDeviceProperties.limits.maxImageDimension2D;
 
     return score;
 }
