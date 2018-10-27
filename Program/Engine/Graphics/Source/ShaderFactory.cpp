@@ -65,7 +65,7 @@ namespace Rife::Graphics {
 		//viewport
 		auto viewportInfo = createViewportInfo();
 		//--------------
-
+        
 		//rasterizer
 		auto rasterizer = createRasterizerInfo(
 			VK_FALSE,
@@ -126,7 +126,7 @@ namespace Rife::Graphics {
 
 		return buffer;
 	}
-	VkDescriptorSetLayoutBinding& ShaderFactory::createDescriptorSetLayoutBinding(
+	VkDescriptorSetLayoutBinding ShaderFactory::createDescriptorSetLayoutBinding(
 		uint32_t binding,
 		VkDescriptorType type,
 		uint32_t descriptorCount,
@@ -144,7 +144,7 @@ namespace Rife::Graphics {
 		return descriptorBinding;
 	}
 
-	VkShaderModule& ShaderFactory::createShaderModule(const std::vector<char>& code) {
+	VkShaderModule ShaderFactory::createShaderModule(const std::vector<char>& code) {
 
 		VkShaderModuleCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -159,7 +159,7 @@ namespace Rife::Graphics {
 		return shaderModule;
 	}
 
-	VkPipelineShaderStageCreateInfo& ShaderFactory::createShaderStage(
+	VkPipelineShaderStageCreateInfo ShaderFactory::createShaderStage(
 		VkShaderStageFlagBits stage,
 		VkShaderModule module,
 		const char * pName
@@ -174,7 +174,7 @@ namespace Rife::Graphics {
 
 	}
 
-	VkPipelineVertexInputStateCreateInfo& ShaderFactory::createVertexInputInfo() {
+	VkPipelineVertexInputStateCreateInfo ShaderFactory::createVertexInputInfo() {
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 
@@ -191,7 +191,7 @@ namespace Rife::Graphics {
 		return vertexInputInfo;
 	}
 
-	VkPipelineInputAssemblyStateCreateInfo& ShaderFactory::createInputAssemblyInfo(
+	VkPipelineInputAssemblyStateCreateInfo ShaderFactory::createInputAssemblyInfo(
 		VkPrimitiveTopology topology,
 		VkBool32 primitiveRestartEnable,
 		const void * pNext
@@ -204,7 +204,7 @@ namespace Rife::Graphics {
 		inputAssembly.pNext = pNext;
 		return inputAssembly;
 	}
-	VkPipelineViewportStateCreateInfo& ShaderFactory::createViewportInfo() {
+	VkPipelineViewportStateCreateInfo ShaderFactory::createViewportInfo() {
 		
 		VkViewport viewport = {};
 		viewport.x = 0.0f;
@@ -231,7 +231,7 @@ namespace Rife::Graphics {
 
 	}
 
-	VkPipelineRasterizationStateCreateInfo& ShaderFactory::createRasterizerInfo(
+	VkPipelineRasterizationStateCreateInfo ShaderFactory::createRasterizerInfo(
 		const VkBool32& depthClamp,
 		VkPolygonMode fillMode,
 		VkCullModeFlags cullMode,
@@ -255,7 +255,7 @@ namespace Rife::Graphics {
 		return rasterizer;
 	}
 
-	VkPipelineMultisampleStateCreateInfo& ShaderFactory::createMultisampleInfo() {
+	VkPipelineMultisampleStateCreateInfo ShaderFactory::createMultisampleInfo() {
 		
 		VkPipelineMultisampleStateCreateInfo multisampling = {};
 		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -269,7 +269,7 @@ namespace Rife::Graphics {
 		return multisampling;
 	}
 
-	VkPipelineColorBlendStateCreateInfo& ShaderFactory::createColorBlendInfo() {
+	VkPipelineColorBlendStateCreateInfo ShaderFactory::createColorBlendInfo() {
 		
 		VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
 		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -295,7 +295,7 @@ namespace Rife::Graphics {
 		return colorBlending;
 	}
 
-	VkPipelineDepthStencilStateCreateInfo& ShaderFactory::createDepthStencilInfo(){
+	VkPipelineDepthStencilStateCreateInfo ShaderFactory::createDepthStencilInfo(){
 		
 		VkPipelineDepthStencilStateCreateInfo depthStencil = {};
 
