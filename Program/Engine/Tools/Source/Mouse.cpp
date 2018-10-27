@@ -2,7 +2,7 @@
 
 namespace Rife::Tools {
    
-    Mouse::Mouse() : m_lastPosition(glm::dvec2(400.0, 300.0)) {}
+    Mouse::Mouse() {}
 
     Mouse* Mouse::s_instance = nullptr;
 
@@ -11,6 +11,12 @@ namespace Rife::Tools {
     }
 
     void Mouse::updatePosition(double x, double y) {
+
+        if (m_firstMove) {
+            m_lastPosition = glm::dvec2(x, y);
+            m_firstMove = false;
+        }
+
         float xoffset = x - m_lastPosition.x;
         float yoffset = m_lastPosition.y - y;
         m_lastPosition.x = x;
@@ -24,6 +30,7 @@ namespace Rife::Tools {
             m_callbacks[i].second(m_callbacks[i].first, xoffset, yoffset);
         }
     }
+
 
     void Mouse::setUpdatePositionCallback(void* caller, std::function<void(void* caller, double xoffset, double yoffset)> callback) {
         m_callbacks.push_back(std::pair<void*, std::function<void(void* caller, double xoffset, double yoffset)>>(caller, callback));

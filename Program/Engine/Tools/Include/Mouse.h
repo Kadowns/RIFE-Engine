@@ -31,5 +31,7 @@ namespace Rife::Tools {
 
         static Mouse* s_instance;
 
+        bool m_firstMove = true;
+
     };
 }
