@@ -1,10 +1,7 @@
 #pragma once
-#include <GraphicsLibs.h>
 #include <Light.h>
+#include <ShaderFactory.h>
 #include <MaterialProperties.h>
-#include <VkUtilities.h>
-#include <RifeCore.h>
-#include <array>
 
 namespace Rife::Graphics {
 
@@ -15,6 +12,7 @@ namespace Rife::Graphics {
         Material() {}
         Material(
 			MaterialProperties&,
+			Shader& shader,
 			std::vector<VkDescriptorSetLayoutCreateInfo>&,
 			std::vector<VkPushConstantRange>&,
 			VkGraphicsPipelineCreateInfo&
@@ -25,10 +23,7 @@ namespace Rife::Graphics {
 
 		MaterialProperties& getProperties() { return m_properties; }
 
-        std::vector<VkDescriptorSetLayout>* getDescriptorSetLayouts() { return &m_descriptorSetLayouts; }
-
-        VkPipelineLayout* getPipelineLayout() { return &m_pipelineLayout; }
-        VkPipeline* getPipeline() { return &m_pipeline; }
+		Shader* getShader() { return &m_shader; }
 
         bool isCleared() { return m_clear; }
 
@@ -37,10 +32,7 @@ namespace Rife::Graphics {
         bool m_clear;
 
 		MaterialProperties m_properties;
+		Shader m_shader;
 
-        std::vector<VkDescriptorSetLayout> m_descriptorSetLayouts;
-
-        VkPipelineLayout m_pipelineLayout;
-        VkPipeline m_pipeline;
     };
 }

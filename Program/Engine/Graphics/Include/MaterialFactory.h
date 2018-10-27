@@ -1,6 +1,7 @@
 #pragma once
 
 #include <MaterialBuilder.h>
+#include <ShaderFactory.h>
 
 
 namespace Rife::Graphics {
@@ -10,9 +11,5 @@ namespace Rife::Graphics {
 
         static Material* defaultMaterial(const std::string& vertShaderName, const std::string& fragShaderName);
 
-    private:
-
-        static std::vector<char> loadShaderFile(const std::string& filename);
-        static VkShaderModule createShaderModule(const std::vector<char>& code);
     };
 }

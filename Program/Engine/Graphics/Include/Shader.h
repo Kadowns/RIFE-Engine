@@ -14,6 +14,7 @@ namespace Rife::Graphics {
 			std::vector<VkDescriptorSetLayoutCreateInfo>&,
 			std::vector<VkPushConstantRange>&
 		);
+		Shader() {}
 
 		~Shader();
 

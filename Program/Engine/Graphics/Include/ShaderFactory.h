@@ -30,16 +30,27 @@ namespace Rife::Graphics {
 			const char* pName
 		);
 
-		static VkPipelineVertexInputStateCreateInfo createVertexInputStateInfo();
+		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo();
 		
 		static VkPipelineInputAssemblyStateCreateInfo createInputAssemblyInfo(
-			VkPipelineInputAssemblyStateCreateFlags flags,
 			VkPrimitiveTopology topology,
 			VkBool32 primitiveRestartEnable,
 			const void* pNext
 		);
+
+		static VkPipelineViewportStateCreateInfo createViewportInfo();
 		
+		static VkPipelineRasterizationStateCreateInfo createRasterizerInfo(
+			const VkBool32& depthClamp,
+			VkPolygonMode fillMode,
+			VkCullModeFlags cullMode,
+			VkFrontFace frontFace
+		);
 
+		static VkPipelineMultisampleStateCreateInfo createMultisampleInfo();
 
+		static VkPipelineColorBlendStateCreateInfo createColorBlendInfo();
+
+		static VkPipelineDepthStencilStateCreateInfo createDepthStencilInfo();
 	};
 }
