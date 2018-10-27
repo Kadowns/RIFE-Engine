@@ -8,13 +8,15 @@ namespace Rife::Graphics {
 
     public:
 
-        
+        MaterialBuilder& setShader(Shader* shader);
 		MaterialBuilder& setMaterialProperties(MaterialProperties& properties);
         Material* createMaterial();
 
     private:
 
 		MaterialProperties m_properties;
+
+        Shader* p_shader;
         
     };
 }

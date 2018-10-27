@@ -14,7 +14,7 @@ namespace Rife::Graphics {
 
 		static std::vector<char> loadShaderFile(const std::string& filename);
 
-		static VkDescriptorSetLayoutBinding createDescriptorSetLayoutBinding(
+		static VkDescriptorSetLayoutBinding& createDescriptorSetLayoutBinding(
 			uint32_t binding,
 			VkDescriptorType type,
 			uint32_t descriptorCount,
@@ -22,35 +22,35 @@ namespace Rife::Graphics {
 			const VkSampler* pImmutableSamplers
 		);
 
-		static VkShaderModule createShaderModule(const std::vector<char>& code);
+		static VkShaderModule& createShaderModule(const std::vector<char>& code);
 
-		static VkPipelineShaderStageCreateInfo createShaderStage(
+		static VkPipelineShaderStageCreateInfo& createShaderStage(
 			VkShaderStageFlagBits stage,
 			VkShaderModule module,
 			const char* pName
 		);
 
-		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo();
+		static VkPipelineVertexInputStateCreateInfo& createVertexInputInfo();
 		
-		static VkPipelineInputAssemblyStateCreateInfo createInputAssemblyInfo(
+		static VkPipelineInputAssemblyStateCreateInfo& createInputAssemblyInfo(
 			VkPrimitiveTopology topology,
 			VkBool32 primitiveRestartEnable,
 			const void* pNext
 		);
 
-		static VkPipelineViewportStateCreateInfo createViewportInfo();
+		static VkPipelineViewportStateCreateInfo& createViewportInfo();
 		
-		static VkPipelineRasterizationStateCreateInfo createRasterizerInfo(
+		static VkPipelineRasterizationStateCreateInfo& createRasterizerInfo(
 			const VkBool32& depthClamp,
 			VkPolygonMode fillMode,
 			VkCullModeFlags cullMode,
 			VkFrontFace frontFace
 		);
 
-		static VkPipelineMultisampleStateCreateInfo createMultisampleInfo();
+		static VkPipelineMultisampleStateCreateInfo& createMultisampleInfo();
 
-		static VkPipelineColorBlendStateCreateInfo createColorBlendInfo();
+		static VkPipelineColorBlendStateCreateInfo& createColorBlendInfo();
 
-		static VkPipelineDepthStencilStateCreateInfo createDepthStencilInfo();
+		static VkPipelineDepthStencilStateCreateInfo& createDepthStencilInfo();
 	};
 }

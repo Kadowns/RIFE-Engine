@@ -3,22 +3,17 @@
 namespace Rife::Graphics {
 
 
-    Material::Material(MaterialProperties& properties,
-		Shader& shader,
-		std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
-        std::vector<VkPushConstantRange>& pushConstantRangeInfos,
-		VkGraphicsPipelineCreateInfo& pipelineCreateInfo
-	) {
+    Material::Material(MaterialProperties& properties, Shader* shader) {
 
 		m_properties = properties;
 
-		m_shader = shader;
+		p_shader = shader;
         
         m_clear = false;
     }
 
     Material::~Material() {
-		m_shader.~Shader();
+        delete p_shader;
     }
 
     void Material::clearPipeline() {

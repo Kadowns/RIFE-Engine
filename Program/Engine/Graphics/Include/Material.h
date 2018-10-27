@@ -10,20 +10,14 @@ namespace Rife::Graphics {
     public:
 
         Material() {}
-        Material(
-			MaterialProperties&,
-			Shader& shader,
-			std::vector<VkDescriptorSetLayoutCreateInfo>&,
-			std::vector<VkPushConstantRange>&,
-			VkGraphicsPipelineCreateInfo&
-		);
+        Material(MaterialProperties&, Shader* shader);
         ~Material();
 
         void clearPipeline();
 
 		MaterialProperties& getProperties() { return m_properties; }
 
-		Shader* getShader() { return &m_shader; }
+		Shader* getShader() { return p_shader; }
 
         bool isCleared() { return m_clear; }
 
@@ -32,7 +26,7 @@ namespace Rife::Graphics {
         bool m_clear;
 
 		MaterialProperties m_properties;
-		Shader m_shader;
+		Shader* p_shader;
 
     };
 }
