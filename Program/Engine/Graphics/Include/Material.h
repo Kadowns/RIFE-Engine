@@ -26,7 +26,6 @@ namespace Rife::Graphics {
 		MaterialProperties& getProperties() { return m_properties; }
 
         std::vector<VkDescriptorSetLayout>* getDescriptorSetLayouts() { return &m_descriptorSetLayouts; }
-        VkDescriptorSet* getDescriptorSet() { return &m_descriptorSet; }
 
         VkPipelineLayout* getPipelineLayout() { return &m_pipelineLayout; }
         VkPipeline* getPipeline() { return &m_pipeline; }
@@ -40,7 +39,6 @@ namespace Rife::Graphics {
 		MaterialProperties m_properties;
 
         std::vector<VkDescriptorSetLayout> m_descriptorSetLayouts;
-        VkDescriptorSet m_descriptorSet;
 
         VkPipelineLayout m_pipelineLayout;
         VkPipeline m_pipeline;

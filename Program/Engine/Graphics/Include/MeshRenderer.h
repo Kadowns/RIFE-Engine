@@ -22,6 +22,8 @@ namespace Rife::Graphics {
         void createDescriptorPool();
         void createDescriptorSets();
 
+		std::vector<size_t> temp_offsets;
+
         Mesh* p_mesh;
         Material* p_material;
         VkBuffer m_vertexBuffer, m_indexBuffer;

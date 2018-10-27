@@ -8,24 +8,13 @@ namespace Rife::Graphics {
 
     public:
 
-        MaterialBuilder& addDescriptorSetLayoutInfo(VkDescriptorSetLayoutCreateInfo& descriptorLayoutInfo);
-        MaterialBuilder& addPushConstantRange(VkPushConstantRange& pushConstantRange);
-        MaterialBuilder& setShaderStages(VkPipelineShaderStageCreateInfo* shaderStages, const uint32_t& stageCount);
-        MaterialBuilder& setVertexInputState(VkPipelineVertexInputStateCreateInfo& vertexInputInfo);
-        MaterialBuilder& setInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo& inputAssembly);
-        MaterialBuilder& setViewportState(VkPipelineViewportStateCreateInfo& viewportState);
-        MaterialBuilder& setRasterizationState(VkPipelineRasterizationStateCreateInfo& rasterizer);
-        MaterialBuilder& setMultisampleState(VkPipelineMultisampleStateCreateInfo& multisampling);
-        MaterialBuilder& setDepthStencilState(VkPipelineDepthStencilStateCreateInfo& depthStencil);
-        MaterialBuilder& setColorBlendState(VkPipelineColorBlendStateCreateInfo& colorBlending);
+        
 		MaterialBuilder& setMaterialProperties(MaterialProperties& properties);
         Material* createMaterial();
 
     private:
 
 		MaterialProperties m_properties;
-        std::vector<VkDescriptorSetLayoutCreateInfo> m_descriptorSetLayoutInfos;
-        std::vector<VkPushConstantRange> m_pushConstantRanges;
-        VkGraphicsPipelineCreateInfo m_pipelineInfo;
+        
     };
 }

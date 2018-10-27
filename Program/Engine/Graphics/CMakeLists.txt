@@ -12,6 +12,9 @@ set(GRAPHICS_INCLUDE
 	Include/MaterialBuilder.h
 	Include/MaterialFactory.h
 	Include/MaterialProperties.h
+	Include/Shader.h
+	Include/ShaderBuilder.h
+	Include/ShaderFactory.h
 	Include/Light.h
 	Include/VkUtilities.h 
 	Include/UniformBufferObject.h
@@ -25,6 +28,9 @@ set(GRAPHICS_SOURCE
 	Source/Material.cpp
 	Source/MaterialBuilder.cpp
 	Source/MaterialFactory.cpp
+	Source/Shader.cpp
+	Source/ShaderBuilder.cpp
+	Source/ShaderFactory.cpp
 	Source/VkUtilities.cpp
 	)
 
