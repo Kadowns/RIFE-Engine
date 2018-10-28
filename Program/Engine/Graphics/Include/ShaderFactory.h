@@ -30,7 +30,10 @@ namespace Rife::Graphics {
 			const char* pName
 		);
 
-		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo();
+		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo(
+            VkVertexInputBindingDescription&,
+            std::array<VkVertexInputAttributeDescription, 3>
+        );
 		
 		static VkPipelineInputAssemblyStateCreateInfo createInputAssemblyInfo(
 			VkPrimitiveTopology topology,
@@ -38,7 +41,7 @@ namespace Rife::Graphics {
 			const void* pNext
 		);
 
-		static VkPipelineViewportStateCreateInfo createViewportInfo();
+		static VkPipelineViewportStateCreateInfo createViewportInfo(VkViewport&, VkRect2D&);
 		
 		static VkPipelineRasterizationStateCreateInfo createRasterizerInfo(
 			const VkBool32& depthClamp,
@@ -49,7 +52,7 @@ namespace Rife::Graphics {
 
 		static VkPipelineMultisampleStateCreateInfo createMultisampleInfo();
 
-		static VkPipelineColorBlendStateCreateInfo createColorBlendInfo();
+		static VkPipelineColorBlendStateCreateInfo createColorBlendInfo(VkPipelineColorBlendAttachmentState&);
 
 		static VkPipelineDepthStencilStateCreateInfo createDepthStencilInfo();
 	};

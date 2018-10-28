@@ -86,7 +86,7 @@ void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const glm::ve
 	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 	//------------------------
 	//light
-	offset += range;
+	offset += temp_offsets[0];
 	range = sizeof(Light);
     data = nullptr;
 
@@ -101,7 +101,7 @@ void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const glm::ve
     vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
 	//-------------------
 	//material
-	offset += range;
+	offset += temp_offsets[1];
 	range = sizeof(MaterialProperties);
 	data = nullptr;
 	
@@ -121,8 +121,12 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
 	bufferSize = sizeof(p_mesh->getIndices()[0]) * p_mesh->getIndices().size();
 	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, p_mesh->getIndices().data());
 
-
-    bufferSize = sizeof(Ubo::Transform) + sizeof(Light) + sizeof(MaterialProperties);
+    VkDeviceSize minAlignment = VK_WRAPPER->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
+    temp_offsets.resize(3);
+    temp_offsets[0] = (sizeof(Ubo::Transform) / minAlignment) * minAlignment + ((sizeof(Ubo::Transform) % minAlignment) > 0 ? minAlignment : 0);
+    temp_offsets[1] = (sizeof(Light) / minAlignment) * minAlignment + ((sizeof(Light) % minAlignment) > 0 ? minAlignment : 0);
+    temp_offsets[2] = (sizeof(MaterialProperties) / minAlignment) * minAlignment + ((sizeof(MaterialProperties) % minAlignment) > 0 ? minAlignment : 0);
+    bufferSize = temp_offsets[0] + temp_offsets[1] + temp_offsets[2];
 	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
 	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
@@ -190,7 +194,6 @@ void MeshRenderer::createDescriptorSets() {
 		throw std::runtime_error("failed to allocate descriptor sets!");
 	}
 	std::array<VkDescriptorBufferInfo, 3> bufferInfos = {};
-	temp_offsets.resize(bufferInfos.size());
 	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
 
 		
@@ -201,11 +204,11 @@ void MeshRenderer::createDescriptorSets() {
         
 
         bufferInfos[1].buffer = m_uniformBuffers[i];
-		bufferInfos[1].offset = (bufferInfos[0].range + bufferInfos[0].offset);
+        bufferInfos[1].offset = temp_offsets[0];
         bufferInfos[1].range = sizeof(Light);
 
 		bufferInfos[2].buffer = m_uniformBuffers[i];
-		bufferInfos[2].offset = (bufferInfos[1].range + bufferInfos[1].offset);
+        bufferInfos[2].offset = temp_offsets[1] + temp_offsets[0];
 		bufferInfos[2].range = sizeof(MaterialProperties);
 
 
@@ -221,8 +224,5 @@ void MeshRenderer::createDescriptorSets() {
 		}
 
 		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
-	}
-	for (int i = 0; i < bufferInfos.size(); i++) {
-		temp_offsets[i] = bufferInfos[i].offset;
 	}
 }

@@ -38,36 +38,52 @@ namespace Rife::Graphics {
 
 		//Shaders------------------------------
 
-		auto vertShaderCode = loadShaderFile(vertShaderName);
-		auto fragShaderCode = loadShaderFile(fragShaderName);
+		std::vector<char> vertShaderCode = loadShaderFile(vertShaderName);
+        std::vector<char> fragShaderCode = loadShaderFile(fragShaderName);
 
 		VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 		VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
-		auto vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
-		auto fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
+	    VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
+        VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 		//--------------------------------------------------------------
 
 		//vertex input
-        auto vertexInputInfo = createVertexInputInfo();
+        VkVertexInputBindingDescription vertexBinding = Vertex::getBindingDescription();
+        std::array<VkVertexInputAttributeDescription, 3> vertexAttribute = Vertex::getAttributeDescriptions();
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
 		//---------------
 		
 		//input assembly
-		auto inputAssembly = createInputAssemblyInfo(
+		VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssemblyInfo(
 			VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 			VK_FALSE,
 			nullptr
 		);
 		//--------------
 
-		//viewport
-		auto viewportInfo = createViewportInfo();
+		//viewport & scissor
+        VkViewport viewport = {};
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        auto extent = *VK_WRAPPER->getVkExtent();
+        viewport.width = (float)extent.width;
+        viewport.height = (float)extent.height;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+
+        VkRect2D scissor = {};
+        scissor.offset = { 0, 0 };
+        scissor.extent = extent;
+
+		VkPipelineViewportStateCreateInfo viewportInfo = createViewportInfo(viewport, scissor);
 		//--------------
         
 		//rasterizer
-		auto rasterizer = createRasterizerInfo(
+		VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
 			VK_FALSE,
 			VK_POLYGON_MODE_FILL,
 			VK_CULL_MODE_BACK_BIT,
@@ -76,15 +92,25 @@ namespace Rife::Graphics {
 		//---------------
 
 		//multisample
-		auto multisample = createMultisampleInfo();
+		VkPipelineMultisampleStateCreateInfo multisample = createMultisampleInfo();
 		//---------------
 
 		//color blend
-		auto colorBlend = createColorBlendInfo();
+        VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
 		//--------------
 
 		//depth stencil
-		auto depthStencil = createDepthStencilInfo();
+		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo();
 		//--------------
 
 		auto shader = ShaderBuilder().
@@ -174,12 +200,12 @@ namespace Rife::Graphics {
 
 	}
 
-	VkPipelineVertexInputStateCreateInfo ShaderFactory::createVertexInputInfo() {
+	VkPipelineVertexInputStateCreateInfo ShaderFactory::createVertexInputInfo(
+        VkVertexInputBindingDescription& bindingDescription,
+        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions
+    ) {
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
-
-		auto bindingDescription = Vertex::getBindingDescription();
-		auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputInfo.vertexBindingDescriptionCount = 1;
@@ -204,21 +230,8 @@ namespace Rife::Graphics {
 		inputAssembly.pNext = pNext;
 		return inputAssembly;
 	}
-	VkPipelineViewportStateCreateInfo ShaderFactory::createViewportInfo() {
+	VkPipelineViewportStateCreateInfo ShaderFactory::createViewportInfo(VkViewport& viewport, VkRect2D& scissor) {
 		
-		VkViewport viewport = {};
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		auto extent = *VK_WRAPPER->getVkExtent();
-		viewport.width = (float)extent.width;
-		viewport.height = (float)extent.height;
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-
-		//scissor define qual parte vai ser cortada da imagem (geralmente n corta nada)
-		VkRect2D scissor = {};
-		scissor.offset = { 0, 0 };
-		scissor.extent = extent;
 
 		VkPipelineViewportStateCreateInfo viewportState = {};
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -269,17 +282,7 @@ namespace Rife::Graphics {
 		return multisampling;
 	}
 
-	VkPipelineColorBlendStateCreateInfo ShaderFactory::createColorBlendInfo() {
-		
-		VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		colorBlendAttachment.blendEnable = VK_TRUE;
-		colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+	VkPipelineColorBlendStateCreateInfo ShaderFactory::createColorBlendInfo(VkPipelineColorBlendAttachmentState& colorBlendAttachment) {
 
 		VkPipelineColorBlendStateCreateInfo colorBlending = {};
 		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
