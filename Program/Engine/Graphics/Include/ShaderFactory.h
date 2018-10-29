@@ -22,6 +22,8 @@ namespace Rife::Graphics {
 			const VkSampler* pImmutableSamplers
 		);
 
+        static VkPushConstantRange createPushConstantRange(VkShaderStageFlags stage, uint32_t range, uint32_t offset);
+
         static UniformBufferObjectInfo createUboInfo(
             VkDeviceSize range
         );

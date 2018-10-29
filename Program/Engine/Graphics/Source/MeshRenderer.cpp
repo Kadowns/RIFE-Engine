@@ -37,6 +37,15 @@ void MeshRenderer::createCommandBuffers() {
 			throw std::runtime_error("failed to begin recording command buffer!");
 		}
 
+        vkCmdPushConstants(
+            m_commandBuffers[i],
+            *p_material->getShader()->getPipelineLayout(),
+            VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(Ubo::uMaterialProperties),
+            (void*)&p_material->getProperties()
+        );
+
         vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *p_material->getShader()->getPipeline());
 
 		VkBuffer vertexBuffers[] = { p_mesh->getVertexBuffer() };
@@ -84,8 +93,8 @@ void MeshRenderer::updateTransformInformation(const uint32_t& imageIndex) {
         ->bindUniformBufferMemory(&m_uniformBuffersMemory[imageIndex])
         ->setItem(&m_ubo)
         ->setItem(CAMERA->getUbo())
-        ->setItem(&light)
-        ->setItem(&(p_material->getProperties()));
+        ->setItem(&light);
+        //->setItem(&(p_material->getProperties()));
 }
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {

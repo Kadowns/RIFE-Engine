@@ -32,13 +32,13 @@ namespace Rife::Graphics {
             }
         };
 
-        struct uMaterialProperties : ShaderItem {
+        struct uMaterialProperties {
 
             glm::vec4 ambient;
             glm::vec4 diffuse;
             glm::vec4 specular;
 
-            void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
+           /* void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
 
                 struct {
                     glm::vec4 ambient;
@@ -54,7 +54,7 @@ namespace Rife::Graphics {
                 vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, sizeof(temp), 0, &data);
                 memcpy(data, &temp, sizeof(temp));
                 vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
-            }
+            }*/
         };
 
         struct uLight : ShaderItem {

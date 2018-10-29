@@ -1,6 +1,5 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-#extension GL_KHR_vulkan_glsl : enable
 
 layout(binding = 2, std140) uniform Light {
 
@@ -11,7 +10,7 @@ layout(binding = 2, std140) uniform Light {
 
 } uLight;
 
-layout(binding = 3, std140) uniform Material {
+layout(push_constant, std140) uniform Material {
 
 	  vec4 ambient;
 	  vec4 diffuse;

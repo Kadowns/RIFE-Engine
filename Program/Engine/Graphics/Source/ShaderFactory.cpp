@@ -5,7 +5,7 @@ namespace Rife::Graphics {
 	Shader* ShaderFactory::defaultShader(const std::string& vertShaderName, const std::string& fragShaderName) {
 
 		//Layout bindings
-		std::array<VkDescriptorSetLayoutBinding, 4> layoutBindings;
+		std::array<VkDescriptorSetLayoutBinding, 3> layoutBindings;
         //model
 		layoutBindings[0] = createDescriptorSetLayoutBinding(
 			0,									//binding
@@ -33,14 +33,15 @@ namespace Rife::Graphics {
 			nullptr								//immutabble samplers
 		);
 
-        //material
-        layoutBindings[3] = createDescriptorSetLayoutBinding(
-            3,									//binding
-            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
-            1,									//descriptor count
-            VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
-            nullptr								//immutabble samplers
-        );
+        ////material
+        //layoutBindings[3] = createDescriptorSetLayoutBinding(
+        //    3,									//binding
+        //    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
+        //    1,									//descriptor count
+        //    VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
+        //    nullptr								//immutabble samplers
+        //);
+
 
 		VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
 		descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -53,7 +54,14 @@ namespace Rife::Graphics {
         UniformBufferObjectInfo modelInfo = createUboInfo(sizeof(Ubo::uTransform) - shaderItemSize);
         UniformBufferObjectInfo cameraInfo = createUboInfo(sizeof(Ubo::uCamera) - shaderItemSize);
         UniformBufferObjectInfo lightInfo = createUboInfo(sizeof(Ubo::uLight) - shaderItemSize);
-        UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
+        //UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
+
+        //pushConstant
+        VkPushConstantRange materialPushConstant = createPushConstantRange(
+            VK_SHADER_STAGE_FRAGMENT_BIT,
+            sizeof(Ubo::uMaterialProperties),
+            0
+        );
 
         //----------------------------------------------------------------------------------
 
@@ -141,7 +149,8 @@ namespace Rife::Graphics {
             .addUniformBufferObjectInfo(modelInfo)
             .addUniformBufferObjectInfo(cameraInfo)
             .addUniformBufferObjectInfo(lightInfo)
-            .addUniformBufferObjectInfo(materialInfo)
+            .addPushConstantRange(materialPushConstant)
+            //.addUniformBufferObjectInfo(materialInfo)
 			.setShaderStages(shaderStages, 2)
 			.setVertexInputState(vertexInputInfo)
 			.setInputAssemblyState(inputAssembly)
@@ -196,6 +205,14 @@ namespace Rife::Graphics {
 
 		return descriptorBinding;
 	}
+
+    VkPushConstantRange ShaderFactory::createPushConstantRange(VkShaderStageFlags stage, uint32_t range, uint32_t offset) {
+        VkPushConstantRange pushConstant = {};
+        pushConstant.stageFlags = stage;
+        pushConstant.size = range;
+        pushConstant.offset = offset;
+        return pushConstant;
+    }
 
     UniformBufferObjectInfo ShaderFactory::createUboInfo(VkDeviceSize range) {
         

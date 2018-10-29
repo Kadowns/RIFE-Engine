@@ -26,7 +26,7 @@ void Triangle::init() {
     gameObjects[0]->addComponent(new Script::Movable());
 	m_camera = (Camera*)gameObjects[0]->addComponent(new Camera());
 	m_camera->updateProjection(
-		45.0f,
+		55.0f,
 		(float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(),
 		0.01f,
 		100.0f
@@ -60,7 +60,7 @@ void Triangle::update() {
         gameObjects[i]->update();
     }
     m_camera->update();
-	printf("\nFPS:%d", TIME->getFPS());
+	//printf("\nFPS:%d", TIME->getFPS());
 }
 
 void Triangle::draw() {
