@@ -22,6 +22,10 @@ namespace Rife::Graphics {
 			const VkSampler* pImmutableSamplers
 		);
 
+        static UniformBufferObjectInfo createUboInfo(
+            VkDeviceSize range
+        );
+
 		static VkShaderModule createShaderModule(const std::vector<char>& code);
 
 		static VkPipelineShaderStageCreateInfo createShaderStage(

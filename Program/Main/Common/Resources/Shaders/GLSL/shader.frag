@@ -2,7 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_KHR_vulkan_glsl : enable
 
-layout(binding = 1, std140) uniform Light {
+layout(binding = 2, std140) uniform Light {
 
 	  vec4 direction;
 	  vec4 ambient;
@@ -11,7 +11,7 @@ layout(binding = 1, std140) uniform Light {
 
 } uLight;
 
-layout(binding = 2, std140) uniform Material {
+layout(binding = 3, std140) uniform Material {
 
 	  vec4 ambient;
 	  vec4 diffuse;

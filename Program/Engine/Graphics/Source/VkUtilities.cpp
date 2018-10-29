@@ -1141,9 +1141,9 @@ void vk::Wrapper::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, 
 
 }
 
-void vk::Wrapper::updateUbos(uint32_t imageIndex, glm::mat4 vp, glm::vec3 cameraPos) {
+void vk::Wrapper::updateUbos(uint32_t imageIndex) {
     for (int i = 0; i < m_renderers.size(); i++) {
-        m_renderers[i]->updateTransformInformation(vp, cameraPos, imageIndex);
+        m_renderers[i]->updateTransformInformation(imageIndex);
     }
 }
 

@@ -18,11 +18,12 @@ void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
     
-    auto mat = MaterialFactory::defaultMaterial("triVert.spv", "triFrag.spv");
-    auto mesh = new Mesh(vertices, indices);
+    mat = MaterialFactory::defaultMaterial("triVert.spv", "triFrag.spv");
+    mesh = new Mesh(vertices, indices);
 
 	gameObjects.push_back(new GameObject());
-	gameObjects[0]->getTransform()->m_position = glm::vec3(4.0f, 1.0f, 6.0f);
+	gameObjects[0]->getTransform()->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
+    gameObjects[0]->addComponent(new Script::Movable());
 	m_camera = (Camera*)gameObjects[0]->addComponent(new Camera());
 	m_camera->updateProjection(
 		45.0f,
@@ -30,7 +31,7 @@ void Triangle::init() {
 		0.01f,
 		100.0f
 	);
-	gameObjects[0]->addComponent(new Script::Movable());
+	
 
 
 	int newSize = gameObjects.size() + 4;
@@ -41,8 +42,7 @@ void Triangle::init() {
         gameObjects[i]->setup();
     }
 	
-    gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -1.5f, -6.0f);
-    gameObjects[1]->getTransform()->m_rotation = glm::quat(glm::vec3(0.0f, -1.5f, -6.0f));
+    gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, 0.0f, -6.0f);
     gameObjects[2]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
     gameObjects[3]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
     gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
@@ -59,7 +59,8 @@ void Triangle::update() {
     for (int i = 0; i < gameObjects.size(); i++) {
         gameObjects[i]->update();
     }
-	//printf("\nFPS:%d", TIME->getLastFrameTime());
+    m_camera->update();
+	printf("\nFPS:%d", TIME->getFPS());
 }
 
 void Triangle::draw() {
@@ -85,10 +86,8 @@ void Triangle::draw() {
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
-
-	m_camera->updateView();
-    glm::mat4 vp = CAMERA->getProjection() * CAMERA->getView();
-    VK_WRAPPER->updateUbos(imageIndex, vp, CAMERA->getPosition());
+    
+    VK_WRAPPER->updateUbos(imageIndex);
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -134,6 +133,9 @@ void Triangle::draw() {
 }
 
 void Triangle::deinit() {
+
+    delete mesh;
+    
 	for (int i = 0; i < gameObjects.size(); i++) {
 		delete gameObjects[i];
 	}

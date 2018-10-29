@@ -1,10 +1,11 @@
 #pragma once
 #include <RifeMath.h>
 #include <RifeCore.h>
+#include <UniformBufferObject.h>
 
-#define CAMERA Rife::Tools::Camera::getInstance()
+#define CAMERA Rife::Graphics::Camera::getInstance()
 
-namespace Rife::Tools {
+namespace Rife::Graphics {
 
     class Camera : public Base::Component {
 
@@ -23,14 +24,20 @@ namespace Rife::Tools {
 
         Camera* updateProjection(float fov, float aspect, float near, float far);
         Camera* updateView();
+        Ubo::uCamera* getUbo() { return &m_ubo; }
         glm::mat4 getProjection() { return m_projection; }
         glm::mat4 getView() { return m_view; }
+
+        void update();
 
         static Camera* getInstance();
 
     private:
 
         static Camera* s_instance;
+
+        Ubo::uCamera m_ubo;
+
 
         float m_fov, m_aspect, m_near, m_far;
         glm::mat4 m_projection, m_view;

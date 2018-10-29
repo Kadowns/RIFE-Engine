@@ -4,7 +4,9 @@ namespace Rife::Graphics {
 
 	Shader::Shader(VkGraphicsPipelineCreateInfo & pipelineCreateInfo,
 		std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
-		std::vector<VkPushConstantRange>& pushConstantRanges) {
+		std::vector<VkPushConstantRange>& pushConstantRanges,
+        std::vector<UniformBufferObjectInfo>& uboInfo
+    ) {
 
 		m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
 		for (int i = 0; i < m_descriptorSetLayouts.size(); i++) {
@@ -37,6 +39,8 @@ namespace Rife::Graphics {
 		if (vkCreateGraphicsPipelines(*VK_WRAPPER->getDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
+
+        m_uboInfo = uboInfo;
 	}
 
 	Shader::~Shader() {
@@ -45,6 +49,36 @@ namespace Rife::Graphics {
 			vkDestroyDescriptorSetLayout(*VK_WRAPPER->getDevice(), m_descriptorSetLayouts[i], nullptr);
 		}
 	}
+
+    Shader* Shader::bindUniformBufferMemory(VkDeviceMemory* memory) {
+        p_uniformBufferMemory = memory;
+        m_uboOffset = 0;
+        m_itemIndex = 0;
+        return this;
+    }
+
+    UniformBufferObjectInfo Shader::getUboInfo(size_t index) {
+        return m_uboInfo[index];
+    }
+
+    VkDeviceSize Shader::getUboOffset(size_t uboIndex) {
+        VkDeviceSize sum = 0;
+        for (size_t i = 0; i < uboIndex; i++) {
+            sum += m_uboInfo[i].offset;
+        }
+        return sum;
+    }
+
+    size_t Shader::getUboSize() {
+        return m_uboInfo.size();
+    }
+
+    Shader* Shader::setItem(ShaderItem* item) {
+        item->Apply(this, p_uniformBufferMemory, m_uboOffset);
+        m_itemIndex++;
+        m_uboOffset += m_uboInfo[m_itemIndex - 1].offset;
+        return this;
+    }
 
 	void Shader::clearPipeline() {
 		vkDestroyPipeline(*VK_WRAPPER->getDevice(), m_pipeline, nullptr);

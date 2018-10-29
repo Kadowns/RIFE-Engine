@@ -3,7 +3,7 @@
 namespace Rife::Graphics {
 
 
-    Material::Material(MaterialProperties& properties, Shader* shader) {
+    Material::Material(Ubo::uMaterialProperties& properties, Shader* shader) {
 
 		m_properties = properties;
 

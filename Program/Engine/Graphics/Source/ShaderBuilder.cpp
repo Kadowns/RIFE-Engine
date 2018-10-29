@@ -12,6 +12,11 @@ namespace Rife::Graphics {
 		return *this;
 	}
 
+    ShaderBuilder& ShaderBuilder::addUniformBufferObjectInfo(UniformBufferObjectInfo& uboInfo) {
+        m_uboInfo.push_back(uboInfo);
+        return *this;
+    }
+
 	ShaderBuilder& ShaderBuilder::setShaderStages(VkPipelineShaderStageCreateInfo* shaderStages, const uint32_t& stageCount) {
 		m_pipelineInfo.stageCount = stageCount;
 		m_pipelineInfo.pStages = shaderStages;
@@ -54,6 +59,6 @@ namespace Rife::Graphics {
 	}
 
 	Shader* ShaderBuilder::createShader() {
-		return new Shader(m_pipelineInfo, m_descriptorSetLayoutInfos, m_pushConstantRanges);
+		return new Shader(m_pipelineInfo, m_descriptorSetLayoutInfos, m_pushConstantRanges, m_uboInfo);
 	}
 }

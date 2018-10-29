@@ -39,11 +39,11 @@ void MeshRenderer::createCommandBuffers() {
 
         vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *p_material->getShader()->getPipeline());
 
-		VkBuffer vertexBuffers[] = { m_vertexBuffer };
+		VkBuffer vertexBuffers[] = { p_mesh->getVertexBuffer() };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, vertexBuffers, offsets);
         
-		vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(m_commandBuffers[i], p_mesh->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(
 			m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -70,63 +70,30 @@ void MeshRenderer::freeCommandBuffers() {
 }
 
 
-void MeshRenderer::updateTransformInformation(const glm::mat4& vp, const glm::vec3& cameraPos, const uint32_t& imageIndex) {
+void MeshRenderer::updateTransformInformation(const uint32_t& imageIndex) {
 
 	//transform
-	m_ubo.vp = vp;
-	m_ubo.m = p_gameObject->getTransform()->getModelMatrix();
-	m_ubo.cameraPos = glm::vec4(cameraPos, 0.0f);
-
-	size_t offset = 0;
-	size_t range = sizeof(m_ubo);
-	void* data;
-
-	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], offset, range, 0, &data);
-	memcpy(data, &m_ubo, range);
-	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
-	//------------------------
-	//light
-	offset += temp_offsets[0];
-	range = sizeof(Light);
-    data = nullptr;
-
-    Light light = {};
+    Ubo::uLight light = {};
     light.direction = glm::vec4(0.0f, -0.4, -1.0f, 0.0f);
 	light.ambient = glm::vec4(0.1f);
 	light.diffuse = glm::vec4(1.0f, 1.0f, 0.8f, 0.0f);
 	light.specular = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-    
-    vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], offset, range, 0, &data);
-    memcpy(data, &light, range);
-    vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
-	//-------------------
-	//material
-	offset += temp_offsets[1];
-	range = sizeof(MaterialProperties);
-	data = nullptr;
-	
-	vkMapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex], offset, range, 0, &data);
-	memcpy(data, &(p_material->getProperties()), range);
-	vkUnmapMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[imageIndex]);
-	//--------------------
+   
+	m_ubo.model = p_gameObject->getTransform()->getModelMatrix();
+    p_material->getShader()
+        ->bindUniformBufferMemory(&m_uniformBuffersMemory[imageIndex])
+        ->setItem(&m_ubo)
+        ->setItem(CAMERA->getUbo())
+        ->setItem(&light)
+        ->setItem(&(p_material->getProperties()));
 }
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
     p_mesh = mesh;
     p_material = material;
 
-	VkDeviceSize bufferSize = sizeof(p_mesh->getVertices()[0]) * p_mesh->getVertices().size();
-	VK_WRAPPER->createVertexBuffer(m_vertexBuffer, m_vertexBufferMemory, bufferSize, p_mesh->getVertices().data());
-
-	bufferSize = sizeof(p_mesh->getIndices()[0]) * p_mesh->getIndices().size();
-	VK_WRAPPER->createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, p_mesh->getIndices().data());
-
-    VkDeviceSize minAlignment = VK_WRAPPER->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
-    temp_offsets.resize(3);
-    temp_offsets[0] = (sizeof(Ubo::Transform) / minAlignment) * minAlignment + ((sizeof(Ubo::Transform) % minAlignment) > 0 ? minAlignment : 0);
-    temp_offsets[1] = (sizeof(Light) / minAlignment) * minAlignment + ((sizeof(Light) % minAlignment) > 0 ? minAlignment : 0);
-    temp_offsets[2] = (sizeof(MaterialProperties) / minAlignment) * minAlignment + ((sizeof(MaterialProperties) % minAlignment) > 0 ? minAlignment : 0);
-    bufferSize = temp_offsets[0] + temp_offsets[1] + temp_offsets[2];
+	
+    VkDeviceSize bufferSize = p_material->getShader()->getUboOffset(p_material->getShader()->getUboSize());
 	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
 	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
@@ -141,12 +108,6 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
 MeshRenderer::~MeshRenderer() {
 	vkDestroyDescriptorPool(*VK_WRAPPER->getDevice(), m_descriptorPool, nullptr);
 
-	vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_vertexBuffer, nullptr);
-	vkFreeMemory(*VK_WRAPPER->getDevice(), m_vertexBufferMemory, nullptr);
-
-	vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_indexBuffer, nullptr);
-	vkFreeMemory(*VK_WRAPPER->getDevice(), m_indexBufferMemory, nullptr);
-
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
 		vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_uniformBuffers[i], nullptr);
 		vkFreeMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
@@ -160,13 +121,15 @@ MeshRenderer::~MeshRenderer() {
 }
 
 void MeshRenderer::createDescriptorPool() {
-	std::array<VkDescriptorPoolSize, 3> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[1].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
 	poolSizes[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[2].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+    poolSizes[3].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[3].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
 
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
@@ -193,26 +156,22 @@ void MeshRenderer::createDescriptorSets() {
 	if (vkAllocateDescriptorSets(*VK_WRAPPER->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate descriptor sets!");
 	}
-	std::array<VkDescriptorBufferInfo, 3> bufferInfos = {};
+
+    Shader* shader = p_material->getShader();
+
+	std::vector<VkDescriptorBufferInfo> bufferInfos = {};
+    bufferInfos.resize(shader->getUboSize());
 	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
 
 		
-		bufferInfos[0].buffer = m_uniformBuffers[i];
-		bufferInfos[0].offset = 0;
-		bufferInfos[0].range = sizeof(Ubo::Transform);
-        auto properties = VK_WRAPPER->getPhysicalDeviceProperties();
-        
+        for (size_t j = 0; j < bufferInfos.size(); j++) {
+            bufferInfos[j].buffer = m_uniformBuffers[i];
+            bufferInfos[j].offset = shader->getUboOffset(j);
+            bufferInfos[j].range = shader->getUboInfo(j).range;
+        }
 
-        bufferInfos[1].buffer = m_uniformBuffers[i];
-        bufferInfos[1].offset = temp_offsets[0];
-        bufferInfos[1].range = sizeof(Light);
-
-		bufferInfos[2].buffer = m_uniformBuffers[i];
-        bufferInfos[2].offset = temp_offsets[1] + temp_offsets[0];
-		bufferInfos[2].range = sizeof(MaterialProperties);
-
-
-		std::array<VkWriteDescriptorSet, 3> descriptorWrite = {};
+		std::vector<VkWriteDescriptorSet> descriptorWrite = {};
+        descriptorWrite.resize(bufferInfos.size());
 		for (size_t j = 0; j < descriptorWrite.size(); j++) {
 			descriptorWrite[j].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrite[j].dstSet = m_descriptorSets[i];

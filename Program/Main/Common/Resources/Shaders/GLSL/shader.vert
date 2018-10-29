@@ -1,11 +1,14 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 0) uniform UniformBufferObject {
-    mat4 vp;
-	mat4 m;
-	vec4 cameraPos;
-} ubo;
+layout(binding = 0) uniform Model {
+	mat4 m;	
+} uModel;
+
+layout(binding = 1) uniform Camera { 
+	mat4 vp;
+	vec4 position;
+} uCamera;
 
 layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec4 aColor;
@@ -20,11 +23,11 @@ out gl_PerVertex {
 };
 
 void main() {
-	vec4 worldPos = ubo.m * vec4(aPosition, 1.0);
+	vec4 worldPos = uModel.m * vec4(aPosition, 1.0);
 
-    gl_Position = ubo.vp * worldPos;
+    gl_Position = uCamera.vp * worldPos;
 	
     vColor = aColor;
-	vNormal = (ubo.m * vec4(aNormal, 0.1)).xyz;
-	vViewPath = ubo.cameraPos.xyz - worldPos.xyz;
+	vNormal = (uModel.m * vec4(aNormal, 0.1)).xyz;
+	vViewPath = uCamera.position.xyz - worldPos.xyz;
 }

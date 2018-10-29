@@ -7,7 +7,7 @@ namespace Rife::Graphics {
         return *this;
     }
 
-	MaterialBuilder& MaterialBuilder::setMaterialProperties(MaterialProperties& properties) {
+	MaterialBuilder& MaterialBuilder::setMaterialProperties(Ubo::uMaterialProperties& properties) {
 		m_properties = properties;
 		return *this;
 	}

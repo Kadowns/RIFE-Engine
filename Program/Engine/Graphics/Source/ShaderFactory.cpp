@@ -5,7 +5,8 @@ namespace Rife::Graphics {
 	Shader* ShaderFactory::defaultShader(const std::string& vertShaderName, const std::string& fragShaderName) {
 
 		//Layout bindings
-		std::array<VkDescriptorSetLayoutBinding, 3> layoutBindings;
+		std::array<VkDescriptorSetLayoutBinding, 4> layoutBindings;
+        //model
 		layoutBindings[0] = createDescriptorSetLayoutBinding(
 			0,									//binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
@@ -14,14 +15,16 @@ namespace Rife::Graphics {
 			nullptr								//immutabble samplers
 		);
 
+        //camera
 		layoutBindings[1] = createDescriptorSetLayoutBinding(
 			1,									//binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
 			1,									//descriptor count
-			VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
+			VK_SHADER_STAGE_VERTEX_BIT,		//shader stage
 			nullptr								//immutabble samplers
 		);
 
+        //light
 		layoutBindings[2] = createDescriptorSetLayoutBinding(
 			2,									//binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
@@ -30,11 +33,31 @@ namespace Rife::Graphics {
 			nullptr								//immutabble samplers
 		);
 
+        //material
+        layoutBindings[3] = createDescriptorSetLayoutBinding(
+            3,									//binding
+            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
+            1,									//descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
+            nullptr								//immutabble samplers
+        );
+
 		VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
 		descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		descriptorSetLayoutInfo.bindingCount = static_cast<uint32_t>(layoutBindings.size());
 		descriptorSetLayoutInfo.pBindings = layoutBindings.data();
 		//----------------------------------------------------------------------------
+
+        //UniformBufferObjectInfo-------------
+        auto shaderItemSize = sizeof(ShaderItem);
+        UniformBufferObjectInfo modelInfo = createUboInfo(sizeof(Ubo::uTransform) - shaderItemSize);
+        UniformBufferObjectInfo cameraInfo = createUboInfo(sizeof(Ubo::uCamera) - shaderItemSize);
+        UniformBufferObjectInfo lightInfo = createUboInfo(sizeof(Ubo::uLight) - shaderItemSize);
+        UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
+
+        //----------------------------------------------------------------------------------
+
+
 
 		//Shaders------------------------------
 
@@ -113,8 +136,12 @@ namespace Rife::Graphics {
 		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo();
 		//--------------
 
-		auto shader = ShaderBuilder().
-			addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
+		auto shader = ShaderBuilder()
+            .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
+            .addUniformBufferObjectInfo(modelInfo)
+            .addUniformBufferObjectInfo(cameraInfo)
+            .addUniformBufferObjectInfo(lightInfo)
+            .addUniformBufferObjectInfo(materialInfo)
 			.setShaderStages(shaderStages, 2)
 			.setVertexInputState(vertexInputInfo)
 			.setInputAssemblyState(inputAssembly)
@@ -169,6 +196,15 @@ namespace Rife::Graphics {
 
 		return descriptorBinding;
 	}
+
+    UniformBufferObjectInfo ShaderFactory::createUboInfo(VkDeviceSize range) {
+        
+        VkDeviceSize minAlignment = VK_WRAPPER->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
+        UniformBufferObjectInfo uboInfo = {};
+        uboInfo.offset = (range / minAlignment) * minAlignment + ((range % minAlignment) > 0 ? minAlignment : 0);
+        uboInfo.range = range;
+        return uboInfo;
+    }
 
 	VkShaderModule ShaderFactory::createShaderModule(const std::vector<char>& code) {
 

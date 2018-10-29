@@ -1,7 +1,6 @@
 #pragma once
-#include <Light.h>
+
 #include <ShaderFactory.h>
-#include <MaterialProperties.h>
 
 namespace Rife::Graphics {
 
@@ -10,12 +9,12 @@ namespace Rife::Graphics {
     public:
 
         Material() {}
-        Material(MaterialProperties&, Shader* shader);
+        Material(Ubo::uMaterialProperties&, Shader* shader);
         ~Material();
 
         void clearPipeline();
 
-		MaterialProperties& getProperties() { return m_properties; }
+        Ubo::uMaterialProperties& getProperties() { return m_properties; }
 
 		Shader* getShader() { return p_shader; }
 
@@ -25,7 +24,7 @@ namespace Rife::Graphics {
 
         bool m_clear;
 
-		MaterialProperties m_properties;
+        Ubo::uMaterialProperties m_properties;
 		Shader* p_shader;
 
     };

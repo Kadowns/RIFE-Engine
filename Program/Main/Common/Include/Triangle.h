@@ -68,6 +68,9 @@ private:
     Keyboard *keys;
 	Camera* m_camera;
 
+    Material* mat;
+    Mesh* mesh;
+
 public:
     Triangle();
     ~Triangle();

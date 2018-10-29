@@ -9,6 +9,7 @@ namespace Rife::Graphics {
 
 		ShaderBuilder& addDescriptorSetLayoutInfo(VkDescriptorSetLayoutCreateInfo& descriptorLayoutInfo);
 		ShaderBuilder& addPushConstantRange(VkPushConstantRange& pushConstantRange);
+        ShaderBuilder& addUniformBufferObjectInfo(UniformBufferObjectInfo& uboInfo);
 		ShaderBuilder& setShaderStages(VkPipelineShaderStageCreateInfo* shaderStages, const uint32_t& stageCount);
 		ShaderBuilder& setVertexInputState(VkPipelineVertexInputStateCreateInfo& vertexInputInfo);
 		ShaderBuilder& setInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo& inputAssembly);
@@ -23,6 +24,7 @@ namespace Rife::Graphics {
 
 		std::vector<VkDescriptorSetLayoutCreateInfo> m_descriptorSetLayoutInfos;
 		std::vector<VkPushConstantRange> m_pushConstantRanges;
+        std::vector<UniformBufferObjectInfo> m_uboInfo;
 		VkGraphicsPipelineCreateInfo m_pipelineInfo;
 
 	};

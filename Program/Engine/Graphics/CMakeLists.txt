@@ -11,11 +11,11 @@ set(GRAPHICS_INCLUDE
 	Include/Material.h
 	Include/MaterialBuilder.h
 	Include/MaterialFactory.h
-	Include/MaterialProperties.h
 	Include/Shader.h
 	Include/ShaderBuilder.h
 	Include/ShaderFactory.h
-	Include/Light.h
+	Include/ShaderItem.h
+	Include/Camera.h
 	Include/VkUtilities.h 
 	Include/UniformBufferObject.h
 	Include/GraphicsLibs.h 
@@ -31,6 +31,7 @@ set(GRAPHICS_SOURCE
 	Source/Shader.cpp
 	Source/ShaderBuilder.cpp
 	Source/ShaderFactory.cpp
+	Source/Camera.cpp
 	Source/VkUtilities.cpp
 	)
 
