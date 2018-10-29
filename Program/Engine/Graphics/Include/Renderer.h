@@ -7,7 +7,7 @@ namespace Rife::Graphics {
     public:
         virtual void draw() = 0;
         virtual void createCommandBuffers() = 0;
-        virtual void updateTransformInformation(const uint32_t& imageIndex) = 0;
+        virtual void updateUbos(const uint32_t& imageIndex) = 0;
         virtual void freeCommandBuffers() = 0;
     protected:
 

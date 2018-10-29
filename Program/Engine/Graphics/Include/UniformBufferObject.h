@@ -4,28 +4,42 @@
 
 namespace Rife::Graphics {
     namespace Ubo {
-        struct uTransform : ShaderItem {
+        class uTransform : public ShaderItem {
        
+		public:
+
+			static unsigned int size() {
+				return sizeof(uTransform) - sizeof(ShaderItem);
+			}
+
 			glm::mat4 model;			
+			virtual ~uTransform() {}
 
             void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
                 void* data;
-                auto range = sizeof(model);
+                auto range = size();
                 vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &model, range);
                 vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
             }
         };
 
-        struct uCamera : ShaderItem {
+		class uCamera : public ShaderItem {
 
+		public:
             glm::mat4 vp;
             glm::vec4 cameraPos;
+
+			virtual ~uCamera() {}
+
+			static unsigned int size() {
+				return sizeof(uCamera) - sizeof(ShaderItem);
+			}
 
             void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
 
                 void* data;
-                auto range = sizeof(vp) + sizeof(cameraPos);
+				auto range = size();
                 vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &vp, range);
                 vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
@@ -37,27 +51,13 @@ namespace Rife::Graphics {
             glm::vec4 ambient;
             glm::vec4 diffuse;
             glm::vec4 specular;
-
-           /* void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
-
-                struct {
-                    glm::vec4 ambient;
-                    glm::vec4 diffuse;
-                    glm::vec4 specular;
-                } temp;
-                temp.ambient = ambient;
-                temp.diffuse = diffuse;
-                temp.specular = specular;
-
-                void* data;
-        
-                vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, sizeof(temp), 0, &data);
-                memcpy(data, &temp, sizeof(temp));
-                vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
-            }*/
+           
         };
 
-        struct uLight : ShaderItem {
+        class uLight : public ShaderItem {
+
+		public:
+
             glm::vec4 direction;
             glm::vec4 ambient;
             glm::vec4 diffuse;
@@ -65,27 +65,21 @@ namespace Rife::Graphics {
             //xyz = color, w = power
             glm::vec4 specular;
 
-            void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
-                struct {
-                    glm::vec4 direction;
-                    glm::vec4 ambient;
-                    glm::vec4 diffuse;
-                    //xyz = color, w = power
-                    glm::vec4 specular;
-                }temp;
+			virtual ~uLight() {}
 
-                temp.direction = direction;
-                temp.ambient = ambient;
-                temp.diffuse = diffuse;
-                temp.specular = specular;
+			static unsigned int size() {
+				return sizeof(uLight) - sizeof(ShaderItem);
+			}
+
+            void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
+
+				auto range = size();
 
                 void* data;
-                vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, sizeof(temp), 0, &data);
-                memcpy(data, &temp, sizeof(temp));
+                vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                memcpy(data, &direction, range);
                 vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
             }
         };
     }
 }
-
-

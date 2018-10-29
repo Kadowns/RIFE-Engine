@@ -8,11 +8,11 @@ namespace Rife::Graphics {
 
 	public:
 
-		static Shader* defaultShader(const std::string& vertShaderName, const std::string& fragShaderName);
+		static Shader* defaultShader(const std::string_view& vertShaderName, const std::string_view& fragShaderName);
 
 	private:
 
-		static std::vector<char> loadShaderFile(const std::string& filename);
+		static std::vector<char> loadShaderFile(const std::string_view& filename);
 
 		static VkDescriptorSetLayoutBinding createDescriptorSetLayoutBinding(
 			uint32_t binding,

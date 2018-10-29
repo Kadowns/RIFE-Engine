@@ -79,7 +79,7 @@ void MeshRenderer::freeCommandBuffers() {
 }
 
 
-void MeshRenderer::updateTransformInformation(const uint32_t& imageIndex) {
+void MeshRenderer::updateUbos(const uint32_t& imageIndex) {
 
 	//transform
     Ubo::uLight light = {};

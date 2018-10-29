@@ -1,47 +1,38 @@
 #include <ShaderFactory.h>
+#include <string_view>
 
 namespace Rife::Graphics {
 
-	Shader* ShaderFactory::defaultShader(const std::string& vertShaderName, const std::string& fragShaderName) {
+	Shader* ShaderFactory::defaultShader(const std::string_view& vertShaderName, const std::string_view& fragShaderName) {
 
 		//Layout bindings
-		std::array<VkDescriptorSetLayoutBinding, 3> layoutBindings;
+		std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
         //model
-		layoutBindings[0] = createDescriptorSetLayoutBinding(
+		layoutBindings.push_back(createDescriptorSetLayoutBinding(
 			0,									//binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
 			1,									//descriptor count
 			VK_SHADER_STAGE_VERTEX_BIT,			//shader stage
 			nullptr								//immutabble samplers
-		);
+		));
 
         //camera
-		layoutBindings[1] = createDescriptorSetLayoutBinding(
+		layoutBindings.push_back(createDescriptorSetLayoutBinding(
 			1,									//binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
 			1,									//descriptor count
-			VK_SHADER_STAGE_VERTEX_BIT,		//shader stage
+			VK_SHADER_STAGE_VERTEX_BIT,			//shader stage
 			nullptr								//immutabble samplers
-		);
+		));
 
         //light
-		layoutBindings[2] = createDescriptorSetLayoutBinding(
+		layoutBindings.push_back(createDescriptorSetLayoutBinding(
 			2,									//binding
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
 			1,									//descriptor count
 			VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
 			nullptr								//immutabble samplers
-		);
-
-        ////material
-        //layoutBindings[3] = createDescriptorSetLayoutBinding(
-        //    3,									//binding
-        //    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
-        //    1,									//descriptor count
-        //    VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
-        //    nullptr								//immutabble samplers
-        //);
-
+		));
 
 		VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
 		descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -50,10 +41,9 @@ namespace Rife::Graphics {
 		//----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        auto shaderItemSize = sizeof(ShaderItem);
-        UniformBufferObjectInfo modelInfo = createUboInfo(sizeof(Ubo::uTransform) - shaderItemSize);
-        UniformBufferObjectInfo cameraInfo = createUboInfo(sizeof(Ubo::uCamera) - shaderItemSize);
-        UniformBufferObjectInfo lightInfo = createUboInfo(sizeof(Ubo::uLight) - shaderItemSize);
+        UniformBufferObjectInfo modelInfo = createUboInfo(Ubo::uTransform::size());
+        UniformBufferObjectInfo cameraInfo = createUboInfo(Ubo::uCamera::size());
+        UniformBufferObjectInfo lightInfo = createUboInfo(Ubo::uLight::size());
         //UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
 
         //pushConstant
@@ -150,7 +140,6 @@ namespace Rife::Graphics {
             .addUniformBufferObjectInfo(cameraInfo)
             .addUniformBufferObjectInfo(lightInfo)
             .addPushConstantRange(materialPushConstant)
-            //.addUniformBufferObjectInfo(materialInfo)
 			.setShaderStages(shaderStages, 2)
 			.setVertexInputState(vertexInputInfo)
 			.setInputAssemblyState(inputAssembly)
@@ -167,9 +156,9 @@ namespace Rife::Graphics {
 		return shader;
 	}
 
-	std::vector<char> ShaderFactory::loadShaderFile(const std::string& filename) {
+	std::vector<char> ShaderFactory::loadShaderFile(const std::string_view& filename) {
 		//abre o arquivo, começa a ler pelo final e em binario
-		std::ifstream file(filename, std::ios::ate | std::ios::binary);
+		std::ifstream file(filename.data(), std::ios::ate | std::ios::binary);
 
 		//se n abriu o arquivo, pula fora
 		if (!file.is_open()) {

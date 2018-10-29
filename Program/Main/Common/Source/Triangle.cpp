@@ -60,7 +60,7 @@ void Triangle::update() {
         gameObjects[i]->update();
     }
     m_camera->update();
-	//printf("\nFPS:%d", TIME->getFPS());
+	//printf("\nFPS:%f", TIME->getFPS());
 }
 
 void Triangle::draw() {
