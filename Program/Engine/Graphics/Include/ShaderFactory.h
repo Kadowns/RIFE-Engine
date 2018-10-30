@@ -8,11 +8,11 @@ namespace Rife::Graphics {
 
 	public:
 
-		static Shader* defaultShader(const std::string_view& vertShaderName, const std::string_view& fragShaderName);
+		static Shader* defaultShader(const std::string& vertShaderName, const std::string& fragShaderName);
 
 	private:
 
-		static std::vector<char> loadShaderFile(const std::string_view& filename);
+		static std::vector<char> loadShaderFile(const std::string& filename);
 
 		static VkDescriptorSetLayoutBinding createDescriptorSetLayoutBinding(
 			uint32_t binding,
@@ -38,7 +38,7 @@ namespace Rife::Graphics {
 
 		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo(
             VkVertexInputBindingDescription&,
-            std::array<VkVertexInputAttributeDescription, 3>
+            std::array<VkVertexInputAttributeDescription, 4>
         );
 		
 		static VkPipelineInputAssemblyStateCreateInfo createInputAssemblyInfo(

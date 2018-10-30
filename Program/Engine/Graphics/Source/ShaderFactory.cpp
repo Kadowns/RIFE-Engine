@@ -3,7 +3,7 @@
 
 namespace Rife::Graphics {
 
-	Shader* ShaderFactory::defaultShader(const std::string_view& vertShaderName, const std::string_view& fragShaderName) {
+	Shader* ShaderFactory::defaultShader(const std::string& vertShaderName, const std::string& fragShaderName) {
 
 		//Layout bindings
 		std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
@@ -33,6 +33,22 @@ namespace Rife::Graphics {
 			VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
 			nullptr								//immutabble samplers
 		));
+
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            3,                                          //binding
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+            1,                                          //descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+            nullptr                                     //immutable samplers
+        ));
+
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            4,                                          //binding
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+            1,                                          //descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+            nullptr                                     //immutable samplers
+        ));
 
 		VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
 		descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -73,7 +89,7 @@ namespace Rife::Graphics {
 
 		//vertex input
         VkVertexInputBindingDescription vertexBinding = Vertex::getBindingDescription();
-        std::array<VkVertexInputAttributeDescription, 3> vertexAttribute = Vertex::getAttributeDescriptions();
+        std::array<VkVertexInputAttributeDescription, 4> vertexAttribute = Vertex::getAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
 		//---------------
@@ -156,9 +172,9 @@ namespace Rife::Graphics {
 		return shader;
 	}
 
-	std::vector<char> ShaderFactory::loadShaderFile(const std::string_view& filename) {
+	std::vector<char> ShaderFactory::loadShaderFile(const std::string& filename) {
 		//abre o arquivo, começa a ler pelo final e em binario
-		std::ifstream file(filename.data(), std::ios::ate | std::ios::binary);
+		std::ifstream file(SHADER_FOLDER + filename, std::ios::ate | std::ios::binary);
 
 		//se n abriu o arquivo, pula fora
 		if (!file.is_open()) {
@@ -244,7 +260,7 @@ namespace Rife::Graphics {
 
 	VkPipelineVertexInputStateCreateInfo ShaderFactory::createVertexInputInfo(
         VkVertexInputBindingDescription& bindingDescription,
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions
+        std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions
     ) {
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};

@@ -7,7 +7,7 @@
       "inheritEnvironments": [
         "msvc_x64"
       ],
-      "buildRoot": "${thisFileDir}\\CMakeBuilds\\build\\${name}",
+      "buildRoot": "${thisFileDir}\\Rife",
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",

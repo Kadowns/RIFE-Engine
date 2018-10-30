@@ -19,7 +19,7 @@ namespace Script {
         void awake() {
 
             transform = p_gameObject->getTransform();
-            rotation = glm::vec3(getRand(30), getRand(10), getRand(10));
+            rotation = glm::vec3(getRand(5), getRand(5), getRand(5));
             printf("\nRotation: x:%f, y:%f, z:%f", rotation.x, rotation.y, rotation.z);
         }
 

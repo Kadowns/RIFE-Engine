@@ -82,11 +82,15 @@ void MeshRenderer::freeCommandBuffers() {
 void MeshRenderer::updateUbos(const uint32_t& imageIndex) {
 
 	//transform
+    
+    auto t = TIME->time();
+    auto seno = abs(sin(t));
+    auto cose = abs(cos(t));
     Ubo::uLight light = {};
     light.direction = glm::vec4(0.0f, -0.4, -1.0f, 0.0f);
 	light.ambient = glm::vec4(0.1f);
-	light.diffuse = glm::vec4(1.0f, 1.0f, 0.8f, 0.0f);
-	light.specular = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+	light.diffuse = glm::vec4(seno);
+	light.specular = glm::vec4(seno);
    
 	m_ubo.model = p_gameObject->getTransform()->getModelMatrix();
     p_material->getShader()
@@ -94,7 +98,6 @@ void MeshRenderer::updateUbos(const uint32_t& imageIndex) {
         ->setItem(&m_ubo)
         ->setItem(CAMERA->getUbo())
         ->setItem(&light);
-        //->setItem(&(p_material->getProperties()));
 }
 
 MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
@@ -130,15 +133,17 @@ MeshRenderer::~MeshRenderer() {
 }
 
 void MeshRenderer::createDescriptorPool() {
-	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 5> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[1].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
 	poolSizes[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[2].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
-    poolSizes[3].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[3].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[3].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+    poolSizes[4].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[4].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
 
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
@@ -169,7 +174,9 @@ void MeshRenderer::createDescriptorSets() {
     Shader* shader = p_material->getShader();
 
 	std::vector<VkDescriptorBufferInfo> bufferInfos = {};
+    std::vector<VkDescriptorImageInfo> imageInfos = {};
     bufferInfos.resize(shader->getUboSize());
+    imageInfos.resize(p_material->getTexturesSize());
 	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
 
 		
@@ -179,9 +186,24 @@ void MeshRenderer::createDescriptorSets() {
             bufferInfos[j].range = shader->getUboInfo(j).range;
         }
 
+        Texture* tex = p_material->getTexture(MATERIAL_TEXTURE_TYPE_DIFFUSE);
+        if (tex != nullptr) {
+            imageInfos[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfos[0].imageView = tex->getImageView();
+            imageInfos[0].sampler = tex->getSampler();
+        }
+
+        tex = p_material->getTexture(MATERIAL_TEXTURE_TYPE_SPECULAR);
+        if (tex != nullptr) {
+            imageInfos[1].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfos[1].imageView = tex->getImageView();
+            imageInfos[1].sampler = tex->getSampler();
+        }
+        
+
 		std::vector<VkWriteDescriptorSet> descriptorWrite = {};
-        descriptorWrite.resize(bufferInfos.size());
-		for (size_t j = 0; j < descriptorWrite.size(); j++) {
+        descriptorWrite.resize(bufferInfos.size() + imageInfos.size());
+		for (size_t j = 0; j < bufferInfos.size(); j++) {
 			descriptorWrite[j].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrite[j].dstSet = m_descriptorSets[i];
 			descriptorWrite[j].dstBinding = j;
@@ -190,6 +212,16 @@ void MeshRenderer::createDescriptorSets() {
 			descriptorWrite[j].descriptorCount = 1;
 			descriptorWrite[j].pBufferInfo = &bufferInfos[j];
 		}
+        for (size_t j = bufferInfos.size(); j < descriptorWrite.size(); j++) {
+            descriptorWrite[j].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrite[j].dstSet = m_descriptorSets[i];
+            descriptorWrite[j].dstBinding = j;
+            descriptorWrite[j].dstArrayElement = 0;
+            descriptorWrite[j].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptorWrite[j].descriptorCount = 1;
+            descriptorWrite[j].pImageInfo = &imageInfos[j - bufferInfos.size()];
+        }
+        
 
 		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
 	}

@@ -13,10 +13,12 @@ layout(binding = 1) uniform Camera {
 layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec4 aColor;
 layout(location = 2) in vec3 aNormal;
+layout(location = 3) in vec2 aTexCoord;
 
 layout(location = 0) out vec4 vColor;
 layout(location = 1) out vec3 vNormal;
 layout(location = 2) out vec3 vViewPath;
+layout(location = 3) out vec2 vTexCoord;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -28,6 +30,7 @@ void main() {
     gl_Position = uCamera.vp * worldPos;
 	
     vColor = aColor;
-	vNormal = (uModel.m * vec4(aNormal, 0.1)).xyz;
+	vNormal = mat3(transpose(inverse(uModel.m))) * aNormal; 
 	vViewPath = uCamera.position.xyz - worldPos.xyz;
+	vTexCoord = aTexCoord;
 }

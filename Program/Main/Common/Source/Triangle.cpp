@@ -18,7 +18,9 @@ void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
     
-    mat = MaterialFactory::defaultMaterial("triVert.spv", "triFrag.spv");
+    diffTex = new Texture("box.png");
+    specTex = new Texture("box_specular.png");
+    mat = MaterialFactory::specularMaterial("triVert.spv", "triFrag.spv", diffTex, specTex);
     mesh = new Mesh(vertices, indices);
 
 	gameObjects.push_back(new GameObject());
@@ -135,6 +137,8 @@ void Triangle::draw() {
 void Triangle::deinit() {
 
     delete mesh;
+    delete diffTex;
+    delete specTex;
     
 	for (int i = 0; i < gameObjects.size(); i++) {
 		delete gameObjects[i];

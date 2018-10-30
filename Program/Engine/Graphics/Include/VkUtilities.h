@@ -6,6 +6,7 @@
 #include <Vertex.h>
 #include <Transform.h>
 #include <Renderer.h>
+
 #include <iostream>
 #include <cstring>
 #include <fstream>
@@ -123,6 +124,7 @@ namespace vk {
 		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset);
 		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
 			VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+        void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
         //-----------------------------------
 
         //Initializer functions
@@ -132,7 +134,7 @@ namespace vk {
         void createSurface();
         void createLogicalDevice();
         void createSwapChain();
-        void createImageViews();
+        void createSwapChainImageViews();
         void createRenderPass();
         void createFramebuffers();
         void createCommandPool();
@@ -163,6 +165,9 @@ namespace vk {
         void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
         void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
         void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
+        void createTextureImage(const std::string& path, VkImage& image, VkDeviceMemory& memory);
+        void createTextureImageView(VkImage& image, VkImageView& imageView);
+        void createTextureSampler(VkSampler& sampler);
 
         void updateUbos(uint32_t imageIndex);
 

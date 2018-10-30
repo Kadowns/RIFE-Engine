@@ -15,6 +15,7 @@ set(GRAPHICS_INCLUDE
 	Include/ShaderBuilder.h
 	Include/ShaderFactory.h
 	Include/ShaderItem.h
+	Include/Texture.h
 	Include/Camera.h
 	Include/VkUtilities.h 
 	Include/UniformBufferObject.h
@@ -31,6 +32,7 @@ set(GRAPHICS_SOURCE
 	Source/Shader.cpp
 	Source/ShaderBuilder.cpp
 	Source/ShaderFactory.cpp
+	Source/Texture.cpp
 	Source/Camera.cpp
 	Source/VkUtilities.cpp
 	)

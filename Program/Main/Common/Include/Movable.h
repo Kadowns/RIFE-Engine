@@ -57,12 +57,18 @@ namespace Script {
 			else if (input->isDown(GLFW_KEY_D)){
 				transform->m_position += glm::normalize(glm::cross(cameraFront, cameraUp)) * speed * dt;
 			}
-			else if (input->isDown(GLFW_KEY_W)) {
+			if (input->isDown(GLFW_KEY_W)) {
 				transform->m_position += cameraFront * speed * dt;
 			}
 			else if (input->isDown(GLFW_KEY_S)){
 				transform->m_position -= cameraFront * speed * dt;
-			}
+            }
+            if (input->isDown(GLFW_KEY_E)) {
+                transform->m_position += cameraUp * speed * dt;
+            }
+            else if (input->isDown(GLFW_KEY_Q)) {
+                transform->m_position -= cameraUp * speed * dt;
+            }
 		}
 	};
 }

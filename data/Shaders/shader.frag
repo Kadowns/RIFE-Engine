@@ -18,25 +18,27 @@ layout(push_constant, std140) uniform Material {
 
 } uMaterial;
 
+layout(binding = 3) uniform sampler2D uMainTex;
+layout(binding = 4) uniform sampler2D uSpecularTex;
+
 
 layout(location = 0) in vec4 vColor;
-
-layout(location = 1) in  vec3 vNormal;
-
+layout(location = 1) in vec3 vNormal;
 layout(location = 2) in vec3 vViewPath;
+layout(location = 3) in vec2 vTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
 void main() {
 	//ambient
-	vec3 ambient = uLight.ambient.xyz * uMaterial.ambient.xyz;
+	vec3 ambient = uLight.ambient.xyz * texture(uMainTex, vTexCoord).xyz;
 	//--------------
 
     //diffuse
     vec3 L = normalize(uLight.direction.xyz);
 	vec3 N = normalize(vNormal);
     float diffuseIntensity = max(dot(N, -L), 0.0);
-    vec3 diffuse = diffuseIntensity * uLight.diffuse.xyz * uMaterial.diffuse.xyz;
+    vec3 diffuse = diffuseIntensity * uLight.diffuse.xyz * texture(uMainTex, vTexCoord).xyz;
 	//---------------
 
     //specular
@@ -46,7 +48,7 @@ void main() {
         vec3 R = reflect(L, N);
         specularIntensity = pow(max(dot(R, V), 0.0), uMaterial.specular.w);
     }
-    vec3 specular = specularIntensity * uLight.specular.xyz * uMaterial.specular.xyz;
+    vec3 specular = specularIntensity * uLight.specular.xyz * texture(uSpecularTex, vTexCoord).x;
 	//---------------------------------
 
     
