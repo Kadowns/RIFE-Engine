@@ -58,9 +58,9 @@ namespace Rife::Graphics {
         );
 
         void* data;
-        vkMapMemory(VK_WRAPPER->getDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
+        vkMapMemory(VK_BASE->getDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
         memcpy(data, pixels, static_cast<size_t>(imageSize));
-        vkUnmapMemory(VK_WRAPPER->getDevice(), stagingBufferMemory);
+        vkUnmapMemory(VK_BASE->getDevice(), stagingBufferMemory);
 
         stbi_image_free(pixels);
 
@@ -78,8 +78,8 @@ namespace Rife::Graphics {
         VulkanData::copyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
         VulkanData::transitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        vkDestroyBuffer(VK_WRAPPER->getDevice(), stagingBuffer, nullptr);
-        vkFreeMemory(VK_WRAPPER->getDevice(), stagingBufferMemory, nullptr);
+        vkDestroyBuffer(VK_BASE->getDevice(), stagingBuffer, nullptr);
+        vkFreeMemory(VK_BASE->getDevice(), stagingBufferMemory, nullptr);
     }
 
     void TextureFactory::createTextureImageView(VkImage& image, VkImageView& imageView) {
@@ -106,7 +106,7 @@ namespace Rife::Graphics {
         samplerInfo.minLod = 0.0f;
         samplerInfo.maxLod = 0.0f;
 
-        if (vkCreateSampler(VK_WRAPPER->getDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS) {
+        if (vkCreateSampler(VK_BASE->getDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture sampler!");
         }
 

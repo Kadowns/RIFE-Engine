@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VkUtilities.h>
+#include <VulkanBase.h>
 
 namespace Rife::Graphics {
 
@@ -24,6 +24,8 @@ namespace Rife::Graphics {
         static void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
         static void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);       
+
+		static void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset);
 
     private:
 

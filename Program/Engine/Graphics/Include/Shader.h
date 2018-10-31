@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VkUtilities.h>
+#include <VulkanBase.h>
 #include <RifeCore.h>
 
 #include <UniformBufferObject.h>

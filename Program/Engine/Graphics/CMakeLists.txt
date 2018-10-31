@@ -4,6 +4,8 @@ find_package(Vulkan REQUIRED)
 find_package(GLFW REQUIRED)
 
 set(GRAPHICS_INCLUDE
+	Include/VulkanInclude.h
+	Include/VulkanBase.h 
 	Include/VulkanData.h
 	Include/Vertex.h
 	Include/Renderer.h
@@ -20,15 +22,15 @@ set(GRAPHICS_INCLUDE
 	Include/Texture.h
 	Include/TextureFactory.h
 	Include/Camera.h
-	Include/VkUtilities.h 
-	Include/UniformBufferObject.h
-	Include/GraphicsLibs.h 
+	Include/UniformBufferObject.h	 
 	Include/RifeGraphics.h
 	)
 
 set(GRAPHICS_SOURCE
+	Source/VulkanBase.cpp
 	Source/VulkanData.cpp
 	Source/Vertex.cpp 
+	Source/Renderer.cpp
 	Source/Mesh.cpp
 	Source/MeshFactory.cpp
 	Source/MeshRenderer.cpp
@@ -41,7 +43,6 @@ set(GRAPHICS_SOURCE
 	Source/Texture.cpp
 	Source/TextureFactory.cpp
 	Source/Camera.cpp
-	Source/VkUtilities.cpp
 	)
 
 set(GRAPHICS_ALL "${GRAPHICS_INCLUDE}" "${GRAPHICS_SOURCE}")

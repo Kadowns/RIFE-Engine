@@ -1,8 +1,8 @@
 #pragma once
-#ifndef VK_WRAPPER
-#define VK_WRAPPER vk::Wrapper::getInstance()
+#ifndef VK_BASE
+#define VK_BASE Rife::Graphics::VulkanBase::getInstance()
 
-#include <GraphicsLibs.h>
+#include <VulkanInclude.h>
 #include <Vertex.h>
 #include <Transform.h>
 #include <Renderer.h>
@@ -17,7 +17,7 @@
 #define VERT_SHADER std::string("triVert.spv")
 #define FRAG_SHADER std::string("triFrag.spv")
 
-namespace vk {
+namespace Rife::Graphics {
     //Proxys pro debug--------------------
     extern VkResult CreateDebugUtilsMessengerEXT(VkInstance instance,
         const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
@@ -27,8 +27,6 @@ namespace vk {
     extern void DestroyDebugUtilsMessengerEXT(VkInstance instance,
         VkDebugUtilsMessengerEXT callback,
         const VkAllocationCallbacks* pAllocator);
-
-    static std::vector<char> loadShaderFile(const std::string& filename);
 
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -60,11 +58,11 @@ namespace vk {
         std::vector<VkPresentModeKHR> presentModes;
     };
 
-    class Wrapper {
+    class VulkanBase {
 
     private:
 
-		static Wrapper* s_instance;
+		static VulkanBase* s_instance;
 
         uint32_t m_width, m_height;
         size_t m_currentFrame = 0;
@@ -98,7 +96,7 @@ namespace vk {
         VkExtent2D m_vkSwapChainExtent;
         VkRenderPass m_vkRenderPass;
 
-		std::vector<Rife::Graphics::Renderer*> m_renderers;
+		std::vector<Renderer*> m_renderers;
 
         //Helper Functions-------------------
 		VkCommandBuffer beginSingleTimeCommands();	
@@ -154,17 +152,13 @@ namespace vk {
             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
             void* pUserData);
 
-		static Wrapper* getInstance();
+		static VulkanBase* getInstance();
 
-        Wrapper(GLFWwindow *window);
+        VulkanBase(GLFWwindow *window);
         void initialSetup();
 		void finalSetup();
 		void recreateSwapChain();
         void terminateVulkan();
-
-        void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
-        void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
-        void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
 
         void updateUbos(uint32_t imageIndex);
 
@@ -195,4 +189,4 @@ namespace vk {
 
     };
 };
-#endif // !VK_WRAPPER
+#endif // !VK_BASE

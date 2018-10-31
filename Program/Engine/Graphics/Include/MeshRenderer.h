@@ -1,5 +1,5 @@
 #pragma once
-#include <VkUtilities.h>
+#include <VulkanBase.h>
 #include <Mesh.h>
 #include <MaterialFactory.h>
 #include <Camera.h>

@@ -6,11 +6,11 @@ namespace Rife::Graphics {
         VkCommandBufferAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = VK_WRAPPER->getCommandPool();
+        allocInfo.commandPool = VK_BASE->getCommandPool();
         allocInfo.commandBufferCount = 1;
 
         VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(VK_WRAPPER->getDevice(), &allocInfo, &commandBuffer);
+        vkAllocateCommandBuffers(VK_BASE->getDevice(), &allocInfo, &commandBuffer);
 
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -30,10 +30,10 @@ namespace Rife::Graphics {
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer;
 
-        vkQueueSubmit(VK_WRAPPER->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(VK_WRAPPER->getGraphicsQueue());
+        vkQueueSubmit(VK_BASE->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(VK_BASE->getGraphicsQueue());
 
-        vkFreeCommandBuffers(VK_WRAPPER->getDevice(), VK_WRAPPER->getCommandPool(), 1, &commandBuffer);
+        vkFreeCommandBuffers(VK_BASE->getDevice(), VK_BASE->getCommandPool(), 1, &commandBuffer);
     }
 
     void VulkanData::createBuffer(
@@ -47,12 +47,12 @@ namespace Rife::Graphics {
         bufferInfo.usage = usage;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateBuffer(VK_WRAPPER->getDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+        if (vkCreateBuffer(VK_BASE->getDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to create buffer!");
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(VK_WRAPPER->getDevice(), buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(VK_BASE->getDevice(), buffer, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -60,11 +60,11 @@ namespace Rife::Graphics {
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
         //TODO --- implementar solução top de alocação de memória (ver vulkan tutorial)
-        if (vkAllocateMemory(VK_WRAPPER->getDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+        if (vkAllocateMemory(VK_BASE->getDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate buffer memory!");
         }
 
-        vkBindBufferMemory(VK_WRAPPER->getDevice(), buffer, bufferMemory, 0);
+        vkBindBufferMemory(VK_BASE->getDevice(), buffer, bufferMemory, 0);
     }
 
     void VulkanData::createImage(
@@ -93,23 +93,23 @@ namespace Rife::Graphics {
         imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateImage(VK_WRAPPER->getDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
+        if (vkCreateImage(VK_BASE->getDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
             throw std::runtime_error("failed to create image!");
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetImageMemoryRequirements(VK_WRAPPER->getDevice(), image, &memRequirements);
+        vkGetImageMemoryRequirements(VK_BASE->getDevice(), image, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(VK_WRAPPER->getDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+        if (vkAllocateMemory(VK_BASE->getDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate image memory!");
         }
 
-        vkBindImageMemory(VK_WRAPPER->getDevice(), image, imageMemory, 0);
+        vkBindImageMemory(VK_BASE->getDevice(), image, imageMemory, 0);
     }
 
     VkImageView VulkanData::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
@@ -126,7 +126,7 @@ namespace Rife::Graphics {
         viewInfo.subresourceRange.layerCount = 1;
 
         VkImageView imageView;
-        if (vkCreateImageView(VK_WRAPPER->getDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        if (vkCreateImageView(VK_BASE->getDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture image view!");
         }
 
@@ -237,11 +237,25 @@ namespace Rife::Graphics {
         endSingleTimeCommands(commandBuffer);
     }
 
+	void VulkanData::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset) {
+
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+
+		VkBufferCopy copyRegion = {};
+		copyRegion.srcOffset = 0; // Optional
+		copyRegion.dstOffset = offset; // Optional
+		copyRegion.size = size;
+		vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+		endSingleTimeCommands(commandBuffer);
+
+	}
+
 
     //private-----------------------------
     uint32_t VulkanData::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         VkPhysicalDeviceMemoryProperties memProperties;
-        vkGetPhysicalDeviceMemoryProperties(VK_WRAPPER->getPhysicalDevice(), &memProperties);
+        vkGetPhysicalDeviceMemoryProperties(VK_BASE->getPhysicalDevice(), &memProperties);
 
         for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
             if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {

@@ -21,8 +21,6 @@ void Triangle::init() {
     diffTex = TextureFactory::loadTexture("box.png");
     specTex = TextureFactory::loadTexture("box_specular.png");
     mat = MaterialFactory::surfaceMaterial(glm::vec4(1.0f), 16.0f, diffTex, specTex);
-    cube = MeshFactory::createCube();
-    plane = MeshFactory::createPlane(40, 40);
 
 	gameObjects.push_back(new GameObject());
 	gameObjects[0]->getTransform()->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
@@ -37,7 +35,7 @@ void Triangle::init() {
     gameObjects[0]->setup();
 
     gameObjects.push_back(new GameObject());
-    gameObjects[1]->addComponent(new MeshRenderer(plane, mat));
+    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), mat));
     gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
     gameObjects[1]->setup();
 
@@ -45,7 +43,7 @@ void Triangle::init() {
 	int newSize = gameObjects.size() + 4;
     for (int i = gameObjects.size(); i < newSize; i++) {
         gameObjects.push_back(new GameObject());
-        gameObjects[i]->addComponent(new MeshRenderer(cube, mat));
+        gameObjects[i]->addComponent(new MeshRenderer(Rife::Application::DataBase::getMesh("Cube"), mat));
         gameObjects[i]->addComponent(new Script::RotatingCube());
         gameObjects[i]->setup();
     }
@@ -95,7 +93,7 @@ void Triangle::draw() {
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
     
-    VK_WRAPPER->updateUbos(imageIndex);
+    VK_BASE->updateUbos(imageIndex);
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -137,7 +135,7 @@ void Triangle::draw() {
         throw std::runtime_error("failed to present swap chain image!");
     }
 
-	*currentFrame = (*currentFrame + 1) % vk::MAX_FRAMES_IN_FLIGHT;
+	*currentFrame = (*currentFrame + 1) % Rife::Graphics::MAX_FRAMES_IN_FLIGHT;
 }
 
 void Triangle::deinit() {

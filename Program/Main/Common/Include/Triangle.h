@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Application.h>
-#include <Scene.h>
 #include <RifeCore.h>
 #include <RifeTools.h>
 #include <RifeGraphics.h>
@@ -19,7 +18,7 @@ private:
 
 	const uint32_t numberOfCubes = 5;
 
-    vk::Wrapper* vkWrapper;
+    VulkanBase* vkWrapper;
 	void updateUniformBuffer(uint32_t currentImage);
     std::vector<GameObject*> gameObjects;
 

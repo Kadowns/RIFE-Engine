@@ -18,9 +18,9 @@ namespace Rife::Graphics {
             void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
                 void* data;
                 auto range = size();
-                vkMapMemory(VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_BASE->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &model, range);
-                vkUnmapMemory(VK_WRAPPER->getDevice(), *memory);
+                vkUnmapMemory(VK_BASE->getDevice(), *memory);
             }
         };
 
@@ -40,9 +40,9 @@ namespace Rife::Graphics {
 
                 void* data;
 				auto range = size();
-                vkMapMemory(VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_BASE->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &vp, range);
-                vkUnmapMemory(VK_WRAPPER->getDevice(), *memory);
+                vkUnmapMemory(VK_BASE->getDevice(), *memory);
             }
         };
 
@@ -74,9 +74,9 @@ namespace Rife::Graphics {
 				auto range = size();
 
                 void* data;
-                vkMapMemory(VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_BASE->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &direction, range);
-                vkUnmapMemory(VK_WRAPPER->getDevice(), *memory);
+                vkUnmapMemory(VK_BASE->getDevice(), *memory);
             }
         };
     }

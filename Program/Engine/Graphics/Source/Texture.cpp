@@ -11,12 +11,12 @@ namespace Rife::Graphics {
     }
 
     Texture::~Texture() {
-        vkDestroySampler(VK_WRAPPER->getDevice(), m_textureSampler, nullptr);
+        vkDestroySampler(VK_BASE->getDevice(), m_textureSampler, nullptr);
 
-        vkDestroyImageView(VK_WRAPPER->getDevice(), m_textureImageView, nullptr);
+        vkDestroyImageView(VK_BASE->getDevice(), m_textureImageView, nullptr);
 
-        vkDestroyImage(VK_WRAPPER->getDevice(), m_textureImage, nullptr);
-        vkFreeMemory(VK_WRAPPER->getDevice(), m_textureImageMemory, nullptr);
+        vkDestroyImage(VK_BASE->getDevice(), m_textureImage, nullptr);
+        vkFreeMemory(VK_BASE->getDevice(), m_textureImageMemory, nullptr);
     }
 }
 

@@ -6,15 +6,15 @@ void MeshRenderer::draw() {
 }
 
 void MeshRenderer::createCommandBuffers() {
-	m_commandBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
+	m_commandBuffers.resize(VK_BASE->getSwapChainImagesCount());
 
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.commandPool = VK_WRAPPER->getCommandPool();
+	allocInfo.commandPool = VK_BASE->getCommandPool();
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
 	allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
 
-	if (vkAllocateCommandBuffers(VK_WRAPPER->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+	if (vkAllocateCommandBuffers(VK_BASE->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate command buffers!");
 	}
 
@@ -23,8 +23,8 @@ void MeshRenderer::createCommandBuffers() {
         VkCommandBufferInheritanceInfo inheritanceInfo = {};
         inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
         inheritanceInfo.pNext = nullptr;
-        inheritanceInfo.renderPass = *VK_WRAPPER->getRenderPass();
-        inheritanceInfo.framebuffer = (*VK_WRAPPER->getFramebuffers())[i];
+        inheritanceInfo.renderPass = *VK_BASE->getRenderPass();
+        inheritanceInfo.framebuffer = (*VK_BASE->getFramebuffers())[i];
         inheritanceInfo.subpass = 0;
 
 
@@ -65,14 +65,14 @@ void MeshRenderer::createCommandBuffers() {
 			throw std::runtime_error("failed to record command buffer!");
 		}
 	}
-	VK_WRAPPER->bindCommandBuffer(&m_commandBuffers);
+	VK_BASE->bindCommandBuffer(&m_commandBuffers);
 }
 
 void MeshRenderer::freeCommandBuffers() {
 
     vkFreeCommandBuffers(
-        VK_WRAPPER->getDevice(),
-        VK_WRAPPER->getCommandPool(),
+        VK_BASE->getDevice(),
+        VK_BASE->getCommandPool(),
         static_cast<uint32_t>(m_commandBuffers.size()),
         m_commandBuffers.data()
     );  
@@ -80,8 +80,6 @@ void MeshRenderer::freeCommandBuffers() {
 
 
 void MeshRenderer::updateUbos(const uint32_t& imageIndex) {
-
-	//transform
     
     auto t = TIME->time();
     auto seno = 1.0f;
@@ -106,23 +104,23 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
 
 	
     VkDeviceSize bufferSize = p_material->getShader()->getUboOffset(p_material->getShader()->getUboSize());
-	m_uniformBuffers.resize(VK_WRAPPER->getSwapChainImagesCount());
-	m_uniformBuffersMemory.resize(VK_WRAPPER->getSwapChainImagesCount());
+	m_uniformBuffers.resize(VK_BASE->getSwapChainImagesCount());
+	m_uniformBuffersMemory.resize(VK_BASE->getSwapChainImagesCount());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
-		VK_WRAPPER->createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
+		createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
 	}	
 	createDescriptorPool();
 	createDescriptorSets();
-	VK_WRAPPER->bindRenderer(this);
+	VK_BASE->bindRenderer(this);
 }
 
 
 MeshRenderer::~MeshRenderer() {
-	vkDestroyDescriptorPool(VK_WRAPPER->getDevice(), m_descriptorPool, nullptr);
+	vkDestroyDescriptorPool(VK_BASE->getDevice(), m_descriptorPool, nullptr);
 
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
-		vkDestroyBuffer(VK_WRAPPER->getDevice(), m_uniformBuffers[i], nullptr);
-		vkFreeMemory(VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
+		vkDestroyBuffer(VK_BASE->getDevice(), m_uniformBuffers[i], nullptr);
+		vkFreeMemory(VK_BASE->getDevice(), m_uniformBuffersMemory[i], nullptr);
 	}
 
     if (p_material != nullptr) {
@@ -139,7 +137,7 @@ void MeshRenderer::createDescriptorPool() {
     poolSizes.resize(layoutBindings.size());
     for (size_t i = 0; i < layoutBindings.size(); i++) {
         poolSizes[i].type = layoutBindings[i].descriptorType;
-        poolSizes[i].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+        poolSizes[i].descriptorCount = VK_BASE->getSwapChainImagesCount();
     }
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
@@ -148,22 +146,22 @@ void MeshRenderer::createDescriptorPool() {
 	poolInfo.pPoolSizes = poolSizes.data();
 	poolInfo.maxSets = static_cast<uint32_t>(poolSizes[0].descriptorCount);
 
-	if (vkCreateDescriptorPool(VK_WRAPPER->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
+	if (vkCreateDescriptorPool(VK_BASE->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create descriptor pool!");
 	}
 }
 
 void MeshRenderer::createDescriptorSets() {
 
-	std::vector<VkDescriptorSetLayout> layouts(VK_WRAPPER->getSwapChainImagesCount(), *(p_material->getShader()->getDescriptorSetLayouts()).data());
+	std::vector<VkDescriptorSetLayout> layouts(VK_BASE->getSwapChainImagesCount(), *(p_material->getShader()->getDescriptorSetLayouts()).data());
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_descriptorPool;
-	allocInfo.descriptorSetCount = static_cast<uint32_t>(VK_WRAPPER->getSwapChainImagesCount());
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(VK_BASE->getSwapChainImagesCount());
 	allocInfo.pSetLayouts = layouts.data();
 
-	m_descriptorSets.resize(VK_WRAPPER->getSwapChainImagesCount());
-	if (vkAllocateDescriptorSets(VK_WRAPPER->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
+	m_descriptorSets.resize(VK_BASE->getSwapChainImagesCount());
+	if (vkAllocateDescriptorSets(VK_BASE->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate descriptor sets!");
 	}
 
@@ -210,6 +208,6 @@ void MeshRenderer::createDescriptorSets() {
         }
         
 
-		vkUpdateDescriptorSets(VK_WRAPPER->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
+		vkUpdateDescriptorSets(VK_BASE->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
 	}
 }

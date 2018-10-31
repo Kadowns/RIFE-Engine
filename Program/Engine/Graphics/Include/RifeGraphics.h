@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VkUtilities.h>
+#include <VulkanBase.h>
 #include <MeshRenderer.h>
 #include <MeshFactory.h>
 #include <TextureFactory.h>

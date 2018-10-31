@@ -1,5 +1,5 @@
 #pragma once
-#include <VkUtilities.h>
+#include <VulkanInclude.h>
 #include <Vertex.h>
 #include <vector>
 
@@ -20,6 +20,9 @@ namespace Rife::Graphics {
         VkDeviceMemory& getIndexBufferMemory() { return m_indexBufferMemory; }
 
     private:
+
+		void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
+		void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
 
         std::vector<Vertex> m_vertices;
         std::vector<uint32_t> m_indices;

@@ -4,6 +4,7 @@
 #include <RifeTools.h>
 #include <RifeGraphics.h>
 
+#include <DataBase.h>
 #include "Scene.h"
 
 #include <iostream>
@@ -33,7 +34,7 @@ private :
     Scene *m_scene;
     GLFWwindow *m_window;
     GLFWerrorfun m_errorCallback;
-    vk::Wrapper *m_vkWrapper;
+    Rife::Graphics::VulkanBase *m_vkWrapper;
 
     Application();
 
@@ -63,7 +64,7 @@ public:
 
     int getHeight();
 
-    vk::Wrapper* getVkWrapper() { return m_vkWrapper; }
+    Rife::Graphics::VulkanBase* getVkWrapper() { return m_vkWrapper; }
 
     void define(Scene *scene, const std::string &title, int width, int height);
 

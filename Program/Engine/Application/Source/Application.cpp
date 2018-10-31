@@ -60,7 +60,7 @@ void Application::init() {
 
     initGlfw();
     initVulkan();
-	
+	DATABASE::LoadMeshes();
     m_initialized = true;
 }
 
@@ -95,7 +95,7 @@ void Application::initGlfw() {
 
 //Inicializa a vulkan
 void Application::initVulkan() {
-    m_vkWrapper = new vk::Wrapper(m_window);
+    m_vkWrapper = new Rife::Graphics::VulkanBase(m_window);
     m_vkWrapper->initialSetup();
 }
 

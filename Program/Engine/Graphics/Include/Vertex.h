@@ -1,7 +1,7 @@
 #pragma once
 
 #include <RifeMath.h>
-#include <GraphicsLibs.h>
+#include <VulkanInclude.h>
 #include <array>
 
 namespace Rife::Graphics {

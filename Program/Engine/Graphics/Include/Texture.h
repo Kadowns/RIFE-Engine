@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VkUtilities.h>
+#include <VulkanBase.h>
 
 namespace Rife::Graphics {
 
