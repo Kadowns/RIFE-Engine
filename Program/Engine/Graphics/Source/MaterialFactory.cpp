@@ -2,40 +2,41 @@
 
 namespace Rife::Graphics {
 
-    Material* MaterialFactory::defaultMaterial(const std::string& vertShaderName, const std::string& fragShaderName, Texture* texture) {
+    Material* MaterialFactory::defaultMaterial() {
 
-		auto shader = ShaderFactory::defaultShader(vertShaderName, fragShaderName);
+		auto shader = ShaderFactory::defaultShader("default_vert.spv", "default_frag.spv");
 
 		Ubo::uMaterialProperties properties = {};
-		properties.ambient = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-		properties.diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-		properties.specular = glm::vec4(1.0f, 1.0f, 1.0f, 64.0f);
+        properties.color = glm::vec4(1.0f);
+        properties.specularPower = 16.0f;
 
 		auto material = MaterialBuilder()
 	        .setShader(shader)
 			.setMaterialProperties(properties)
-            .setDiffuseTexture(texture)
             .createMaterial();
-
        
         return material;
     }
-    Material * MaterialFactory::specularMaterial(const std::string & vertShaderName, const std::string & fragShaderName, Texture * diffuseTex, Texture * specularTex) {
+
+    Material* MaterialFactory::surfaceMaterial(
+        glm::vec4& color,
+        float_t specularPower,
+        Texture* diffuseTex,
+        Texture* specularTex
+    ) {
         
-        auto shader = ShaderFactory::defaultShader(vertShaderName, fragShaderName);
+        auto shader = ShaderFactory::surfaceShader("surface_vert.spv", "surface_frag.spv");
 
         Ubo::uMaterialProperties properties = {};
-        properties.ambient = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-        properties.diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-        properties.specular = glm::vec4(1.0f, 1.0f, 1.0f, 16.0f);
+        properties.color = color;
+        properties.specularPower = specularPower;
 
         auto material = MaterialBuilder()
             .setShader(shader)
             .setMaterialProperties(properties)
-            .setDiffuseTexture(diffuseTex)
-            .setSpecularTexture(specularTex)
+            .addTexture(specularTex, MATERIAL_TEXTURE_TYPE_SPECULAR_MAP)
+            .addTexture(diffuseTex, MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP)
             .createMaterial();
-
 
         return material;
     }

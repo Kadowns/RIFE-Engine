@@ -165,9 +165,6 @@ namespace vk {
         void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
         void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
         void createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize);
-        void createTextureImage(const std::string& path, VkImage& image, VkDeviceMemory& memory);
-        void createTextureImageView(VkImage& image, VkImageView& imageView);
-        void createTextureSampler(VkSampler& sampler);
 
         void updateUbos(uint32_t imageIndex);
 
@@ -175,14 +172,15 @@ namespace vk {
 		void bindRenderer(Rife::Graphics::Renderer*);
 
         //Getters
-        VkDevice* getDevice() { return &m_vkDevice; }
+        VkDevice& getDevice() { return m_vkDevice; }
+        VkPhysicalDevice& getPhysicalDevice() { return m_vkPhysicalDevice; }
         VkPhysicalDeviceProperties getPhysicalDeviceProperties() { return m_physicalDeviceProperties; }
         std::vector<VkCommandBuffer>* getCommandBuffers() { return &m_primaryCommandBuffers; }
-        VkQueue* getGraphicsQueue() { return &m_vkGraphicsQueue; }
-        VkQueue* getPresentQueue() { return &m_vkPresentQueue; }
+        VkQueue& getGraphicsQueue() { return m_vkGraphicsQueue; }
+        VkQueue& getPresentQueue() { return m_vkPresentQueue; }
         VkSwapchainKHR* getSwapChain() { return &m_vkSwapChain; }	
         VkRenderPass* getRenderPass() { return &m_vkRenderPass; }
-		VkCommandPool* getCommandPool() { return &m_vkCommandPool; }
+		VkCommandPool& getCommandPool() { return m_vkCommandPool; }
         std::vector<VkSemaphore>* getImageAvailableSemaphores() { return &m_vkImageAvailableSemaphores; }
         std::vector<VkSemaphore>* getRenderFinishedSemaphores() { return &m_vkRenderFinishedSemaphores; }
         std::vector<VkFence>* getInFlightFences() { return &m_vkInFlightFences; }

@@ -6,8 +6,8 @@
 namespace Rife::Graphics {
 
     enum MATERIAL_TEXTURE_TYPE {
-        MATERIAL_TEXTURE_TYPE_DIFFUSE = 0,
-        MATERIAL_TEXTURE_TYPE_SPECULAR = 1
+        MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP = 0,
+        MATERIAL_TEXTURE_TYPE_SPECULAR_MAP = 1
     };
 
     class Material : public Base::Object {
@@ -15,7 +15,7 @@ namespace Rife::Graphics {
     public:
 
         Material() {}
-        Material(Ubo::uMaterialProperties&, Shader* shader, Texture* diffuseTex, Texture* specularTex);
+        Material(Ubo::uMaterialProperties&, Shader* shader, std::vector<Texture*> pTextures);
         ~Material();
 
         void clearPipeline();
@@ -24,9 +24,9 @@ namespace Rife::Graphics {
 
         Shader* getShader() { return p_shader; }
 
-        Texture* getTexture(MATERIAL_TEXTURE_TYPE textureType) { return p_textures[textureType]; }
+        std::vector<Texture*>& getTextures() { return m_pTextures; }
 
-        size_t getTexturesSize() { return p_textures.size(); }
+        size_t getTexturesSize() { return m_pTextures.size(); }
 
         bool isCleared() { return m_clear; }
 
@@ -35,7 +35,7 @@ namespace Rife::Graphics {
         bool m_clear;
 
         Ubo::uMaterialProperties m_properties;
-        std::vector<Texture*> p_textures;
+        std::vector<Texture*> m_pTextures;
 		Shader* p_shader;
 
     };

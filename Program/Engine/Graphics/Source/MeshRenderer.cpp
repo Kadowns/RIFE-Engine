@@ -10,11 +10,11 @@ void MeshRenderer::createCommandBuffers() {
 
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.commandPool = *VK_WRAPPER->getCommandPool();
+	allocInfo.commandPool = VK_WRAPPER->getCommandPool();
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
 	allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
 
-	if (vkAllocateCommandBuffers(*VK_WRAPPER->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+	if (vkAllocateCommandBuffers(VK_WRAPPER->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate command buffers!");
 	}
 
@@ -71,8 +71,8 @@ void MeshRenderer::createCommandBuffers() {
 void MeshRenderer::freeCommandBuffers() {
 
     vkFreeCommandBuffers(
-        *VK_WRAPPER->getDevice(),
-        *VK_WRAPPER->getCommandPool(),
+        VK_WRAPPER->getDevice(),
+        VK_WRAPPER->getCommandPool(),
         static_cast<uint32_t>(m_commandBuffers.size()),
         m_commandBuffers.data()
     );  
@@ -84,7 +84,7 @@ void MeshRenderer::updateUbos(const uint32_t& imageIndex) {
 	//transform
     
     auto t = TIME->time();
-    auto seno = abs(sin(t));
+    auto seno = 1.0f;
     auto cose = abs(cos(t));
     Ubo::uLight light = {};
     light.direction = glm::vec4(0.0f, -0.4, -1.0f, 0.0f);
@@ -118,11 +118,11 @@ MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
 
 
 MeshRenderer::~MeshRenderer() {
-	vkDestroyDescriptorPool(*VK_WRAPPER->getDevice(), m_descriptorPool, nullptr);
+	vkDestroyDescriptorPool(VK_WRAPPER->getDevice(), m_descriptorPool, nullptr);
 
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
-		vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_uniformBuffers[i], nullptr);
-		vkFreeMemory(*VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
+		vkDestroyBuffer(VK_WRAPPER->getDevice(), m_uniformBuffers[i], nullptr);
+		vkFreeMemory(VK_WRAPPER->getDevice(), m_uniformBuffersMemory[i], nullptr);
 	}
 
     if (p_material != nullptr) {
@@ -133,18 +133,14 @@ MeshRenderer::~MeshRenderer() {
 }
 
 void MeshRenderer::createDescriptorPool() {
-	std::array<VkDescriptorPoolSize, 5> poolSizes = {};
-	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[1].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
-	poolSizes[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[2].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
-    poolSizes[3].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[3].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
-    poolSizes[4].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[4].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+    auto layoutBindings = p_material->getShader()->getLayoutBindings();
 
+	std::vector<VkDescriptorPoolSize> poolSizes = {};
+    poolSizes.resize(layoutBindings.size());
+    for (size_t i = 0; i < layoutBindings.size(); i++) {
+        poolSizes[i].type = layoutBindings[i].descriptorType;
+        poolSizes[i].descriptorCount = VK_WRAPPER->getSwapChainImagesCount();
+    }
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -152,14 +148,14 @@ void MeshRenderer::createDescriptorPool() {
 	poolInfo.pPoolSizes = poolSizes.data();
 	poolInfo.maxSets = static_cast<uint32_t>(poolSizes[0].descriptorCount);
 
-	if (vkCreateDescriptorPool(*VK_WRAPPER->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
+	if (vkCreateDescriptorPool(VK_WRAPPER->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create descriptor pool!");
 	}
 }
 
 void MeshRenderer::createDescriptorSets() {
 
-	std::vector<VkDescriptorSetLayout> layouts(VK_WRAPPER->getSwapChainImagesCount(), *(p_material->getShader()->getDescriptorSetLayouts())->data());
+	std::vector<VkDescriptorSetLayout> layouts(VK_WRAPPER->getSwapChainImagesCount(), *(p_material->getShader()->getDescriptorSetLayouts()).data());
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_descriptorPool;
@@ -167,7 +163,7 @@ void MeshRenderer::createDescriptorSets() {
 	allocInfo.pSetLayouts = layouts.data();
 
 	m_descriptorSets.resize(VK_WRAPPER->getSwapChainImagesCount());
-	if (vkAllocateDescriptorSets(*VK_WRAPPER->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
+	if (vkAllocateDescriptorSets(VK_WRAPPER->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate descriptor sets!");
 	}
 
@@ -178,29 +174,20 @@ void MeshRenderer::createDescriptorSets() {
     bufferInfos.resize(shader->getUboSize());
     imageInfos.resize(p_material->getTexturesSize());
 	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
-
-		
+	
         for (size_t j = 0; j < bufferInfos.size(); j++) {
             bufferInfos[j].buffer = m_uniformBuffers[i];
             bufferInfos[j].offset = shader->getUboOffset(j);
             bufferInfos[j].range = shader->getUboInfo(j).range;
         }
+        for (size_t j = 0; j < imageInfos.size(); j++) {
+            Texture* tex = p_material->getTextures()[j];
 
-        Texture* tex = p_material->getTexture(MATERIAL_TEXTURE_TYPE_DIFFUSE);
-        if (tex != nullptr) {
-            imageInfos[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfos[0].imageView = tex->getImageView();
-            imageInfos[0].sampler = tex->getSampler();
-        }
-
-        tex = p_material->getTexture(MATERIAL_TEXTURE_TYPE_SPECULAR);
-        if (tex != nullptr) {
-            imageInfos[1].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfos[1].imageView = tex->getImageView();
-            imageInfos[1].sampler = tex->getSampler();
+            imageInfos[j].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfos[j].imageView = tex->getImageView();
+            imageInfos[j].sampler = tex->getSampler();
         }
         
-
 		std::vector<VkWriteDescriptorSet> descriptorWrite = {};
         descriptorWrite.resize(bufferInfos.size() + imageInfos.size());
 		for (size_t j = 0; j < bufferInfos.size(); j++) {
@@ -223,6 +210,6 @@ void MeshRenderer::createDescriptorSets() {
         }
         
 
-		vkUpdateDescriptorSets(*VK_WRAPPER->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
+		vkUpdateDescriptorSets(VK_WRAPPER->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
 	}
 }

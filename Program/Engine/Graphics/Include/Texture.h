@@ -8,7 +8,7 @@ namespace Rife::Graphics {
 
     public:
 
-        Texture(const std::string& path);
+        Texture(VkImage& image, VkImageView& imageView, VkDeviceMemory& memory, VkSampler& sampler);
         ~Texture();
 
         VkImage& getImage() { return m_textureImage; }
@@ -22,6 +22,5 @@ namespace Rife::Graphics {
         VkImageView m_textureImageView;
         VkSampler m_textureSampler;
         VkDeviceMemory m_textureImageMemory;
-
     };
 }

@@ -18,9 +18,9 @@ namespace Rife::Graphics {
             void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
                 void* data;
                 auto range = size();
-                vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &model, range);
-                vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
+                vkUnmapMemory(VK_WRAPPER->getDevice(), *memory);
             }
         };
 
@@ -40,18 +40,16 @@ namespace Rife::Graphics {
 
                 void* data;
 				auto range = size();
-                vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &vp, range);
-                vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
+                vkUnmapMemory(VK_WRAPPER->getDevice(), *memory);
             }
         };
 
         struct uMaterialProperties {
 
-            glm::vec4 ambient;
-            glm::vec4 diffuse;
-            glm::vec4 specular;
-           
+            glm::vec4 color;
+            float specularPower;
         };
 
         class uLight : public ShaderItem {
@@ -76,9 +74,9 @@ namespace Rife::Graphics {
 				auto range = size();
 
                 void* data;
-                vkMapMemory(*VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_WRAPPER->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &direction, range);
-                vkUnmapMemory(*VK_WRAPPER->getDevice(), *memory);
+                vkUnmapMemory(VK_WRAPPER->getDevice(), *memory);
             }
         };
     }

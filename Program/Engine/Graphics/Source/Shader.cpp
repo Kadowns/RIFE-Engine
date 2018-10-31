@@ -5,12 +5,13 @@ namespace Rife::Graphics {
 	Shader::Shader(VkGraphicsPipelineCreateInfo & pipelineCreateInfo,
 		std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
 		std::vector<VkPushConstantRange>& pushConstantRanges,
-        std::vector<UniformBufferObjectInfo>& uboInfo
+        std::vector<UniformBufferObjectInfo>& uboInfo,
+        std::vector<VkDescriptorSetLayoutBinding>& layoutBindings
     ) {
 
 		m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
 		for (int i = 0; i < m_descriptorSetLayouts.size(); i++) {
-			if (vkCreateDescriptorSetLayout(*VK_WRAPPER->getDevice(), &descriptorSetLayoutInfos[i], nullptr, &m_descriptorSetLayouts[i])
+			if (vkCreateDescriptorSetLayout(VK_WRAPPER->getDevice(), &descriptorSetLayoutInfos[i], nullptr, &m_descriptorSetLayouts[i])
 				!= VK_SUCCESS) {
 				throw std::runtime_error("failed to create descriptor set layout!");
 			}
@@ -24,7 +25,7 @@ namespace Rife::Graphics {
 		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
 		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
 
-		if (vkCreatePipelineLayout(*VK_WRAPPER->getDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
+		if (vkCreatePipelineLayout(VK_WRAPPER->getDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
 
@@ -36,17 +37,18 @@ namespace Rife::Graphics {
 		pipelineCreateInfo.layout = m_pipelineLayout;
 
 
-		if (vkCreateGraphicsPipelines(*VK_WRAPPER->getDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
+		if (vkCreateGraphicsPipelines(VK_WRAPPER->getDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 
         m_uboInfo = uboInfo;
+        m_layoutBindings = layoutBindings;
 	}
 
 	Shader::~Shader() {
 		clearPipeline();
 		for (size_t i = 0; i < m_descriptorSetLayouts.size(); i++) {
-			vkDestroyDescriptorSetLayout(*VK_WRAPPER->getDevice(), m_descriptorSetLayouts[i], nullptr);
+			vkDestroyDescriptorSetLayout(VK_WRAPPER->getDevice(), m_descriptorSetLayouts[i], nullptr);
 		}
 	}
 
@@ -81,7 +83,7 @@ namespace Rife::Graphics {
     }
 
 	void Shader::clearPipeline() {
-		vkDestroyPipeline(*VK_WRAPPER->getDevice(), m_pipeline, nullptr);
-		vkDestroyPipelineLayout(*VK_WRAPPER->getDevice(), m_pipelineLayout, nullptr);
+		vkDestroyPipeline(VK_WRAPPER->getDevice(), m_pipeline, nullptr);
+		vkDestroyPipelineLayout(VK_WRAPPER->getDevice(), m_pipelineLayout, nullptr);
 	}
 }

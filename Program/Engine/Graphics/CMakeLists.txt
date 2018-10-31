@@ -3,10 +3,12 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 find_package(Vulkan REQUIRED)
 find_package(GLFW REQUIRED)
 
-set(GRAPHICS_INCLUDE 
+set(GRAPHICS_INCLUDE
+	Include/VulkanData.h
 	Include/Vertex.h
 	Include/Renderer.h
 	Include/Mesh.h
+	Include/MeshFactory.h
 	Include/MeshRenderer.h
 	Include/Material.h
 	Include/MaterialBuilder.h
@@ -16,15 +18,19 @@ set(GRAPHICS_INCLUDE
 	Include/ShaderFactory.h
 	Include/ShaderItem.h
 	Include/Texture.h
+	Include/TextureFactory.h
 	Include/Camera.h
 	Include/VkUtilities.h 
 	Include/UniformBufferObject.h
 	Include/GraphicsLibs.h 
-	Include/RifeGraphics.h)
+	Include/RifeGraphics.h
+	)
 
 set(GRAPHICS_SOURCE
+	Source/VulkanData.cpp
 	Source/Vertex.cpp 
 	Source/Mesh.cpp
+	Source/MeshFactory.cpp
 	Source/MeshRenderer.cpp
 	Source/Material.cpp
 	Source/MaterialBuilder.cpp
@@ -33,6 +39,7 @@ set(GRAPHICS_SOURCE
 	Source/ShaderBuilder.cpp
 	Source/ShaderFactory.cpp
 	Source/Texture.cpp
+	Source/TextureFactory.cpp
 	Source/Camera.cpp
 	Source/VkUtilities.cpp
 	)

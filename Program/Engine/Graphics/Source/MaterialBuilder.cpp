@@ -12,18 +12,16 @@ namespace Rife::Graphics {
 		return *this;
 	}
 
-    MaterialBuilder& MaterialBuilder::setDiffuseTexture(Texture* texture) {
-        p_texDiffuse = texture;
-        return *this;
-    }
-
-    MaterialBuilder& MaterialBuilder::setSpecularTexture(Texture* texture) {
-        p_texSpecular = texture;
+    MaterialBuilder& MaterialBuilder::addTexture(Texture* texture, MATERIAL_TEXTURE_TYPE textureType) {
+        if (m_pTextures.size() <= textureType) {
+            m_pTextures.resize(textureType + 1);
+        }
+        m_pTextures[textureType] = texture;
         return *this;
     }
 
     Material* MaterialBuilder::createMaterial() {
-        return new Material(m_properties, p_shader, p_texDiffuse, p_texSpecular);
+        return new Material(m_properties, p_shader, m_pTextures);
     }
 }
 

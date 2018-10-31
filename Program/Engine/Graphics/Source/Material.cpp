@@ -2,12 +2,11 @@
 
 namespace Rife::Graphics {
 
-    Material::Material(Ubo::uMaterialProperties& properties, Shader* shader, Texture* diffuseTex, Texture* specularTex) {
+    Material::Material(Ubo::uMaterialProperties& properties, Shader* shader, std::vector<Texture*> pTextures) {
         
         m_properties = properties;
 
-        p_textures.push_back(diffuseTex);
-        p_textures.push_back(specularTex);
+        m_pTextures = pTextures;
 
         p_shader = shader;
 

@@ -117,7 +117,7 @@ void Application::loop() {
 
     } // se o maluco apertar os bot�o de sair, vc sai
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == GLFW_FALSE);
-    vkDeviceWaitIdle(*m_vkWrapper->getDevice());
+    vkDeviceWaitIdle(m_vkWrapper->getDevice());
    
 }
 

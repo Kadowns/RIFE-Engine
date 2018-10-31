@@ -17,6 +17,11 @@ namespace Rife::Graphics {
         return *this;
     }
 
+    ShaderBuilder& ShaderBuilder::setLayoutBindings(std::vector<VkDescriptorSetLayoutBinding>& layoutBindings) {
+        m_layoutBindings = layoutBindings;
+        return *this;
+    }
+
 	ShaderBuilder& ShaderBuilder::setShaderStages(VkPipelineShaderStageCreateInfo* shaderStages, const uint32_t& stageCount) {
 		m_pipelineInfo.stageCount = stageCount;
 		m_pipelineInfo.pStages = shaderStages;
@@ -59,6 +64,6 @@ namespace Rife::Graphics {
 	}
 
 	Shader* ShaderBuilder::createShader() {
-		return new Shader(m_pipelineInfo, m_descriptorSetLayoutInfos, m_pushConstantRanges, m_uboInfo);
+		return new Shader(m_pipelineInfo, m_descriptorSetLayoutInfos, m_pushConstantRanges, m_uboInfo, m_layoutBindings);
 	}
 }

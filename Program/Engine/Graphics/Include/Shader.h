@@ -20,7 +20,8 @@ namespace Rife::Graphics {
 			VkGraphicsPipelineCreateInfo&,
 			std::vector<VkDescriptorSetLayoutCreateInfo>&,
 			std::vector<VkPushConstantRange>&,
-            std::vector<UniformBufferObjectInfo>&
+            std::vector<UniformBufferObjectInfo>&,
+            std::vector<VkDescriptorSetLayoutBinding>&
 		);
 		Shader() {}
 
@@ -37,7 +38,8 @@ namespace Rife::Graphics {
         size_t getUboSize();
         VkDeviceSize getUboOffset(size_t uboIndex);
 
-		std::vector<VkDescriptorSetLayout>* getDescriptorSetLayouts() { return &m_descriptorSetLayouts; }
+        std::vector<VkDescriptorSetLayoutBinding>& getLayoutBindings() { return m_layoutBindings; }
+		std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() { return m_descriptorSetLayouts; }
 
 
 	private:
@@ -50,6 +52,7 @@ namespace Rife::Graphics {
 		VkPipelineLayout m_pipelineLayout;
 
         std::vector<UniformBufferObjectInfo> m_uboInfo;
+        std::vector<VkDescriptorSetLayoutBinding> m_layoutBindings;
 		std::vector<VkDescriptorSetLayout> m_descriptorSetLayouts;
 
 	};

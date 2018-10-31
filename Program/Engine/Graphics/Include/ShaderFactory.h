@@ -8,7 +8,8 @@ namespace Rife::Graphics {
 
 	public:
 
-		static Shader* defaultShader(const std::string& vertShaderName, const std::string& fragShaderName);
+		static Shader* surfaceShader(const std::string& vertShaderName, const std::string& fragShaderName);
+        static Shader* defaultShader(const std::string& vertShaderName, const std::string& fragShaderName);
 
 	private:
 

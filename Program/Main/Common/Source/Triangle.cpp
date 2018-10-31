@@ -18,10 +18,11 @@ void Triangle::init() {
 	vkWrapper = APPLICATION->getVkWrapper();
 
     
-    diffTex = new Texture("box.png");
-    specTex = new Texture("box_specular.png");
-    mat = MaterialFactory::specularMaterial("triVert.spv", "triFrag.spv", diffTex, specTex);
-    mesh = new Mesh(vertices, indices);
+    diffTex = TextureFactory::loadTexture("box.png");
+    specTex = TextureFactory::loadTexture("box_specular.png");
+    mat = MaterialFactory::surfaceMaterial(glm::vec4(1.0f), 16.0f, diffTex, specTex);
+    cube = MeshFactory::createCube();
+    plane = MeshFactory::createPlane(40, 40);
 
 	gameObjects.push_back(new GameObject());
 	gameObjects[0]->getTransform()->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
@@ -33,21 +34,26 @@ void Triangle::init() {
 		0.01f,
 		100.0f
 	);
-	
+    gameObjects[0]->setup();
+
+    gameObjects.push_back(new GameObject());
+    gameObjects[1]->addComponent(new MeshRenderer(plane, mat));
+    gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
+    gameObjects[1]->setup();
 
 
 	int newSize = gameObjects.size() + 4;
     for (int i = gameObjects.size(); i < newSize; i++) {
         gameObjects.push_back(new GameObject());
-        gameObjects[i]->addComponent(new MeshRenderer(mesh, mat));
+        gameObjects[i]->addComponent(new MeshRenderer(cube, mat));
         gameObjects[i]->addComponent(new Script::RotatingCube());
         gameObjects[i]->setup();
     }
 	
-    gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, 0.0f, -6.0f);
-    gameObjects[2]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
-    gameObjects[3]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
-    gameObjects[4]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
+    gameObjects[2]->getTransform()->m_position = glm::vec3(0.0f, 0.0f, -6.0f);
+    gameObjects[3]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, -1.0f);
+    gameObjects[4]->getTransform()->m_position = glm::vec3(2.0f, -0.5f, 1.0f);
+    gameObjects[5]->getTransform()->m_position = glm::vec3(-2.0f, -0.5f, 1.0f);
 
 }
 
@@ -75,10 +81,10 @@ void Triangle::draw() {
 	auto renderFinishedSemaphores = vkWrapper->getRenderFinishedSemaphores();
 	auto frameBufferResized = APPLICATION->framebufferResized();
 
-	vkWaitForFences(*device, 1, &(*inFlightFences)[*currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	vkWaitForFences(device, 1, &(*inFlightFences)[*currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 	
 	uint32_t imageIndex;
-	VkResult result = vkAcquireNextImageKHR(*device, *swapChain, std::numeric_limits<uint64_t>::max(),
+	VkResult result = vkAcquireNextImageKHR(device, *swapChain, std::numeric_limits<uint64_t>::max(),
 		(*imageAvailableSemaphores)[*currentFrame], VK_NULL_HANDLE, &imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -105,8 +111,8 @@ void Triangle::draw() {
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	vkResetFences(*device, 1, &(*inFlightFences)[*currentFrame]);
-	if (vkQueueSubmit(*vkWrapper->getGraphicsQueue(), 1, &submitInfo, (*inFlightFences)[*currentFrame]) != VK_SUCCESS) {
+	vkResetFences(device, 1, &(*inFlightFences)[*currentFrame]);
+	if (vkQueueSubmit(vkWrapper->getGraphicsQueue(), 1, &submitInfo, (*inFlightFences)[*currentFrame]) != VK_SUCCESS) {
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
@@ -120,7 +126,7 @@ void Triangle::draw() {
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr; // Optional
 
-	result = vkQueuePresentKHR(*vkWrapper->getPresentQueue(), &presentInfo);
+	result = vkQueuePresentKHR(vkWrapper->getPresentQueue(), &presentInfo);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || *frameBufferResized) {
 		*frameBufferResized = false;
@@ -136,7 +142,8 @@ void Triangle::draw() {
 
 void Triangle::deinit() {
 
-    delete mesh;
+    delete cube;
+    delete plane;
     delete diffTex;
     delete specTex;
     

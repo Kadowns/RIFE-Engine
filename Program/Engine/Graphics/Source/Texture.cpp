@@ -2,21 +2,21 @@
 
 namespace Rife::Graphics {
 
-    Texture::Texture(const std::string& path) {
-
-        VK_WRAPPER->createTextureImage(path, m_textureImage, m_textureImageMemory);
-        VK_WRAPPER->createTextureImageView(m_textureImage, m_textureImageView);
-        VK_WRAPPER->createTextureSampler(m_textureSampler);
+    Texture::Texture(VkImage& image, VkImageView& imageView, VkDeviceMemory& memory, VkSampler& sampler) {
+        m_textureImage = image;
+        m_textureImageView = imageView;
+        m_textureImageMemory = memory;
+        m_textureSampler = sampler;
 
     }
 
     Texture::~Texture() {
-        vkDestroySampler(*VK_WRAPPER->getDevice(), m_textureSampler, nullptr);
+        vkDestroySampler(VK_WRAPPER->getDevice(), m_textureSampler, nullptr);
 
-        vkDestroyImageView(*VK_WRAPPER->getDevice(), m_textureImageView, nullptr);
+        vkDestroyImageView(VK_WRAPPER->getDevice(), m_textureImageView, nullptr);
 
-        vkDestroyImage(*VK_WRAPPER->getDevice(), m_textureImage, nullptr);
-        vkFreeMemory(*VK_WRAPPER->getDevice(), m_textureImageMemory, nullptr);
+        vkDestroyImage(VK_WRAPPER->getDevice(), m_textureImage, nullptr);
+        vkFreeMemory(VK_WRAPPER->getDevice(), m_textureImageMemory, nullptr);
     }
 }
 

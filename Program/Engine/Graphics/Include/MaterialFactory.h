@@ -9,15 +9,11 @@ namespace Rife::Graphics {
     class MaterialFactory {
     public:
 
-        static Material* defaultMaterial(
-            const std::string& vertShaderName,
-            const std::string& fragShaderName,
-            Texture* texture
-        );
+        static Material* defaultMaterial();
 
-        static Material* specularMaterial(
-            const std::string& vertShaderName,
-            const std::string& fragShaderName,
+        static Material* surfaceMaterial(
+            glm::vec4& color,
+            float_t specularPower,
             Texture* diffuseTex,
             Texture* specularTex
         );

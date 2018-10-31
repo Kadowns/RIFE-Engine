@@ -10,16 +10,14 @@ namespace Rife::Graphics {
 
         MaterialBuilder& setShader(Shader* shader);
 		MaterialBuilder& setMaterialProperties(Ubo::uMaterialProperties& properties);
-        MaterialBuilder& setDiffuseTexture(Texture* texture);
-        MaterialBuilder& setSpecularTexture(Texture* texture);
+        MaterialBuilder& addTexture(Texture* texture, MATERIAL_TEXTURE_TYPE textureType);
         Material* createMaterial();
 
     private:
 
 		Ubo::uMaterialProperties m_properties;
 
-        Texture* p_texDiffuse = nullptr;
-        Texture* p_texSpecular = nullptr;
+        std::vector<Texture*> m_pTextures;
 
         Shader* p_shader = nullptr;
         

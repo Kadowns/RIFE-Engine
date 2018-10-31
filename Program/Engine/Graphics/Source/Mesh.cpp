@@ -3,11 +3,11 @@ namespace Rife::Graphics {
 
     Mesh::~Mesh() {
 
-        vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_vertexBuffer, nullptr);
-        vkFreeMemory(*VK_WRAPPER->getDevice(), m_vertexBufferMemory, nullptr);
+        vkDestroyBuffer(VK_WRAPPER->getDevice(), m_vertexBuffer, nullptr);
+        vkFreeMemory(VK_WRAPPER->getDevice(), m_vertexBufferMemory, nullptr);
 
-        vkDestroyBuffer(*VK_WRAPPER->getDevice(), m_indexBuffer, nullptr);
-        vkFreeMemory(*VK_WRAPPER->getDevice(), m_indexBufferMemory, nullptr);
+        vkDestroyBuffer(VK_WRAPPER->getDevice(), m_indexBuffer, nullptr);
+        vkFreeMemory(VK_WRAPPER->getDevice(), m_indexBufferMemory, nullptr);
     }
 
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices) {
