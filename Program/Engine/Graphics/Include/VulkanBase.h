@@ -142,6 +142,8 @@ namespace Rife::Graphics {
         void createSyncObjects();
         //---------------------
 
+		void submitUniformBuffersInfo(uint32_t imageIndex);
+
 		void cleanupSwapChain();
 
     public:
@@ -160,7 +162,9 @@ namespace Rife::Graphics {
 		void recreateSwapChain();
         void terminateVulkan();
 
-        void updateUbos(uint32_t imageIndex);
+		VkResult prepareFrame(uint32_t* imageIndex);    
+		void submitFrame(uint32_t& imageIndex, std::vector<VkSemaphore>& waitSemaphores, std::vector<VkSemaphore>& signalSemaphores);
+		VkResult presentFrame(uint32_t& imageIndex, std::vector<VkSemaphore>& waitSemaphores);
 
 		void bindCommandBuffer(std::vector<VkCommandBuffer>*);
 		void bindRenderer(Rife::Graphics::Renderer*);

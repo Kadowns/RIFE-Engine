@@ -79,7 +79,7 @@ void MeshRenderer::freeCommandBuffers() {
 }
 
 
-void MeshRenderer::updateUbos(const uint32_t& imageIndex) {
+void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
     
     auto t = TIME->time();
     auto seno = 1.0f;

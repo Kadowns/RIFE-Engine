@@ -60,7 +60,7 @@ void Application::init() {
 
     initGlfw();
     initVulkan();
-	DATABASE::LoadMeshes();
+	DATABASE::loadData();
     m_initialized = true;
 }
 
@@ -124,6 +124,7 @@ void Application::loop() {
 void Application::terminate() {
 
     m_scene->deinit();
+	DATABASE::unloadData();
     m_vkWrapper->terminateVulkan();
     delete m_vkWrapper;
     glfwDestroyWindow(m_window);

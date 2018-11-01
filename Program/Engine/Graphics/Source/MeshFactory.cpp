@@ -61,8 +61,8 @@ namespace Rife::Graphics {
         }
 
         std::vector<uint32_t> indices;
-        for (uint32_t z = 0; z < depth - 1; z++) {
-            for (uint32_t x = 0; x < width - 1; x++) {
+        for (uint8_t z = 0; z < depth - 1; z++) {
+            for (uint8_t x = 0; x < width - 1; x++) {
                 uint32_t zero = x + z * width;
                 uint32_t one = (x + 1) + z * width;
                 uint32_t two = x + (z + 1) * width;
@@ -102,8 +102,8 @@ namespace Rife::Graphics {
             glm::normalize(normals[i]);
         }
 
-        float tx = 1.0f / width * 2;
-        float ty = 1.0f / depth * 2;
+        float tx = 1.0f / width;
+        float ty = 1.0f / depth;
         std::vector<glm::vec2> texCoords;
         for (int z = 0; z < depth; z++) {
             for (int x = 0; x < width; x++) {
@@ -123,7 +123,7 @@ namespace Rife::Graphics {
         return new Mesh(vertices, indices);
     }
 
-	Mesh* MeshFactory::createSphere(uint8_t slices, uint8_t stacks) {
+	Mesh* MeshFactory::createPolarSphere(uint8_t slices, uint8_t stacks) {
 
 		std::vector<glm::vec3> positions;
 		std::vector<glm::vec2> texCoords;
@@ -183,6 +183,96 @@ namespace Rife::Graphics {
 			vertices[i].color = glm::vec4(1.0f);
 		}
 
+		return new Mesh(vertices, indices);
+	}
+
+	Mesh* MeshFactory::createNormalizedSphere(uint8_t resolution) {
+
+		glm::vec3 directions[] = {
+			glm::vec3(0.0f, 1.0f, 0.0f), //up
+			glm::vec3(0.0f, -1.0f, 0.0f),//down
+			glm::vec3(1.0f, 0.0f, 0.0f), //right
+			glm::vec3(-1.0f, 0.0f, 0.0f),//left
+			glm::vec3(0.0f, 0.0f, 1.0f), //back
+			glm::vec3(0.0f, 0.0f, -1.0f),//forward
+		};
+
+		std::vector<glm::vec3> positions;
+		std::vector<glm::vec2> texCoords;
+		std::vector<uint32_t> indices;
+		for (uint8_t face = 0; face < 6; face++) {
+
+			glm::vec3 localUp = directions[face];
+			glm::vec3 localRight = glm::vec3(localUp.y, localUp.z, localUp.x);
+			glm::vec3 localFront = glm::cross(localUp, localRight);
+
+			uint32_t lastSize = positions.size();
+
+			for (uint8_t x = 0; x < resolution; x++) {
+				for (uint8_t z = 0; z < resolution; z++) {
+					uint32_t i = (x + z * resolution) * (face + 1);
+					glm::vec2 percent = glm::vec2(x, z) / (resolution - 1.0f);
+					glm::vec3 pointOnUnitCube =
+						(localUp + (percent.x - 0.5f) * 2 * localRight + (percent.y - 0.5f) * 2 * localFront);
+					glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
+
+					positions.push_back(pointOnUnitSphere);
+					texCoords.push_back(percent);
+				}
+			}	
+
+			
+			//indices.resize(positions.size());
+			for (uint8_t z = 0; z < resolution - 1; z++) {
+				for (uint8_t x = 0; x < resolution - 1; x++) {
+					uint32_t zero = (x + z * resolution) + lastSize;
+					uint32_t one = ((x + 1) + z * resolution) + lastSize;
+					uint32_t two = (x + (z + 1) * resolution) + lastSize;
+					uint32_t three = ((x + 1) + (z + 1) * resolution) + lastSize;
+
+					indices.push_back(zero);
+					indices.push_back(two);
+					indices.push_back(three);
+
+					indices.push_back(zero);
+					indices.push_back(three);
+					indices.push_back(one);
+				}
+			}
+		}
+
+		std::vector<glm::vec3> normals(positions.size(), glm::vec3(0));
+		for (uint32_t i = 0; i < indices.size(); i += 3) {
+			uint32_t i1 = indices[i];
+			uint32_t i2 = indices[i + 1];
+			uint32_t i3 = indices[i + 2];
+
+			glm::vec3 v1 = positions[i1];
+			glm::vec3 v2 = positions[i2];
+			glm::vec3 v3 = positions[i3];
+
+			glm::vec3 side1 = v2 - v1;
+			glm::vec3 side2 = v3 - v1;
+
+			glm::vec3 normal = glm::cross(side1, side2);
+
+			normals[i1] += normal;
+			normals[i2] += normal;
+			normals[i3] += normal;
+		}
+
+		for (uint32_t i = 0; i < normals.size(); i++) {
+			glm::normalize(normals[i]);
+		}
+
+		std::vector<Vertex> vertices;
+		vertices.resize(positions.size());
+		for (uint32_t i = 0; i < vertices.size(); i++) {
+			vertices[i].position = positions[i];
+			vertices[i].texCoord = texCoords[i];
+			vertices[i].normal = normals[i];
+			vertices[i].color = glm::vec4(1.0f);
+		}
 		return new Mesh(vertices, indices);
 	}
 

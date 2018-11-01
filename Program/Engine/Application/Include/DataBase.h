@@ -12,13 +12,20 @@ namespace Rife::Application {
 
 	public:
 
-		static void LoadMeshes();
+		static void loadData();
+		static void unloadData();
+		
 		
 		static Graphics::Mesh* getMesh(const char* name);
+		static Graphics::Texture* getTexture(const char* name);
 
 	private:
+		static void loadTextures();
+		static void unloadTextures();
+		static void loadMeshes();
+		static void unloadMeshes();
 
 		static std::map<const char*, Rife::Graphics::Mesh*> s_meshes;
-
+		static std::map<const char*, Rife::Graphics::Texture*> s_textures;
 	};
 }

@@ -103,7 +103,7 @@ namespace Rife::Graphics {
 		const VkDebugUtilsMessengerCallbackDataEXT * pCallbackData,
 		void * pUserData) {
 
-		std::cerr << "\n validation layer!!: " << pCallbackData->pMessage << std::endl;
+		std::cerr << "\nvalidation layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
 	}
@@ -875,10 +875,83 @@ namespace Rife::Graphics {
 		);
 	}
 
-	void VulkanBase::updateUbos(uint32_t imageIndex) {
-		for (int i = 0; i < m_renderers.size(); i++) {
-			m_renderers[i]->updateUbos(imageIndex);
+	VkResult VulkanBase::prepareFrame(uint32_t* imageIndex) {
+
+		vkWaitForFences(m_vkDevice, 1, &m_vkInFlightFences[m_currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+
+		VkResult result = vkAcquireNextImageKHR(
+			m_vkDevice,
+			m_vkSwapChain,
+			std::numeric_limits<uint64_t>::max(),
+			m_vkImageAvailableSemaphores[m_currentFrame],
+			VK_NULL_HANDLE,
+			imageIndex
+		);
+
+		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+			throw std::runtime_error("failed to acquire swap chain image!");
 		}
+
+		return result;
+	}
+
+	void VulkanBase::submitUniformBuffersInfo(uint32_t imageIndex) {
+		for (int i = 0; i < m_renderers.size(); i++) {
+			m_renderers[i]->submitUniformBuffersInfo(imageIndex);
+		}
+	}
+
+	void VulkanBase::submitFrame(
+		uint32_t& imageIndex,
+		std::vector<VkSemaphore>& waitSemaphores,
+		std::vector<VkSemaphore>& signalSemaphores
+	) {
+		submitUniformBuffersInfo(imageIndex);
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		waitSemaphores = { m_vkImageAvailableSemaphores[m_currentFrame] };
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size());
+		submitInfo.pWaitSemaphores = waitSemaphores.data();
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &m_primaryCommandBuffers[imageIndex];
+
+		signalSemaphores = { m_vkRenderFinishedSemaphores[m_currentFrame] };
+
+		submitInfo.signalSemaphoreCount = static_cast<uint32_t>(signalSemaphores.size());
+		submitInfo.pSignalSemaphores = signalSemaphores.data();
+
+		vkResetFences(m_vkDevice, 1, &m_vkInFlightFences[m_currentFrame]);
+		if (vkQueueSubmit(m_vkGraphicsQueue, 1, &submitInfo, m_vkInFlightFences[m_currentFrame]) != VK_SUCCESS) {
+			throw std::runtime_error("failed to submit draw command buffer!");
+		}
+	}
+
+	VkResult VulkanBase::presentFrame(uint32_t& imageIndex, std::vector<VkSemaphore>& waitSemaphores) {
+		
+		VkPresentInfoKHR presentInfo = {};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size());
+		presentInfo.pWaitSemaphores = waitSemaphores.data();
+		
+		VkSwapchainKHR swapChains[] = { m_vkSwapChain };
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr; // Optional
+
+		VkResult result = vkQueuePresentKHR(m_vkPresentQueue, &presentInfo);
+
+		m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+		if (result != VK_SUCCESS) {
+			throw std::runtime_error("failed to present swap chain image!");
+		}
+
+		return result;
 	}
 
 	void VulkanBase::bindRenderer(Rife::Graphics::Renderer* renderer) {

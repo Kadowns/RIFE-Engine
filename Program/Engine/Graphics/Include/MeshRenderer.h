@@ -14,7 +14,7 @@ namespace Rife::Graphics {
         void draw();
         void createCommandBuffers();
         void freeCommandBuffers();
-        void updateUbos(const uint32_t& imageIndex);
+        void submitUniformBuffersInfo(const uint32_t& imageIndex);
         MeshRenderer(Mesh* mesh, Material* material);
         ~MeshRenderer();
 

@@ -10,7 +10,9 @@ namespace Rife::Graphics {
         
         static Mesh* createPlane(uint8_t width, uint8_t depth);
 
-		static Mesh* createSphere(uint8_t slices, uint8_t stakcs);
+		static Mesh* createPolarSphere(uint8_t slices, uint8_t stakcs);
+
+		static Mesh* createNormalizedSphere(uint8_t resolution);
 
     };
 }
