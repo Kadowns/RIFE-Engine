@@ -18,9 +18,8 @@ layout(push_constant, std140) uniform Material {
 } uMaterial;
 
 
-layout(location = 0) in vec4 vColor;
-layout(location = 1) in vec3 vNormal;
-layout(location = 2) in vec3 vViewPath;
+layout(location = 0) in vec3 vNormal;
+layout(location = 1) in vec3 vViewPath;
 
 layout(location = 0) out vec4 outColor;
 

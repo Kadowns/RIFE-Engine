@@ -86,7 +86,7 @@ void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
     auto cose = abs(cos(t));
     Ubo::uLight light = {};
     light.direction = glm::vec4(0.0f, -0.4, -1.0f, 0.0f);
-	light.ambient = glm::vec4(0.1f);
+	light.ambient = glm::vec4(0.2f);
 	light.diffuse = glm::vec4(seno);
 	light.specular = glm::vec4(seno);
    

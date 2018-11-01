@@ -39,7 +39,7 @@ namespace Rife::Graphics {
 
 		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo(
             VkVertexInputBindingDescription&,
-            std::array<VkVertexInputAttributeDescription, 4>
+            std::array<VkVertexInputAttributeDescription, 3>
         );
 		
 		static VkPipelineInputAssemblyStateCreateInfo createInputAssemblyInfo(

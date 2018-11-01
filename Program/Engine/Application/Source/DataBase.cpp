@@ -25,8 +25,8 @@ namespace Rife::Application {
 		std::cout << "Loading Meshes..." << std::endl;
 		s_meshes["Cube"] = Graphics::MeshFactory::createCube();
 		s_meshes["Plane"] = Graphics::MeshFactory::createPlane(20, 20);
-		s_meshes["PolarSphere"] = Graphics::MeshFactory::createPolarSphere(64, 64);
-		s_meshes["NormalizedSphere"] = Graphics::MeshFactory::createNormalizedSphere(64);
+		s_meshes["PolarSphere"] = Graphics::MeshFactory::createPolarSphere(32);
+		s_meshes["NormalizedSphere"] = Graphics::MeshFactory::createNormalizedSphere(32);
 		std::cout << "Meshes loaded!" << std::endl;
 	}
 

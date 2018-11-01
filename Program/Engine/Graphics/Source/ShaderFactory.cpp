@@ -70,7 +70,7 @@ namespace Rife::Graphics {
 
         //vertex input
         VkVertexInputBindingDescription vertexBinding = Vertex::getBindingDescription();
-        std::array<VkVertexInputAttributeDescription, 4> vertexAttribute = Vertex::getAttributeDescriptions();
+        std::array<VkVertexInputAttributeDescription, 3> vertexAttribute = Vertex::getAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
         //---------------
@@ -242,7 +242,7 @@ namespace Rife::Graphics {
 
 		//vertex input
         VkVertexInputBindingDescription vertexBinding = Vertex::getBindingDescription();
-        std::array<VkVertexInputAttributeDescription, 4> vertexAttribute = Vertex::getAttributeDescriptions();
+        std::array<VkVertexInputAttributeDescription, 3> vertexAttribute = Vertex::getAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
 		//---------------
@@ -414,7 +414,7 @@ namespace Rife::Graphics {
 
 	VkPipelineVertexInputStateCreateInfo ShaderFactory::createVertexInputInfo(
         VkVertexInputBindingDescription& bindingDescription,
-        std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions
+        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions
     ) {
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
