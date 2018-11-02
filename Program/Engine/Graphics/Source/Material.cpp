@@ -2,9 +2,7 @@
 
 namespace Rife::Graphics {
 
-    Material::Material(Ubo::uMaterialProperties& properties, Shader* shader, std::vector<Texture*> pTextures) {
-        
-        m_properties = properties;
+    Material::Material(Shader* shader, std::vector<Texture*> pTextures) {
 
         m_pTextures = pTextures;
 

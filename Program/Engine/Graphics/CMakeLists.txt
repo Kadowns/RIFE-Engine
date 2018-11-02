@@ -16,6 +16,7 @@ set(GRAPHICS_INCLUDE
 	Include/Material.h
 	Include/MaterialBuilder.h
 	Include/MaterialFactory.h
+	Include/MaterialInstance.h
 	Include/Shader.h
 	Include/ShaderBuilder.h
 	Include/ShaderFactory.h
@@ -39,6 +40,7 @@ set(GRAPHICS_SOURCE
 	Source/Material.cpp
 	Source/MaterialBuilder.cpp
 	Source/MaterialFactory.cpp
+	Source/MaterialInstance.cpp
 	Source/Shader.cpp
 	Source/ShaderBuilder.cpp
 	Source/ShaderFactory.cpp

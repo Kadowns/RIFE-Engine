@@ -12,8 +12,6 @@ namespace Rife::Graphics {
         static Material* defaultMaterial();
 
         static Material* surfaceMaterial(
-            glm::vec4& color,
-            float_t specularPower,
             Texture* diffuseTex,
             Texture* specularTex
         );

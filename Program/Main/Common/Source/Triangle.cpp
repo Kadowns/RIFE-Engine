@@ -17,8 +17,6 @@ void Triangle::init() {
 
 
     mat = MaterialFactory::surfaceMaterial(
-		glm::vec4(1.0f),
-		16.0f,
 		DATABASE::getTexture("box"),
 		DATABASE::getTexture("box_specular")
 	);
@@ -35,8 +33,12 @@ void Triangle::init() {
 		100.0f
 	);
 
+    Ubo::uMaterialProperties matProp = {};
+    matProp.color = glm::vec4(1.0f);
+    matProp.specularPower = 16.0f;
+
     gameObjects.push_back(new GameObject());
-    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), mat));
+    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(mat, matProp)));
     gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
 
 
@@ -44,7 +46,13 @@ void Triangle::init() {
 	int newSize = gameObjects.size() + 10;
     for (int i = gameObjects.size(); i < newSize; i++) {
         gameObjects.push_back(new GameObject());
-        gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh(i % 2 == 0 ? "PolarSphere" : "NormalizedSphere"), mat));
+
+        float random1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        float random2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        float random3 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+        matProp.color = glm::vec4(random1, random2, random3, 1.0f);
+        gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh(i % 2 == 0 ? "PolarSphere" : "NormalizedSphere"), MaterialInstance(mat, matProp)));
         gameObjects[i]->addComponent(new Script::RotatingCube());
 		gameObjects[i]->getTransform()->m_position = glm::vec3(4.0f - 2.0f * (i % 4), 0.0f, 10.0f - 2.0f * (i + 1));
     }
@@ -91,6 +99,7 @@ void Triangle::draw() {
 }
 
 void Triangle::deinit() {
+    delete mat;
 	for (int i = 0; i < gameObjects.size(); i++) {
 		delete gameObjects[i];
 	}

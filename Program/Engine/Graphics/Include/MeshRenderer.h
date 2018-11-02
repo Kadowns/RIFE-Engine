@@ -2,7 +2,7 @@
 #include <VulkanInclude.h>
 #include <Mesh.h>
 #include <Renderer.h>
-#include <Material.h>
+#include <MaterialInstance.h>
 
 namespace Rife::Graphics {
 
@@ -10,11 +10,10 @@ namespace Rife::Graphics {
 
     public:
 
-        void draw();
         void createCommandBuffers();
         void freeCommandBuffers();
         void submitUniformBuffersInfo(const uint32_t& imageIndex);
-        MeshRenderer(Mesh* mesh, Material* material);
+        MeshRenderer(Mesh* mesh, const MaterialInstance& material);
         ~MeshRenderer();
 
     private:
@@ -25,7 +24,7 @@ namespace Rife::Graphics {
         Ubo::uTransform m_ubo;
 
         Mesh* p_mesh;
-        Material* p_material;
+        MaterialInstance m_material;
 
         std::vector<VkBuffer> m_uniformBuffers;
         std::vector<VkDeviceMemory> m_uniformBuffersMemory;

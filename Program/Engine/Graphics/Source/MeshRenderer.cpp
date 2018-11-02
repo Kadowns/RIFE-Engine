@@ -7,9 +7,6 @@
 
 using namespace Rife::Graphics;
 
-void MeshRenderer::draw() {
-
-}
 
 void MeshRenderer::createCommandBuffers() {
 	m_commandBuffers.resize(VK_DATA->getSwapchainImages().size());
@@ -45,14 +42,14 @@ void MeshRenderer::createCommandBuffers() {
 
         vkCmdPushConstants(
             m_commandBuffers[i],
-            *p_material->getShader()->getPipelineLayout(),
+            *m_material.getShader()->getPipelineLayout(),
             VK_SHADER_STAGE_FRAGMENT_BIT,
             0,
             sizeof(Ubo::uMaterialProperties),
-            (void*)&p_material->getProperties()
+            (void*)&m_material.getProperties()
         );
 
-        vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *p_material->getShader()->getPipeline());
+        vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *m_material.getShader()->getPipeline());
 
 		VkBuffer vertexBuffers[] = { p_mesh->getVertexBuffer() };
 		VkDeviceSize offsets[] = { 0 };
@@ -62,7 +59,7 @@ void MeshRenderer::createCommandBuffers() {
 
 		vkCmdBindDescriptorSets(
 			m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
-			*p_material->getShader()->getPipelineLayout(), 0, 1, &m_descriptorSets[i], 0, nullptr
+			*m_material.getShader()->getPipelineLayout(), 0, 1, &m_descriptorSets[i], 0, nullptr
 		);
 
 		vkCmdDrawIndexed(m_commandBuffers[i], p_mesh->getIndices().size(), 1, 0, 0, 0);
@@ -97,19 +94,19 @@ void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
 	light.specular = glm::vec4(seno);
    
 	m_ubo.model = p_gameObject->getTransform()->getModelMatrix();
-    p_material->getShader()
+    m_material.getShader()
         ->bindUniformBufferMemory(&m_uniformBuffersMemory[imageIndex])
         ->setItem(&m_ubo)
         ->setItem(CAMERA->getUbo())
         ->setItem(&light);
 }
 
-MeshRenderer::MeshRenderer(Mesh* mesh, Material* material) {
+MeshRenderer::MeshRenderer(Mesh* mesh, const MaterialInstance& material) {
     p_mesh = mesh;
-    p_material = material;
+    m_material = material;
 
 	
-    VkDeviceSize bufferSize = p_material->getShader()->getUboOffset(p_material->getShader()->getUboSize());
+    VkDeviceSize bufferSize = m_material.getShader()->getUboOffset(m_material.getShader()->getUboSize());
 	m_uniformBuffers.resize(VK_DATA->getSwapchainImages().size());
 	m_uniformBuffersMemory.resize(VK_DATA->getSwapchainImages().size());
 	for (int i = 0; i < m_uniformBuffers.size(); i++) {
@@ -128,16 +125,12 @@ MeshRenderer::~MeshRenderer() {
 		vkDestroyBuffer(VK_DATA->getDevice(), m_uniformBuffers[i], nullptr);
 		vkFreeMemory(VK_DATA->getDevice(), m_uniformBuffersMemory[i], nullptr);
 	}
-
-    if (p_material != nullptr) {
-        p_material->~Material();
-    }
 	
     freeCommandBuffers();
 }
 
 void MeshRenderer::createDescriptorPool() {
-    auto layoutBindings = p_material->getShader()->getLayoutBindings();
+    auto layoutBindings = m_material.getShader()->getLayoutBindings();
 
 	std::vector<VkDescriptorPoolSize> poolSizes = {};
     poolSizes.resize(layoutBindings.size());
@@ -159,7 +152,7 @@ void MeshRenderer::createDescriptorPool() {
 
 void MeshRenderer::createDescriptorSets() {
 
-	std::vector<VkDescriptorSetLayout> layouts(VK_DATA->getSwapchainImages().size(), *(p_material->getShader()->getDescriptorSetLayouts()).data());
+	std::vector<VkDescriptorSetLayout> layouts(VK_DATA->getSwapchainImages().size(), *(m_material.getShader()->getDescriptorSetLayouts()).data());
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_descriptorPool;
@@ -171,12 +164,12 @@ void MeshRenderer::createDescriptorSets() {
 		throw std::runtime_error("failed to allocate descriptor sets!");
 	}
 
-    Shader* shader = p_material->getShader();
+    Shader* shader = m_material.getShader();
 
 	std::vector<VkDescriptorBufferInfo> bufferInfos = {};
     std::vector<VkDescriptorImageInfo> imageInfos = {};
     bufferInfos.resize(shader->getUboSize());
-    imageInfos.resize(p_material->getTexturesSize());
+    imageInfos.resize(m_material.getTexturesSize());
 	for (size_t i = 0; i < m_descriptorSets.size(); i++) {
 	
         for (size_t j = 0; j < bufferInfos.size(); j++) {
@@ -185,7 +178,7 @@ void MeshRenderer::createDescriptorSets() {
             bufferInfos[j].range = shader->getUboInfo(j).range;
         }
         for (size_t j = 0; j < imageInfos.size(); j++) {
-            Texture* tex = p_material->getTextures()[j];
+            Texture* tex = m_material.getTextures()[j];
 
             imageInfos[j].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             imageInfos[j].imageView = tex->getImageView();

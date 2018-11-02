@@ -15,12 +15,10 @@ namespace Rife::Graphics {
     public:
 
         Material() {}
-        Material(Ubo::uMaterialProperties&, Shader* shader, std::vector<Texture*> pTextures);
+        Material(Shader* shader, std::vector<Texture*> pTextures);
         ~Material();
 
         void clearPipeline();
-
-        Ubo::uMaterialProperties& getProperties() { return m_properties; }
 
         Shader* getShader() { return p_shader; }
 
@@ -34,7 +32,6 @@ namespace Rife::Graphics {
 
         bool m_clear;
 
-        Ubo::uMaterialProperties m_properties;
         std::vector<Texture*> m_pTextures;
 		Shader* p_shader;
 

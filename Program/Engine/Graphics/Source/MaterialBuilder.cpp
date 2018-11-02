@@ -7,10 +7,6 @@ namespace Rife::Graphics {
         return *this;
     }
 
-	MaterialBuilder& MaterialBuilder::setMaterialProperties(Ubo::uMaterialProperties& properties) {
-		m_properties = properties;
-		return *this;
-	}
 
     MaterialBuilder& MaterialBuilder::addTexture(Texture* texture, MATERIAL_TEXTURE_TYPE textureType) {
         if (m_pTextures.size() <= textureType) {
@@ -21,7 +17,7 @@ namespace Rife::Graphics {
     }
 
     Material* MaterialBuilder::createMaterial() {
-        return new Material(m_properties, p_shader, m_pTextures);
+        return new Material(p_shader, m_pTextures);
     }
 }
 
