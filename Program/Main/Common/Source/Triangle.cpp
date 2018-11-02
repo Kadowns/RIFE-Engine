@@ -62,11 +62,12 @@ void Triangle::init() {
         gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 1.0f))
         );
 
-    auto lights = new GlobalLights(*dirLight, *pointLight);
 
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();
 	}
+
+    auto lights = new GlobalLights(dirLight, pointLight);
 }
 
 void Triangle::awake() {

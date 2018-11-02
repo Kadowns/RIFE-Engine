@@ -35,7 +35,7 @@ namespace Rife::Base {
         std::type_index index(typeid(T));
 
         if (m_components.count(std::type_index(typeid(T))) != 0) {
-            return reinterpret_cast<T*>(m_components[index]);
+            return static_cast<T*>(m_components[index]);
         }
         return nullptr;
     }

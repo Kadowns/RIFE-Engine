@@ -10,6 +10,20 @@ namespace Rife::Graphics {
 
     class GlobalLights;
 
+
+    struct uPointLight {
+        glm::vec4 position;
+        glm::vec4 color;
+        glm::vec4 intensitys;
+    };
+
+    struct uDirectionalLight {
+        glm::vec4 direction;
+        glm::vec4 color;
+        glm::vec4 intensitys;
+    };
+
+
     class Light : public Base::Component {
     
     public:
@@ -32,7 +46,16 @@ namespace Rife::Graphics {
             m_intensity = intensity;
         }
        
+        
+
     private:
+
+        void apply(uDirectionalLight& ubo) {
+            ubo.color = glm::vec4(m_color, 1.0f);
+            ubo.direction = glm::vec4(m_direction, 1.0f);
+            ubo.intensitys = glm::vec4(0.1f, m_intensity, 0.0f, 0.0f);
+        }
+
         friend GlobalLights;
 
         glm::vec3 m_direction;
@@ -46,6 +69,8 @@ namespace Rife::Graphics {
             m_constant = constant;
             m_linear = linear;
             m_quadratic = quadratic;
+            m_intensity = 1.0f;
+            m_color = glm::vec3(1.0f);
         }
 
         void awake() {
@@ -58,6 +83,12 @@ namespace Rife::Graphics {
 
     private:
         friend GlobalLights;
+
+        void apply(uPointLight ubo) {
+            ubo.position = glm::vec4(m_position, 1.0f);
+            ubo.color = glm::vec4(m_color, 1.0f);
+            ubo.intensitys = glm::vec4(m_constant, m_linear, m_quadratic, m_intensity);
+        }
 
         Transform* m_transform;
 
@@ -72,7 +103,7 @@ namespace Rife::Graphics {
 
     public:
 
-        GlobalLights(DirectionalLight& directional, PointLight& point) {
+        GlobalLights(DirectionalLight* directional, PointLight* point) {
             m_directionalLight = directional;
             m_pointLight = point;
             s_instance = this;
@@ -87,13 +118,8 @@ namespace Rife::Graphics {
         }
 
         void updateLightInfo() {
-            m_ubo_lights.directional.direction = glm::vec4(m_directionalLight.m_direction, 0.0f);
-            m_ubo_lights.directional.color = glm::vec4(m_directionalLight.m_color, 1.0f);
-            m_ubo_lights.directional.intensitys = glm::vec4(0.1f, m_directionalLight.m_intensity, 0.0f, 0.0f);
-
-            m_ubo_lights.point.position = glm::vec4(m_pointLight.m_position, 1.0f);
-            m_ubo_lights.point.color = glm::vec4(m_pointLight.m_color, 1.0f);
-            m_ubo_lights.point.intensitys = glm::vec4(m_pointLight.m_constant, m_pointLight.m_linear, m_pointLight.m_quadratic, m_pointLight.m_intensity);
+            m_directionalLight->apply(m_ubo_lights.directional);
+            m_pointLight->apply(m_ubo_lights.point);
         }
 
         void apply(VkDeviceMemory* memory, VkDeviceSize offset) {
@@ -103,23 +129,14 @@ namespace Rife::Graphics {
     private:
 
         struct {
-            struct {
-                glm::vec4 direction;
-                glm::vec4 color;
-                glm::vec4 intensitys;
-            } directional;
-
-            struct {
-                glm::vec4 position;
-                glm::vec4 color;
-                glm::vec4 intensitys;
-            } point;
+            uDirectionalLight directional;
+            uPointLight point;
         } m_ubo_lights;
 
         static GlobalLights* s_instance;
 
-        DirectionalLight m_directionalLight;
-        PointLight m_pointLight;
+        DirectionalLight* m_directionalLight;
+        PointLight* m_pointLight;
     };
 
 }
