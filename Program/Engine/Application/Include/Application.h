@@ -5,17 +5,9 @@
 #include <RifeGraphics.h>
 
 #include <DataBase.h>
-#include "Scene.h"
-
-#include <iostream>
-#include <stdexcept>
-#include <functional>
-#include <cstdlib>
+#include <Scene.h>
 
 #include <vector>
-#include <map>
-#include <chrono>
-#include <thread>
 
 #define APPLICATION Application::getInstance()
 
@@ -34,7 +26,9 @@ private :
     Scene *m_scene;
     GLFWwindow *m_window;
     GLFWerrorfun m_errorCallback;
-    Rife::Graphics::VulkanBase *m_vkWrapper;
+
+    Rife::Graphics::VulkanData *m_vulkanData;
+    Rife::Graphics::VulkanBase *m_vulkanBase;
 
     Application();
 
@@ -63,8 +57,6 @@ public:
     int getWidth();
 
     int getHeight();
-
-    Rife::Graphics::VulkanBase* getVkWrapper() { return m_vkWrapper; }
 
     void define(Scene *scene, const std::string &title, int width, int height);
 

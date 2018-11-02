@@ -1,5 +1,6 @@
 #include <TextureFactory.h>
 
+#include <VulkanTools.h>
 #include <VulkanData.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -49,7 +50,7 @@ namespace Rife::Graphics {
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
 
-        VulkanData::createBuffer(
+        VulkanTools::createBuffer(
             imageSize,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -58,13 +59,13 @@ namespace Rife::Graphics {
         );
 
         void* data;
-        vkMapMemory(VK_BASE->getDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
+        vkMapMemory(VK_DATA->getDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
         memcpy(data, pixels, static_cast<size_t>(imageSize));
-        vkUnmapMemory(VK_BASE->getDevice(), stagingBufferMemory);
+        vkUnmapMemory(VK_DATA->getDevice(), stagingBufferMemory);
 
         stbi_image_free(pixels);
 
-        VulkanData::createImage(
+        VulkanTools::createImage(
             texWidth, texHeight,
             VK_FORMAT_R8G8B8A8_UNORM,
             VK_IMAGE_TILING_OPTIMAL,
@@ -74,16 +75,16 @@ namespace Rife::Graphics {
             memory
         );
 
-        VulkanData::transitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-        VulkanData::copyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-        VulkanData::transitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        VulkanTools::transitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        VulkanTools::copyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+        VulkanTools::transitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        vkDestroyBuffer(VK_BASE->getDevice(), stagingBuffer, nullptr);
-        vkFreeMemory(VK_BASE->getDevice(), stagingBufferMemory, nullptr);
+        vkDestroyBuffer(VK_DATA->getDevice(), stagingBuffer, nullptr);
+        vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
     }
 
     void TextureFactory::createTextureImageView(VkImage& image, VkImageView& imageView) {
-        imageView = VulkanData::createImageView(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+        imageView = VulkanTools::createImageView(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
     }
 
     void TextureFactory::createTextureSampler(VkSampler& sampler) {
@@ -106,7 +107,7 @@ namespace Rife::Graphics {
         samplerInfo.minLod = 0.0f;
         samplerInfo.maxLod = 0.0f;
 
-        if (vkCreateSampler(VK_BASE->getDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS) {
+        if (vkCreateSampler(VK_DATA->getDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture sampler!");
         }
 

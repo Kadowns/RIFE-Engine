@@ -1,9 +1,8 @@
 #include <Triangle.h>
 
-void Triangle::updateUniformBuffer(uint32_t currentImage) {
-	
-   
-}
+
+#include <RotatingCube.h>
+#include <Movable.h>
 
 Triangle::Triangle(){
 
@@ -15,7 +14,7 @@ Triangle::~Triangle() {
 }
 
 void Triangle::init() {
-	vkWrapper = APPLICATION->getVkWrapper();
+
 
     mat = MaterialFactory::surfaceMaterial(
 		glm::vec4(1.0f),

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <RifeGraphics.h>
+
 #include <map>
 
 #define DATABASE Rife::Application::DataBase
-
 
 namespace Rife::Application {
 

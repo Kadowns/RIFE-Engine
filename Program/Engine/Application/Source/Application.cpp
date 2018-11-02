@@ -1,5 +1,7 @@
 #include <Application.h>
 
+#include <thread>
+
 //--------------------------Singleton
 Application *Application::s_instance = nullptr;
 
@@ -95,14 +97,15 @@ void Application::initGlfw() {
 
 //Inicializa a vulkan
 void Application::initVulkan() {
-    m_vkWrapper = new Rife::Graphics::VulkanBase(m_window);
-    m_vkWrapper->initialSetup();
+    m_vulkanData = new Rife::Graphics::VulkanData();
+    m_vulkanBase = new Rife::Graphics::VulkanBase(m_window);
+    m_vulkanBase->initialSetup();
 }
 
 //loop principal, n tem segredo n�
 void Application::loop() {
     m_scene->init();
-	m_vkWrapper->finalSetup();
+	m_vulkanBase->finalSetup();
     m_scene->awake();
     do {
         TIME->earlyUpdate();
@@ -117,7 +120,7 @@ void Application::loop() {
 
     } // se o maluco apertar os bot�o de sair, vc sai
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == GLFW_FALSE);
-    vkDeviceWaitIdle(m_vkWrapper->getDevice());
+    vkDeviceWaitIdle(VK_DATA->getDevice());
    
 }
 
@@ -125,8 +128,8 @@ void Application::terminate() {
 
     m_scene->deinit();
 	DATABASE::unloadData();
-    m_vkWrapper->terminateVulkan();
-    delete m_vkWrapper;
+    m_vulkanBase->terminateVulkan();
+    delete m_vulkanBase;
     glfwDestroyWindow(m_window);
     glfwTerminate();
 }

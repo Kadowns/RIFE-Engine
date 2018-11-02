@@ -1,5 +1,8 @@
 #include <ShaderFactory.h>
-#include <string_view>
+#include <VulkanData.h>
+#include <Vertex.h>
+
+#include <fstream>
 
 namespace Rife::Graphics {
 
@@ -87,7 +90,7 @@ namespace Rife::Graphics {
         VkViewport viewport = {};
         viewport.x = 0.0f;
         viewport.y = 0.0f;
-        auto extent = *VK_BASE->getVkExtent();
+        auto extent = VK_DATA->getExtent();
         viewport.width = (float)extent.width;
         viewport.height = (float)extent.height;
         viewport.minDepth = 0.0f;
@@ -148,8 +151,8 @@ namespace Rife::Graphics {
             .setDepthStencilState(depthStencil)
             .createShader();
 
-        vkDestroyShaderModule(VK_BASE->getDevice(), vertShaderModule, nullptr);
-        vkDestroyShaderModule(VK_BASE->getDevice(), fragShaderModule, nullptr);
+        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
+        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
 
         return shader;
 
@@ -259,7 +262,7 @@ namespace Rife::Graphics {
         VkViewport viewport = {};
         viewport.x = 0.0f;
         viewport.y = 0.0f;
-        auto extent = *VK_BASE->getVkExtent();
+        auto extent = VK_DATA->getExtent();
         viewport.width = (float)extent.width;
         viewport.height = (float)extent.height;
         viewport.minDepth = 0.0f;
@@ -320,8 +323,8 @@ namespace Rife::Graphics {
 			.setDepthStencilState(depthStencil)
 			.createShader();
 
-		vkDestroyShaderModule(VK_BASE->getDevice(), vertShaderModule, nullptr);
-		vkDestroyShaderModule(VK_BASE->getDevice(), fragShaderModule, nullptr);
+		vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
 
 		return shader;
 	}
@@ -375,7 +378,7 @@ namespace Rife::Graphics {
 
     UniformBufferObjectInfo ShaderFactory::createUboInfo(VkDeviceSize range) {
         
-        VkDeviceSize minAlignment = VK_BASE->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
+        VkDeviceSize minAlignment = VK_DATA->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
         UniformBufferObjectInfo uboInfo = {};
         uboInfo.offset = (range / minAlignment) * minAlignment + ((range % minAlignment) > 0 ? minAlignment : 0);
         uboInfo.range = range;
@@ -391,7 +394,7 @@ namespace Rife::Graphics {
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
 		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(VK_BASE->getDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+		if (vkCreateShaderModule(VK_DATA->getDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create shader module!");
 		}
 		return shaderModule;

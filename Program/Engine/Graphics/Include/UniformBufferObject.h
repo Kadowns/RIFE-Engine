@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ShaderItem.h>
+#include <VulkanData.h>
 
 namespace Rife::Graphics {
     namespace Ubo {
@@ -18,9 +19,9 @@ namespace Rife::Graphics {
             void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) {
                 void* data;
                 auto range = size();
-                vkMapMemory(VK_BASE->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_DATA->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &model, range);
-                vkUnmapMemory(VK_BASE->getDevice(), *memory);
+                vkUnmapMemory(VK_DATA->getDevice(), *memory);
             }
         };
 
@@ -40,9 +41,9 @@ namespace Rife::Graphics {
 
                 void* data;
 				auto range = size();
-                vkMapMemory(VK_BASE->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_DATA->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &vp, range);
-                vkUnmapMemory(VK_BASE->getDevice(), *memory);
+                vkUnmapMemory(VK_DATA->getDevice(), *memory);
             }
         };
 
@@ -74,9 +75,9 @@ namespace Rife::Graphics {
 				auto range = size();
 
                 void* data;
-                vkMapMemory(VK_BASE->getDevice(), *memory, offset, range, 0, &data);
+                vkMapMemory(VK_DATA->getDevice(), *memory, offset, range, 0, &data);
                 memcpy(data, &direction, range);
-                vkUnmapMemory(VK_BASE->getDevice(), *memory);
+                vkUnmapMemory(VK_DATA->getDevice(), *memory);
             }
         };
     }

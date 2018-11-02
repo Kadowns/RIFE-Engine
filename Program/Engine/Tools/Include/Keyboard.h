@@ -2,8 +2,6 @@
 
 #include <set>
 
-
-
 #define KEYBOARD Rife::Tools::Keyboard::getInstance()
 
 namespace Rife::Tools {

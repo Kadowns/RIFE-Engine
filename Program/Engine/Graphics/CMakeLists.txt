@@ -6,6 +6,7 @@ find_package(GLFW REQUIRED)
 set(GRAPHICS_INCLUDE
 	Include/VulkanInclude.h
 	Include/VulkanBase.h 
+	Include/VulkanTools.h
 	Include/VulkanData.h
 	Include/Vertex.h
 	Include/Renderer.h
@@ -28,6 +29,7 @@ set(GRAPHICS_INCLUDE
 
 set(GRAPHICS_SOURCE
 	Source/VulkanBase.cpp
+	Source/VulkanTools.cpp
 	Source/VulkanData.cpp
 	Source/Vertex.cpp 
 	Source/Renderer.cpp

@@ -1,4 +1,5 @@
 #include <Texture.h>
+#include <VulkanData.h>
 
 namespace Rife::Graphics {
 
@@ -11,12 +12,12 @@ namespace Rife::Graphics {
     }
 
     Texture::~Texture() {
-        vkDestroySampler(VK_BASE->getDevice(), m_textureSampler, nullptr);
+        vkDestroySampler(VK_DATA->getDevice(), m_textureSampler, nullptr);
 
-        vkDestroyImageView(VK_BASE->getDevice(), m_textureImageView, nullptr);
+        vkDestroyImageView(VK_DATA->getDevice(), m_textureImageView, nullptr);
 
-        vkDestroyImage(VK_BASE->getDevice(), m_textureImage, nullptr);
-        vkFreeMemory(VK_BASE->getDevice(), m_textureImageMemory, nullptr);
+        vkDestroyImage(VK_DATA->getDevice(), m_textureImage, nullptr);
+        vkFreeMemory(VK_DATA->getDevice(), m_textureImageMemory, nullptr);
     }
 }
 

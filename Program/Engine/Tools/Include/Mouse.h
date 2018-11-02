@@ -2,13 +2,9 @@
 
 #include <RifeMath.h>
 
-#include <VulkanInclude.h>
-#include <set>
 #include <functional>
 
-
 #define MOUSE Rife::Tools::Mouse::getInstance()
-
 
 namespace Rife::Tools {
 

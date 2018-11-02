@@ -1,9 +1,8 @@
 #pragma once
-#include <VulkanBase.h>
+#include <VulkanInclude.h>
 #include <Mesh.h>
-#include <MaterialFactory.h>
-#include <Camera.h>
 #include <Renderer.h>
+#include <Material.h>
 
 namespace Rife::Graphics {
 
