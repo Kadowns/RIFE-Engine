@@ -16,51 +16,57 @@ Triangle::~Triangle() {
 void Triangle::init() {
 
 
-    mat = MaterialFactory::surfaceMaterial(
-		DATABASE::getTexture("box"),
-		DATABASE::getTexture("box_specular")
-	);
-
-	gameObjects.push_back(new GameObject());
-	gameObjects[0]->getTransform()->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
+	gameObjects.push_back(new GameObject(new Transform()));
+    auto t = gameObjects[0]->getComponent<Transform>();
+    t->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
     gameObjects[0]->addComponent(new Script::Movable());
 
-	m_camera = (Camera*)gameObjects[0]->addComponent(new Camera());
-	m_camera->updateProjection(
+	gameObjects[0]->addComponent(new Camera());
+	CAMERA->updateProjection(
 		55.0f,
 		(float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(),
 		0.01f,
-		100.0f
+		1000.0f
 	);
+    auto pointLight = static_cast<PointLight*>(gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.032)));
+
+    
 
     Ubo::uMaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
-    matProp.specularPower = 16.0f;
+    matProp.specularPower = 256.0f;
+    matProp.tiling = 32.0f;
 
-    gameObjects.push_back(new GameObject());
-    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(mat, matProp)));
-    gameObjects[1]->getTransform()->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
+    gameObjects.push_back(new GameObject(new Transform()));
+    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
+    t = gameObjects[1]->getComponent<Transform>();
+    t->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
+    t->m_scale = glm::vec3(20.0f, 1.0f, 20.0f);
 
 
-
+    matProp.tiling = 2.0f;
 	int newSize = gameObjects.size() + 10;
     for (int i = gameObjects.size(); i < newSize; i++) {
-        gameObjects.push_back(new GameObject());
+        gameObjects.push_back(new GameObject(new Transform()));
 
-        float random1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        float random2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        float random3 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-
-        matProp.color = glm::vec4(random1, random2, random3, 1.0f);
-        gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh(i % 2 == 0 ? "PolarSphere" : "NormalizedSphere"), MaterialInstance(mat, matProp)));
+        matProp.color = glm::vec4(Random::range(0.4f, 1.0f), Random::range(0.2f, 0.6f), Random::range(0.9f, 1.0f), 1.0f);
+        matProp.specularPower = Random::range(1.0f, 64.0f);
+        gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh("PolarSphere"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
         gameObjects[i]->addComponent(new Script::RotatingCube());
-		gameObjects[i]->getTransform()->m_position = glm::vec3(4.0f - 2.0f * (i % 4), 0.0f, 10.0f - 2.0f * (i + 1));
+        t = gameObjects[i]->getComponent<Transform>();
+        t->m_position = glm::vec3(4.0f - 2.0f * (i % 4), 0.0f, 10.0f - 2.0f * (i + 1));
     }
+
+    gameObjects.push_back(new GameObject(new Transform()));
+    auto dirLight = static_cast<DirectionalLight*>(
+        gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 1.0f))
+        );
+
+    auto lights = new GlobalLights(*dirLight, *pointLight);
 
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();
 	}
-
 }
 
 void Triangle::awake() {
@@ -73,8 +79,8 @@ void Triangle::update() {
     for (int i = 0; i < gameObjects.size(); i++) {
         gameObjects[i]->update();
     }
-    m_camera->update();
-	//printf("\nFPS:%f", TIME->getFPS());
+    CAMERA->update();
+    GLOBAL_LIGHTS->updateLightInfo();
 }
 
 void Triangle::draw() {
@@ -99,12 +105,11 @@ void Triangle::draw() {
 }
 
 void Triangle::deinit() {
-    delete mat;
 	for (int i = 0; i < gameObjects.size(); i++) {
 		delete gameObjects[i];
 	}
 }
 
 void Triangle::windowResized(const uint32_t& width, const uint32_t& height) {
-    m_camera->updateProjection(m_camera->getFov(), (float)width / (float)height, m_camera->getNear(), m_camera->getFar());
+    CAMERA->updateProjection(CAMERA->getFov(), (float)width / (float)height, CAMERA->getNear(), CAMERA->getFar());
 }

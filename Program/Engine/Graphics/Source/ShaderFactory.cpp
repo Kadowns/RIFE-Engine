@@ -1,6 +1,10 @@
 #include <ShaderFactory.h>
 #include <VulkanData.h>
+
 #include <Vertex.h>
+#include <Camera.h>
+#include <Transform.h>
+#include <Lights.h>
 
 #include <fstream>
 
@@ -43,9 +47,9 @@ namespace Rife::Graphics {
         //----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        UniformBufferObjectInfo modelInfo = createUboInfo(Ubo::uTransform::size());
-        UniformBufferObjectInfo cameraInfo = createUboInfo(Ubo::uCamera::size());
-        UniformBufferObjectInfo lightInfo = createUboInfo(Ubo::uLight::size());
+        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size());
+        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size());
+        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size());
 
         //pushConstant
         VkPushConstantRange materialPushConstant = createPushConstantRange(
@@ -213,9 +217,9 @@ namespace Rife::Graphics {
 		//----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        UniformBufferObjectInfo modelInfo = createUboInfo(Ubo::uTransform::size());
-        UniformBufferObjectInfo cameraInfo = createUboInfo(Ubo::uCamera::size());
-        UniformBufferObjectInfo lightInfo = createUboInfo(Ubo::uLight::size());
+        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size());
+        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size());
+        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size());
         //UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
 
         //pushConstant

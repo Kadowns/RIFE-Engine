@@ -5,7 +5,6 @@ find_package(GLM REQUIRED)
 set(MATH_INCLUDE
 	Include/MathIncludes.h
 	Include/RifeMath.h
-	Include/Transform.h
 	)
 set(MATH_SOURCE
 	Source/RifeMath.cpp

@@ -53,11 +53,11 @@ namespace Rife::Graphics {
 		}
 	}
 
-    Shader* Shader::bindUniformBufferMemory(VkDeviceMemory* memory) {
+    Shader& Shader::bindUniformBufferMemory(VkDeviceMemory* memory) {
         p_uniformBufferMemory = memory;
         m_uboOffset = 0;
         m_itemIndex = 0;
-        return this;
+        return *this;
     }
 
     UniformBufferObjectInfo Shader::getUboInfo(size_t index) {
@@ -76,11 +76,11 @@ namespace Rife::Graphics {
         return m_uboInfo.size();
     }
 
-    Shader* Shader::setItem(ShaderItem* item) {
-        item->Apply(this, p_uniformBufferMemory, m_uboOffset);
+    Shader& Shader::setItem(ShaderItem& item) {
+        item.apply(p_uniformBufferMemory, m_uboOffset);
         m_itemIndex++;
         m_uboOffset += m_uboInfo[m_itemIndex - 1].offset;
-        return this;
+        return *this;
     }
 
 	void Shader::clearPipeline() {

@@ -3,10 +3,41 @@
 
 #include <MeshRenderer.h>
 #include <MaterialFactory.h>
+#include <Transform.h>
 #include <Camera.h>
+#include <Lights.h>
 
 using namespace Rife::Graphics;
 
+MeshRenderer::MeshRenderer(Mesh* mesh, const MaterialInstance& material) {
+    p_mesh = mesh;
+    m_material = material;
+}
+
+MeshRenderer::~MeshRenderer() {
+    vkDestroyDescriptorPool(VK_DATA->getDevice(), m_descriptorPool, nullptr);
+
+    for (int i = 0; i < m_uniformBuffers.size(); i++) {
+        vkDestroyBuffer(VK_DATA->getDevice(), m_uniformBuffers[i], nullptr);
+        vkFreeMemory(VK_DATA->getDevice(), m_uniformBuffersMemory[i], nullptr);
+    }
+
+    freeCommandBuffers();
+}
+
+void Rife::Graphics::MeshRenderer::setup() {
+
+    VkDeviceSize bufferSize = m_material.getShader()->getUboOffset(m_material.getShader()->getUboSize());
+    m_uniformBuffers.resize(VK_DATA->getSwapchainImages().size());
+    m_uniformBuffersMemory.resize(VK_DATA->getSwapchainImages().size());
+    for (int i = 0; i < m_uniformBuffers.size(); i++) {
+        createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
+    }
+    createDescriptorPool();
+    createDescriptorSets();
+    VK_BASE->bindRenderer(this);
+
+}
 
 void MeshRenderer::createCommandBuffers() {
 	m_commandBuffers.resize(VK_DATA->getSwapchainImages().size());
@@ -84,49 +115,24 @@ void MeshRenderer::freeCommandBuffers() {
 
 void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
     
-    auto t = TIME->time();
-    auto seno = 1.0f;
+    /*auto t = TIME->time();
+    auto seno = abs(sin(t * 0.125f));
     auto cose = abs(cos(t));
-    Ubo::uLight light = {};
-    light.direction = glm::vec4(0.0f, -0.4, -1.0f, 0.0f);
-	light.ambient = glm::vec4(0.2f);
-	light.diffuse = glm::vec4(seno);
-	light.specular = glm::vec4(seno);
+    Ubo::uLights light = {};
+    light.directional.direction = glm::vec4(cos(t * 0.25f), -seno * 0.5f + 0.15f , sin(t * 0.25f), 0.0f);
+	light.directional.color = glm::vec4(1.0f);
+    light.directional.intensitys = glm::vec4(0.1f, 1.0f, 0.0f, 0.0f);
+
+    light.point.color = glm::vec4(1.0f);
+    light.point.position = glm::vec4(CAMERA->getPosition(), 1.0f);
+    light.point.intensitys = glm::vec4(1.0f, 0.07, 0.017f, 2.0f);*/
+
    
-	m_ubo.model = p_gameObject->getTransform()->getModelMatrix();
     m_material.getShader()
         ->bindUniformBufferMemory(&m_uniformBuffersMemory[imageIndex])
-        ->setItem(&m_ubo)
-        ->setItem(CAMERA->getUbo())
-        ->setItem(&light);
-}
-
-MeshRenderer::MeshRenderer(Mesh* mesh, const MaterialInstance& material) {
-    p_mesh = mesh;
-    m_material = material;
-
-	
-    VkDeviceSize bufferSize = m_material.getShader()->getUboOffset(m_material.getShader()->getUboSize());
-	m_uniformBuffers.resize(VK_DATA->getSwapchainImages().size());
-	m_uniformBuffersMemory.resize(VK_DATA->getSwapchainImages().size());
-	for (int i = 0; i < m_uniformBuffers.size(); i++) {
-		createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
-	}	
-	createDescriptorPool();
-	createDescriptorSets();
-	VK_BASE->bindRenderer(this);
-}
-
-
-MeshRenderer::~MeshRenderer() {
-	vkDestroyDescriptorPool(VK_DATA->getDevice(), m_descriptorPool, nullptr);
-
-	for (int i = 0; i < m_uniformBuffers.size(); i++) {
-		vkDestroyBuffer(VK_DATA->getDevice(), m_uniformBuffers[i], nullptr);
-		vkFreeMemory(VK_DATA->getDevice(), m_uniformBuffersMemory[i], nullptr);
-	}
-	
-    freeCommandBuffers();
+        .setItem(*p_gameObject->getComponent<Transform>())
+        .setItem(*CAMERA)
+        .setItem(*GLOBAL_LIGHTS);
 }
 
 void MeshRenderer::createDescriptorPool() {

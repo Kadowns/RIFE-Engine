@@ -27,8 +27,8 @@ namespace Rife::Graphics {
 
 		~Shader();
 
-        Shader* bindUniformBufferMemory(VkDeviceMemory* memory);
-        Shader* setItem(ShaderItem *item);
+        Shader& bindUniformBufferMemory(VkDeviceMemory* memory);
+        Shader& setItem(ShaderItem& item);
 
 		void clearPipeline();
 		VkPipeline* getPipeline() { return &m_pipeline; }

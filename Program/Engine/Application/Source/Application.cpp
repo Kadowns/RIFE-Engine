@@ -130,6 +130,7 @@ void Application::terminate() {
 	DATABASE::unloadData();
     m_vulkanBase->terminateVulkan();
     delete m_vulkanBase;
+    delete m_vulkanData;
     glfwDestroyWindow(m_window);
     glfwTerminate();
 }

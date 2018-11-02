@@ -43,11 +43,11 @@ namespace Script {
 			front.y = sin(glm::radians(pitch));
 			front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 			cameraFront = glm::normalize(front);
-			p_gameObject->getTransform()->m_front = cameraFront;
+			transform->m_front = cameraFront;
 		}
 
 		void awake() {
-			transform = p_gameObject->getTransform();
+			transform = p_gameObject->getComponent<Transform>();
 			input = KEYBOARD;
             MOUSE->setUpdatePositionCallback(this, mouseMoveCallback);
 		}

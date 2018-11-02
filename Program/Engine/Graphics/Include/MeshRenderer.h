@@ -10,6 +10,8 @@ namespace Rife::Graphics {
 
     public:
 
+        void setup();
+
         void createCommandBuffers();
         void freeCommandBuffers();
         void submitUniformBuffersInfo(const uint32_t& imageIndex);
@@ -20,8 +22,6 @@ namespace Rife::Graphics {
 
         void createDescriptorPool();
         void createDescriptorSets();
-
-        Ubo::uTransform m_ubo;
 
         Mesh* p_mesh;
         MaterialInstance m_material;

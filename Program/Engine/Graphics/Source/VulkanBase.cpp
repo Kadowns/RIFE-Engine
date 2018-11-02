@@ -2,6 +2,8 @@
 #include <VulkanData.h>
 #include <VulkanTools.h>
 
+#include <RifeMath.h>
+
 #include <set>
 #include <map>
 #include <array>
@@ -109,7 +111,7 @@ namespace Rife::Graphics {
 		const VkDebugUtilsMessengerCallbackDataEXT * pCallbackData,
 		void * pUserData) {
 
-		std::cerr << "\nvalidation layer: " << pCallbackData->pMessage << std::endl;
+		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
 	}

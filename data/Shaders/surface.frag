@@ -1,56 +1,116 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 2, std140) uniform Light {
+struct DirectionalLight{
+	vec4 direction;
+	vec4 color;
+	vec4 intensitys;
+};
 
-	  vec4 direction;
-	  vec4 ambient;
-	  vec4 diffuse;
-	  vec4 specular;
+struct PointLight{
+	vec4 position;
+	vec4 color;
+	vec4 intensitys;
+};
 
-} uLight;
+struct SpotLight{
+	vec4 position;
+	vec4 direction;
+	vec4 color;
+	float cutoff;
+	float intensity;
+};
+
+struct MaterialProperties {
+
+	vec4 color;
+	float specularPower;
+	float tiling;
+};
+
+layout(binding = 2, std140) uniform Lights {
+
+	  DirectionalLight directional;
+	  PointLight point;
+
+} uLights;
 
 layout(push_constant, std140) uniform Material {
-
-	  vec4 color;
-	  float specularPower;
-
+	  MaterialProperties properties;
 } uMaterial;
 
 layout(binding = 3) uniform sampler2D uMainTex;
 layout(binding = 4) uniform sampler2D uSpecularTex;
 
 
-layout(location = 0) in vec3 vNormal;
-layout(location = 1) in vec3 vViewPath;
-layout(location = 2) in vec2 vTexCoord;
+layout(location = 0) in vec3 vPosition;
+layout(location = 1) in vec3 vNormal;
+layout(location = 2) in vec3 vViewPath;
+layout(location = 3) in vec2 vTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
-void main() {
-	//ambient
-	vec3 ambient = uLight.ambient.xyz * texture(uMainTex, vTexCoord).xyz;
-	//--------------
+vec3 calculateDirectionalLight(in DirectionalLight light, in vec2 texCoord) {
 
-    //diffuse
-    vec3 L = normalize(uLight.direction.xyz);
+	//ambient
+	vec3 ambient = (light.color.xyz * texture(uMainTex, texCoord).xyz) * light.intensitys.x;
+	//------
+
+	//diffuse
+	vec3 L = normalize(light.direction.xyz);
 	vec3 N = normalize(vNormal);
     float diffuseIntensity = max(dot(N, -L), 0.0);
-    vec3 diffuse = diffuseIntensity * uLight.diffuse.xyz * texture(uMainTex, vTexCoord).xyz;
-	//---------------
+    vec3 diffuse = diffuseIntensity * light.color.xyz * texture(uMainTex, texCoord).xyz;
+	//------
 
-    //specular
-    float specularIntensity = 0.0;
-    if (uMaterial.specularPower > 0.0) {
+	//specular
+	float specularIntensity = 0.0;
+    if (uMaterial.properties.specularPower > 0.0) {
         vec3 V = normalize(vViewPath);
         vec3 R = reflect(L, N);
-        specularIntensity = pow(max(dot(R, V), 0.0), uMaterial.specularPower);
+        specularIntensity = pow(max(dot(R, V), 0.0), uMaterial.properties.specularPower);
     }
-    vec3 specular = specularIntensity * uLight.specular.xyz * texture(uSpecularTex, vTexCoord).x;
-	//---------------------------------
+    vec3 specular = specularIntensity * light.color.xyz * texture(uSpecularTex, texCoord).x;
+	//--------
+	vec3 color = (clamp(ambient + diffuse + specular, 0.0, 1.0) * uMaterial.properties.color.xyz) * light.intensitys.y;
+	return color;
+}
 
-    
-    vec3 color = clamp(ambient + diffuse + specular, 0.0, 1.0) * uMaterial.color.xyz;
+vec3 calculatePointLight(in PointLight light, in vec2 texCoord){
+
+	//diffuse
+	vec3 L = normalize(light.position.xyz - vPosition); 
+	vec3 N = normalize(vNormal);
+    float diffuseIntensity = max(dot(N, L), 0.0);
+    vec3 diffuse = diffuseIntensity * light.color.xyz * texture(uMainTex, texCoord).xyz;
+
+	//specular
+	float specularIntensity = 0.0;
+	if (uMaterial.properties.specularPower > 0.0) {
+		vec3 V = normalize(vViewPath);
+		vec3 R = reflect(-L, N);
+		specularIntensity = pow(max(dot(R, V), 0.0), uMaterial.properties.specularPower);
+	}
+	vec3 specular = specularIntensity * light.color.xyz *  texture(uSpecularTex, texCoord).x;
+	//---------------------
+	float dist = length(light.position.xyz - vPosition);
+	float attenuation = 1.0 / (light.intensitys.x + light.intensitys.y * dist + light.intensitys.z * (dist * dist));    
+
+	diffuse  *= attenuation;
+	specular *= attenuation;
+
+	vec3 color = (clamp(diffuse + specular, 0.0, 1.0) * uMaterial.properties.color.xyz) * light.intensitys.w;
+	return color;
+}
+
+void main() {
+
+	vec2 texCoord = vTexCoord * uMaterial.properties.tiling;
+
+	vec3 color = calculateDirectionalLight(uLights.directional, texCoord);
+
+	color += calculatePointLight(uLights.point, texCoord);
+
     outColor = vec4(color, 1.0);
 }
 //é, preciso usar vec4 pra essas merdas pq glsl É UMA MERDA

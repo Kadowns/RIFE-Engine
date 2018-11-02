@@ -21,9 +21,11 @@ set(GRAPHICS_INCLUDE
 	Include/ShaderBuilder.h
 	Include/ShaderFactory.h
 	Include/ShaderItem.h
+	Include/Transform.h
 	Include/Texture.h
 	Include/TextureFactory.h
 	Include/Camera.h
+	Include/Lights.h
 	Include/UniformBufferObject.h	 
 	Include/RifeGraphics.h
 	)
@@ -47,6 +49,7 @@ set(GRAPHICS_SOURCE
 	Source/Texture.cpp
 	Source/TextureFactory.cpp
 	Source/Camera.cpp
+	Source/Lights.cpp
 	)
 
 set(GRAPHICS_ALL "${GRAPHICS_INCLUDE}" "${GRAPHICS_SOURCE}")

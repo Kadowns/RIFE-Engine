@@ -12,10 +12,6 @@ private:
 
     std::vector<GameObject*> gameObjects;
 
-	Camera* m_camera;
-
-    Material* mat;
-
 public:
     Triangle();
     ~Triangle();

@@ -2,32 +2,36 @@
 
 Rife::Base::GameObject::GameObject() {}
 
+Rife::Base::GameObject::GameObject(Component* transform) {
+    addComponent(transform);
+}
+
 Rife::Base::GameObject::~GameObject() {
-    for (int i = 0; i < m_components.size(); i++) {
-        delete m_components[i];
+    for (auto it : m_components) {
+        delete it.second;
     }
 }
 
 void Rife::Base::GameObject::setup() {
-    for (int i = 0; i < m_components.size(); i++) {
-        m_components[i]->setup();
+    for (auto it : m_components) {
+        it.second->setup();
     }
 }
 
 void Rife::Base::GameObject::awake(){
-    for (int i = 0; i < m_components.size(); i++) {
-        m_components[i]->awake();
+    for (auto it : m_components) {
+        it.second->awake();
     }
 }
 
 void Rife::Base::GameObject::update() {
-    for (int i = 0; i < m_components.size(); i++) {
-        m_components[i]->update();
+    for (auto it : m_components) {
+        it.second->update();
     }
 }
 
 Rife::Base::Component* Rife::Base::GameObject::addComponent(Component* component) {
-    m_components.push_back(component);
+    m_components[std::type_index(typeid(*component))] = component;
     component->setParentObject(this);
     return component;
 }

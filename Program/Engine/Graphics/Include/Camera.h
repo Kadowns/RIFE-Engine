@@ -1,13 +1,14 @@
 #pragma once
 #include <RifeMath.h>
 #include <RifeCore.h>
-#include <UniformBufferObject.h>
+
+#include <ShaderItem.h>
 
 #define CAMERA Rife::Graphics::Camera::getInstance()
 
 namespace Rife::Graphics {
 
-    class Camera : public Base::Component {
+    class Camera : public Base::Component, public ShaderItem {
 
     public:
 		Camera() { s_instance = this; }
@@ -18,17 +19,20 @@ namespace Rife::Graphics {
         float getNear() { return m_near; }
         float getFar() { return m_far; }
 
-        glm::vec3 getPosition() { return p_gameObject->getTransform()->m_position; }
+        glm::vec3 getPosition();
         glm::vec3 getTarget() { return m_target; }
         glm::vec3 getUp() { return m_up; }
 
         Camera* updateProjection(float fov, float aspect, float near, float far);
         Camera* updateView();
-        Ubo::uCamera* getUbo() { return &m_ubo; }
         glm::mat4 getProjection() { return m_projection; }
         glm::mat4 getView() { return m_view; }
 
         void update();
+
+        static size_t size();
+
+        void apply(VkDeviceMemory* memory, VkDeviceSize offset);
 
         static Camera* getInstance();
 
@@ -36,7 +40,10 @@ namespace Rife::Graphics {
 
         static Camera* s_instance;
 
-        Ubo::uCamera m_ubo;
+        struct {
+            glm::mat4 vp;
+            glm::vec4 position;
+        } m_ubo;
 
 
         float m_fov, m_aspect, m_near, m_far;

@@ -1,14 +1,24 @@
 #pragma once
 
-#include <VulkanInclude.h>
+#include <VulkanData.h>
 
 namespace Rife::Graphics {
 
-    class Shader;
-
     class ShaderItem {
     public:
+
 		virtual ~ShaderItem() {}
-        virtual void Apply(Shader* shader, VkDeviceMemory* memory, VkDeviceSize offset) = 0;
+        virtual void apply(VkDeviceMemory* memory, VkDeviceSize offset) = 0;
+
+    protected:
+
+        void flushData(VkDeviceMemory* memory, VkDeviceSize range, VkDeviceSize offset, const void* dataValue) {
+
+            void* dataPtr;
+            vkMapMemory(VK_DATA->getDevice(), *memory, offset, range, 0, &dataPtr);
+            memcpy(dataPtr, dataValue, range);
+            vkUnmapMemory(VK_DATA->getDevice(), *memory);
+
+        }
     };
 }

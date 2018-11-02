@@ -1,26 +1,25 @@
 #pragma once
 
 #include <RifeCore.h>
+#include <RifeGraphics.h>
+#include <Random.h>
 
 using namespace Rife::Base;
+using namespace Rife::Graphics;
 
 namespace Script {
 
     class RotatingCube : public Component {
     private:
+       
         Transform* transform;
         glm::vec3 rotation;
     public:
 
-        float getRand(int maxValue) {
-            return (rand() % maxValue * 2) - maxValue;
-        }
-
         void awake() {
 
-            transform = p_gameObject->getTransform();
-            rotation = glm::vec3(getRand(5), getRand(5), getRand(5));
-            printf("\nRotation: x:%f, y:%f, z:%f", rotation.x, rotation.y, rotation.z);
+            transform = p_gameObject->getComponent<Transform>();
+            rotation = glm::vec3(Random::range(-50, 50), Random::range(-20, 20), Random::range(-20, 20));
         }
 
         void update() {
