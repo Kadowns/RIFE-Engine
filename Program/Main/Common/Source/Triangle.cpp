@@ -28,8 +28,8 @@ void Triangle::init() {
 		0.01f,
 		1000.0f
 	);
-    gameObjects[0]->addComponent(new PointLight(1.0, 0.03, 0.0098));
-
+    GLOBAL_LIGHTS->addPointLight((PointLight*)gameObjects[0]->addComponent(new PointLight(1.0, 0.03, 0.0098)));
+	
     
 
     Ubo::uMaterialProperties matProp = {};
@@ -58,7 +58,7 @@ void Triangle::init() {
     }
 
     gameObjects.push_back(new GameObject(new Transform()));
-	gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 0.2f));
+	GLOBAL_LIGHTS->setDirectionalLight((DirectionalLight*)gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 0.7f)));
         
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();
