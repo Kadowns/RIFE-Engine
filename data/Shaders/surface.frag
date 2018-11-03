@@ -31,7 +31,8 @@ struct MaterialProperties {
 layout(binding = 2, std140) uniform Lights {
 
 	  DirectionalLight directional;
-	  PointLight point;
+	  PointLight point[16];
+	  int pointLightCount;
 
 } uLights;
 
@@ -109,7 +110,9 @@ void main() {
 
 	vec3 color = calculateDirectionalLight(uLights.directional, texCoord);
 
-	color += calculatePointLight(uLights.point, texCoord);
+	for (int i = 0; i < uLights.pointLightCount; i++){
+		color += calculatePointLight(uLights.point[i], texCoord);
+	}
 
     outColor = vec4(color, 1.0);
 }

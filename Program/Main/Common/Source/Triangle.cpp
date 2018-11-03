@@ -28,7 +28,7 @@ void Triangle::init() {
 		0.01f,
 		1000.0f
 	);
-    auto pointLight = static_cast<PointLight*>(gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.032)));
+    gameObjects[0]->addComponent(new PointLight(1.0, 0.03, 0.0098));
 
     
 
@@ -58,16 +58,11 @@ void Triangle::init() {
     }
 
     gameObjects.push_back(new GameObject(new Transform()));
-    auto dirLight = static_cast<DirectionalLight*>(
-        gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 1.0f))
-        );
-
-
+	gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 0.2f));
+        
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();
 	}
-
-    auto lights = new GlobalLights(dirLight, pointLight);
 }
 
 void Triangle::awake() {
