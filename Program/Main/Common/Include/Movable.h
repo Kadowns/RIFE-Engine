@@ -9,12 +9,10 @@ namespace Script {
 
 	private:
 
-		float speed = 10.0f;
+		float moveSpeed = 10.0f;
+        float rotateSpeed = 50.0f;
 
-        float yaw = 0, pitch = 0;
-
-		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 front, up;
 
 		Transform* transform;
 		Rife::Tools::Keyboard* input;
@@ -23,27 +21,12 @@ namespace Script {
 
         static void mouseMoveCallback(void* caller, double x, double y) {
             auto camera = reinterpret_cast<Movable*>(caller);
-			camera->updateCameraDirection(x, y);
-           
+			camera->updateCameraDirection(x, y);         
         }
 
 		void updateCameraDirection(double x, double y) {
-			yaw += x;
-			pitch += y;
-
-			if (pitch > 89.0f) {
-				pitch = 89.0f;
-			}
-			else if (pitch < -89.0f) {
-				pitch = -89.0f;
-			}
-
-			glm::vec3 front;
-			front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-			front.y = sin(glm::radians(pitch));
-			front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-			cameraFront = glm::normalize(front);
-			transform->m_front = cameraFront;
+            transform->m_rotation *= glm::quat(glm::radians(glm::vec3(y, -x, 0)));
+            glm::normalize(transform->m_rotation);
 		}
 
 		void awake() {
@@ -55,39 +38,49 @@ namespace Script {
 		void update() {
 
 			if (input->isDown(GLFW_KEY_LEFT_SHIFT)) {
-				speed = 30.0f;
+				moveSpeed = 30.0f;
 			}
 			else {
-				speed = 10.0f;
+				moveSpeed = 10.0f;
 			}
 
+            float rotateAmount = 0.0f;
+            front = transform->getFront();
+            up = transform->getUp();
 			glm::vec3 moveDirection(0.0f);
 			if (input->isDown(GLFW_KEY_A)) {
-				moveDirection -= glm::normalize(glm::cross(cameraFront, cameraUp));
+				moveDirection -= glm::normalize(glm::cross(front, up));
 			}
 			else if (input->isDown(GLFW_KEY_D)){
-				moveDirection += glm::normalize(glm::cross(cameraFront, cameraUp));
+				moveDirection += glm::normalize(glm::cross(front, up));
 			}
 			if (input->isDown(GLFW_KEY_W)) {
-				moveDirection += cameraFront;
+				moveDirection += front;
 			}
 			else if (input->isDown(GLFW_KEY_S)){
-				moveDirection -= cameraFront;
+				moveDirection -= front;
             }
             if (input->isDown(GLFW_KEY_E)) {
-				moveDirection += cameraUp;
+                rotateAmount = -rotateSpeed;
             }
             else if (input->isDown(GLFW_KEY_Q)) {
-				moveDirection -= cameraUp;
+                rotateAmount = rotateSpeed;
             }
 			if (moveDirection.x != 0 || moveDirection.y != 0 || moveDirection.z != 0) {
 				move(glm::normalize(moveDirection));
-			}		
+			}	
+            if (rotateAmount != 0) {
+                rotateZ(rotateAmount);
+            }
 		}
-
 
 		void move(glm::vec3 direction) {
-			transform->m_position += direction * speed * (float)TIME->getLastFrameTime();
+			transform->m_position += direction * moveSpeed * (float)TIME->getLastFrameTime();
 		}
+
+        void rotateZ(double amount) {
+            transform->m_rotation *= glm::quat(glm::radians(glm::vec3(0.0f, 0.0f, amount * TIME->getLastFrameTime())));
+            glm::normalize(transform->m_position);
+        }
 	};
 }

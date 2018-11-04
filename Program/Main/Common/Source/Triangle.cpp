@@ -28,8 +28,8 @@ void Triangle::init() {
 		0.01f,
 		1000.0f
 	);
-    GLOBAL_LIGHTS->addPointLight((PointLight*)gameObjects[0]->addComponent(new PointLight(1.0, 0.03, 0.0098)));
-	
+   // GLOBAL_LIGHTS->addPointLight((PointLight*)gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031)));
+    
     
 
     Ubo::uMaterialProperties matProp = {};
@@ -54,12 +54,26 @@ void Triangle::init() {
         gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh("PolarSphere"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
         gameObjects[i]->addComponent(new Script::RotatingCube());
         t = gameObjects[i]->getComponent<Transform>();
-        t->m_position = glm::vec3(4.0f - 2.0f * (i % 4), 0.0f, 10.0f - 2.0f * (i + 1));
+        t->m_position = glm::vec3(40.0f - 20.0f * (i % 4), 0.0f, 10.0f - 2.0f * (i + 1));
     }
 
     gameObjects.push_back(new GameObject(new Transform()));
-	GLOBAL_LIGHTS->setDirectionalLight((DirectionalLight*)gameObjects[gameObjects.size() - 1]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 0.7f)));
+    int index = gameObjects.size() - 1;
+    matProp.color = glm::vec4(1.0f);
+    gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
+    GLOBAL_LIGHTS->addPointLight((PointLight*)gameObjects[index]->addComponent(new PointLight(1.0, 0.09, 0.031)));
+
+
+	GLOBAL_LIGHTS->setDirectionalLight((DirectionalLight*)gameObjects[index]->addComponent(new DirectionalLight(glm::vec3(-0.2), glm::vec3(1.0f), 0.01f)));
         
+
+    gameObjects.push_back(new GameObject(new Transform()));
+    index = gameObjects.size() - 1;
+    gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(-30, 15.0f, -5.0f);
+    gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
+    GLOBAL_LIGHTS->addPointLight((PointLight*)gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014)));
+
+
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();
 	}

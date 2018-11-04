@@ -28,8 +28,8 @@ namespace Rife::Graphics {
         auto t = p_gameObject->getComponent<Transform>();
 
         m_position = t->m_position;
-        m_target = m_position + t->m_front;
-        m_up = glm::vec3(0.0f, 1.0f, 0.0f);
+        m_target = m_position + t->getFront();
+        m_up = t->getUp();
         m_view = glm::lookAt(m_position, m_target, m_up);
         return this;
     }

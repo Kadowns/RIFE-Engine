@@ -4,10 +4,12 @@ set(APPLICATION_INCLUDE
         Include/Application.h  
 		Include/Scene.h
 		Include/DataBase.h
+		Include/MeshLoader.h
         )
 set(APPLICATION_SOURCE
         Source/Application.cpp
 		Source/DataBase.cpp
+		Source/MeshLoader.cpp
         )
 
 set(APPLICATION_ALL ${APPLICATION_INCLUDE} ${APPLICATION_SOURCE})
