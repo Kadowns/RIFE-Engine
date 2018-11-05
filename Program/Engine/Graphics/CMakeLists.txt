@@ -10,6 +10,7 @@ set(GRAPHICS_INCLUDE
 	Include/VulkanData.h
 	Include/Vertex.h
 	Include/Renderer.h
+	Include/tiny_obj_loader.h
 	Include/Mesh.h
 	Include/MeshFactory.h
 	Include/MeshRenderer.h
@@ -22,10 +23,12 @@ set(GRAPHICS_INCLUDE
 	Include/ShaderFactory.h
 	Include/ShaderItem.h
 	Include/Transform.h
+	Include/stb_image.h
 	Include/Texture.h
 	Include/TextureFactory.h
 	Include/Camera.h
 	Include/Lights.h
+	Include/GlobalLights.h
 	Include/UniformBufferObject.h	 
 	Include/RifeGraphics.h
 	)
@@ -50,6 +53,7 @@ set(GRAPHICS_SOURCE
 	Source/TextureFactory.cpp
 	Source/Camera.cpp
 	Source/Lights.cpp
+	Source/GlobalLights.cpp
 	)
 
 set(GRAPHICS_ALL "${GRAPHICS_INCLUDE}" "${GRAPHICS_SOURCE}")

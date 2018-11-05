@@ -1,10 +1,12 @@
 #include <ShaderFactory.h>
 #include <VulkanData.h>
 
+#include <RifePath.h>
+
 #include <Vertex.h>
 #include <Camera.h>
 #include <Transform.h>
-#include <Lights.h>
+#include <GlobalLights.h>
 
 #include <fstream>
 

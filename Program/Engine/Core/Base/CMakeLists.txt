@@ -5,11 +5,10 @@ set(BASE_INCLUDE
 	Include/Object.h
 	Include/GameObject.h
 	Include/Clock.h
-	Include/stb_image.h
 	Include/RifeCore.h
+	Include/RifePath.h
 	)
 
-	message("stdimage: ${CMAKE_HOME_DIRECTORY}/libs/stb/stb_image.h")
 set(BASE_SOURCE 
 	Source/Component.cpp
 	Source/Object.cpp

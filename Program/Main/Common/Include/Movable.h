@@ -1,6 +1,9 @@
 #pragma once
 
+#include <RifeCore.h>
 #include <RifeTools.h>
+#include <RifeGraphics.h>
+
 using namespace Rife::Base;
 
 namespace Script {

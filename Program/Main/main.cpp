@@ -1,11 +1,11 @@
 #include <Application.h>
-#include <Triangle.h>
+#include <ScenePlayer.h>
 
 int main() {
 
     srand(time(0));
 
-    Scene *scene = new Triangle();
+    Scene *scene = new ScenePlayer();
     Application *app = new Application(scene, "Test", 800, 600);
     try {
         app->show();

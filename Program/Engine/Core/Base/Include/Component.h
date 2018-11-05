@@ -13,6 +13,9 @@ namespace Rife::Base {
         virtual void awake();
         virtual void update();
 
+        template<typename T>
+        T* getComponent();
+
         void setParentObject(GameObject*);
 	protected:
 
@@ -22,4 +25,8 @@ namespace Rife::Base {
         bool m_setup = false, m_awake = false;
 
 	};
+    template<typename T>
+    inline T* Component::getComponent() {
+        return p_gameObject->getComponent<T>();
+    }
 }

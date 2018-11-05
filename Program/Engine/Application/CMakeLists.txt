@@ -3,13 +3,12 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 set(APPLICATION_INCLUDE
         Include/Application.h  
 		Include/Scene.h
-		Include/DataBase.h
-		Include/MeshLoader.h
+		Include/Database.h
         )
 set(APPLICATION_SOURCE
         Source/Application.cpp
-		Source/DataBase.cpp
-		Source/MeshLoader.cpp
+		Source/Database.cpp
+
         )
 
 set(APPLICATION_ALL ${APPLICATION_INCLUDE} ${APPLICATION_SOURCE})

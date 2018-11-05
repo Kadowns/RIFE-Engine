@@ -4,11 +4,11 @@
 
 #include <map>
 
-#define DATABASE Rife::Application::DataBase
+#define DATABASE Rife::Data::Database
 
-namespace Rife::Application {
+namespace Rife::Data {
 
-	class DataBase {
+	class Database {
 
 	public:
 

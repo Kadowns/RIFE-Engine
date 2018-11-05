@@ -1,13 +1,15 @@
 include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 set(COMMON_INCLUDE
-        Include/Test.h 
-        Include/Triangle.h	
+		Include/DataLoader.h
+		Include/RifeScripts.h
+        Include/ScenePlayer.h	
 		Include/RotatingCube.h
 		Include/Movable.h
         )
 set(COMMON_SOURCE
-        Source/Test.cpp
-        Source/Triangle.cpp
+Include/DataLoader.h
+        Source/DataLoader.cpp
+        Source/ScenePlayer.cpp
         )
 
 SeT(COMMON_ALL ${COMMON_INCLUDE} ${COMMON_SOURCE})

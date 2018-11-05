@@ -18,7 +18,7 @@ namespace Script {
 
         void awake() {
 
-            transform = p_gameObject->getComponent<Transform>();
+            transform = getComponent<Transform>();
             rotation = glm::vec3(Random::range(-50, 50), Random::range(-20, 20), Random::range(-20, 20));
         }
 

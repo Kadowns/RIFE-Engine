@@ -5,7 +5,7 @@
 #include <MaterialFactory.h>
 #include <Transform.h>
 #include <Camera.h>
-#include <Lights.h>
+#include <GlobalLights.h>
 
 using namespace Rife::Graphics;
 

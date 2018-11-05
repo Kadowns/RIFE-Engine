@@ -1,5 +1,12 @@
 #include <MeshFactory.h>
 
+#include <RifePath.h>
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+#include <unordered_map>
+
 namespace Rife::Graphics {
 
     Mesh* MeshFactory::createCube() {
@@ -78,29 +85,7 @@ namespace Rife::Graphics {
             }
         }
 
-        std::vector<glm::vec3> normals(positions.size(), glm::vec3(0));
-        for (uint32_t i = 0; i < indices.size(); i += 3) {
-            uint32_t i1 = indices[i];
-            uint32_t i2 = indices[i + 1];
-            uint32_t i3 = indices[i + 2];
-
-            glm::vec3 v1 = positions[i1];
-            glm::vec3 v2 = positions[i2];
-            glm::vec3 v3 = positions[i3];
-
-            glm::vec3 side1 = v2 - v1;
-            glm::vec3 side2 = v3 - v1;
-
-            glm::vec3 normal = glm::cross(side1, side2);
-
-            normals[i1] += normal;
-            normals[i2] += normal;
-            normals[i3] += normal;
-        }
-
-        for (uint32_t i = 0; i < normals.size(); i++) {
-            glm::normalize(normals[i]);
-        }
+        std::vector<glm::vec3> normals = calculateNormals(positions, indices);
 
         float tx = 1.0f / width;
         float ty = 1.0f / depth;
@@ -239,29 +224,7 @@ namespace Rife::Graphics {
 			}
 		}
 
-		std::vector<glm::vec3> normals(positions.size(), glm::vec3(0));
-		for (uint32_t i = 0; i < indices.size(); i += 3) {
-			uint32_t i1 = indices[i];
-			uint32_t i2 = indices[i + 1];
-			uint32_t i3 = indices[i + 2];
-
-			glm::vec3 v1 = positions[i1];
-			glm::vec3 v2 = positions[i2];
-			glm::vec3 v3 = positions[i3];
-
-			glm::vec3 side1 = v2 - v1;
-			glm::vec3 side2 = v3 - v1;
-
-			glm::vec3 normal = glm::cross(side1, side2);
-
-			normals[i1] += normal;
-			normals[i2] += normal;
-			normals[i3] += normal;
-		}
-
-		for (uint32_t i = 0; i < normals.size(); i++) {
-			glm::normalize(normals[i]);
-		}
+        std::vector<glm::vec3> normals = calculateNormals(positions, indices);
 
 		std::vector<Vertex> vertices;
 		vertices.resize(positions.size());
@@ -273,4 +236,92 @@ namespace Rife::Graphics {
 		return new Mesh(vertices, indices);
 	}
 
+    Mesh* MeshFactory::loadMesh(const char* path) {
+
+        tinyobj::attrib_t attrib;
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string warn, err;
+
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, std::string(MESH_FOLDER + std::string(path)).c_str())) {
+            throw std::runtime_error(warn + err);
+        }
+
+        std::unordered_map<Vertex, uint32_t> uniqueVertices = {};
+        std::vector<glm::vec3> positions;
+        std::vector<Vertex> vertices;
+        std::vector<uint32_t> indices;
+   
+        for (const auto& shape : shapes) {
+            for (const auto& index : shape.mesh.indices) {
+         
+                Vertex vertex;
+                vertex.position = {
+                    attrib.vertices[3 * index.vertex_index + 0],
+                    attrib.vertices[3 * index.vertex_index + 1],
+                    attrib.vertices[3 * index.vertex_index + 2]
+                };
+
+                if (attrib.normals.size() != 0) {
+                     vertex.normal = {
+                        attrib.normals[3 * index.normal_index + 0],
+                        attrib.normals[3 * index.normal_index + 1],
+                        attrib.normals[3 * index.normal_index + 2],
+                    };
+                }
+                if (attrib.texcoords.size() != 0) {
+                   vertex.texCoord = {
+                        attrib.texcoords[2 * index.texcoord_index + 0],
+                        1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+                    };
+                } 
+                else {
+                    vertex.texCoord = glm::vec2(0);
+                }
+                if (uniqueVertices.count(vertex) == 0) {
+                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                    vertices.push_back(vertex);
+                    positions.push_back(vertex.position);
+                }
+                
+                indices.push_back(uniqueVertices[vertex]);
+            }
+        }
+
+        if (attrib.normals.size() == 0) {
+            std::vector<glm::vec3> normals = calculateNormals(positions, indices);
+            for (uint32_t i = 0; i < vertices.size(); i++) {
+                vertices[i].normal = normals[i];
+            }
+        }
+
+        return new Mesh(vertices, indices);
+    }
+
+    std::vector<glm::vec3> MeshFactory::calculateNormals(std::vector<glm::vec3>& positions, std::vector<uint32_t>& indices) {
+        std::vector<glm::vec3> normals(positions.size(), glm::vec3(0));
+        for (uint32_t i = 0; i < indices.size(); i += 3) {
+            uint32_t i1 = indices[i];
+            uint32_t i2 = indices[i + 1];
+            uint32_t i3 = indices[i + 2];
+
+            glm::vec3 v1 = positions[i1];
+            glm::vec3 v2 = positions[i2];
+            glm::vec3 v3 = positions[i3];
+
+            glm::vec3 side1 = v2 - v1;
+            glm::vec3 side2 = v3 - v1;
+
+            glm::vec3 normal = glm::cross(side1, side2);
+
+            normals[i1] += normal;
+            normals[i2] += normal;
+            normals[i3] += normal;
+        }
+        for (uint32_t i = 0; i < normals.size(); i++) {
+            glm::normalize(normals[i]);
+        }
+
+        return normals;
+    }
 }
