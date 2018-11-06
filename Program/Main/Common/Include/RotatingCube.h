@@ -16,6 +16,14 @@ namespace Script {
         glm::vec3 rotation;
     public:
 
+        RotatingCube() {
+            m_name = "RotatingCube";
+        }
+
+        void serialize(std::ofstream& file) {
+            
+        }
+
         void awake() {
 
             transform = getComponent<Transform>();

@@ -8,6 +8,7 @@
 namespace Rife::Graphics {
 
     struct UniformBufferObjectInfo {
+        std::vector<void*> pDatas;
         VkDeviceSize offset;
         VkDeviceSize range;
     };
@@ -23,7 +24,11 @@ namespace Rife::Graphics {
             std::vector<UniformBufferObjectInfo>&,
             std::vector<VkDescriptorSetLayoutBinding>&
 		);
-		Shader() {}
+        Shader() { m_name = "Shader"; }
+
+        void serialize(std::ofstream& file) {
+            file << (m_name + "\n").c_str();
+        }
 
 		~Shader();
 
@@ -40,7 +45,6 @@ namespace Rife::Graphics {
 
         std::vector<VkDescriptorSetLayoutBinding>& getLayoutBindings() { return m_layoutBindings; }
 		std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() { return m_descriptorSetLayouts; }
-
 
 	private:
 

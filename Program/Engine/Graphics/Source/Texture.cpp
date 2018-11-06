@@ -4,6 +4,7 @@
 namespace Rife::Graphics {
 
     Texture::Texture(VkImage& image, VkImageView& imageView, VkDeviceMemory& memory, VkSampler& sampler) {
+        m_name = "Texture";
         m_textureImage = image;
         m_textureImageView = imageView;
         m_textureImageMemory = memory;

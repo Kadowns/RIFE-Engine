@@ -10,6 +10,7 @@
 using namespace Rife::Graphics;
 
 MeshRenderer::MeshRenderer(Mesh* mesh, const MaterialInstance& material) {
+    m_name = "MeshRenderer";
     p_mesh = mesh;
     m_material = material;
 }
@@ -32,11 +33,12 @@ void Rife::Graphics::MeshRenderer::setup() {
     m_uniformBuffersMemory.resize(VK_DATA->getSwapchainImages().size());
     for (int i = 0; i < m_uniformBuffers.size(); i++) {
         createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
+        
     }
+
     createDescriptorPool();
     createDescriptorSets();
     VK_BASE->bindRenderer(this);
-
 }
 
 void MeshRenderer::createCommandBuffers() {
@@ -117,7 +119,7 @@ void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
   
     m_material.getShader()
         ->bindUniformBufferMemory(&m_uniformBuffersMemory[imageIndex])
-        .setItem(*p_gameObject->getComponent<Transform>())
+        .setItem(*getComponent<Transform>())
         .setItem(*CAMERA)
         .setItem(*GLOBAL_LIGHTS);
 }

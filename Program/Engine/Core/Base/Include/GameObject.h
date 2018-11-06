@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Component.h>
-#include <typeindex>
+
 #include <map>
 
 namespace Rife::Base {
 
-    class GameObject : Object {
+    class GameObject : public Object {
 
     public:
         
@@ -23,6 +23,7 @@ namespace Rife::Base {
         template<typename T>
         T* getComponent();
 
+        void serialize(std::ofstream& file);
 
     private:
         

@@ -42,6 +42,7 @@ namespace Rife::Graphics {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 
+        m_name = "Shader";
         m_uboInfo = uboInfo;
         m_layoutBindings = layoutBindings;
 	}
@@ -52,6 +53,7 @@ namespace Rife::Graphics {
 			vkDestroyDescriptorSetLayout(VK_DATA->getDevice(), m_descriptorSetLayouts[i], nullptr);
 		}
 	}
+
 
     Shader& Shader::bindUniformBufferMemory(VkDeviceMemory* memory) {
         p_uniformBufferMemory = memory;

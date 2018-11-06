@@ -5,7 +5,7 @@ namespace Rife::Base {
 
     class GameObject;
 
-	class Component : Object {
+	class Component : public Object {
 
 	public:
 

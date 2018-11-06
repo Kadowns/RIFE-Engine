@@ -5,11 +5,11 @@
 
 namespace Rife::Graphics {
 
-    class MaterialInstance {
+    class MaterialInstance : public Base::Object{
 
     public:
 
-        MaterialInstance() {}
+        MaterialInstance() { m_name = "MaterialInstance"; }
         MaterialInstance(Material* baseMaterial, Ubo::uMaterialProperties properties);
 
         Material* getBaseMaterial() { return p_baseMaterial; }
@@ -17,6 +17,10 @@ namespace Rife::Graphics {
         std::vector<Texture*>& getTextures() { return p_baseMaterial->getTextures(); }
         Shader* getShader() { return p_baseMaterial->getShader(); }
         Ubo::uMaterialProperties& getProperties() { return m_properties; }
+
+        void serialize(std::ofstream& file) {
+            file << (m_name + "\n").c_str();
+        }
 
     private:
 

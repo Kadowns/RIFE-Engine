@@ -14,7 +14,7 @@ namespace Rife::Graphics {
 
     public:
 
-        Material() {}
+        Material() { m_name = "Material"; }
         Material(Shader* shader, std::vector<Texture*> pTextures);
         ~Material();
 
@@ -27,6 +27,10 @@ namespace Rife::Graphics {
         size_t getTexturesSize() { return m_pTextures.size(); }
 
         bool isCleared() { return m_clear; }
+
+        void serialize(std::ofstream& file) {
+            file << (m_name + "\n").c_str();
+        }
 
     private:
 

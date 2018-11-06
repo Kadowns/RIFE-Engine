@@ -1,5 +1,5 @@
 #include <ScenePlayer.h>
-
+#include <Serializer.h>
 
 #include <RifeScripts.h>
 #include <Movable.h>
@@ -85,6 +85,8 @@ void ScenePlayer::init() {
     gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
     gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014));
 
+    
+    Rife::Data::Serializer::saveScene("Main.scene", gameObjects);
 
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();

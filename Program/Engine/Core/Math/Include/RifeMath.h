@@ -1,6 +1,7 @@
 #pragma once
 #include <MathIncludes.h>
 
+
 namespace Rife::Math {
 
     template<class T>
@@ -10,4 +11,11 @@ namespace Rife::Math {
 
 };
 
+namespace std {
 
+    string to_string(glm::vec2 vec);
+    string to_string(glm::vec3 vec);
+    string to_string(glm::vec4 vec);
+    string to_string(glm::quat);
+
+}

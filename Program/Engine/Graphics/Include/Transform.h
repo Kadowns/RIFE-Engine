@@ -3,6 +3,7 @@
 #include <RifeCore.h>
 #include <ShaderItem.h>
 
+
 namespace Rife::Graphics {
 
 	struct Transform : public Base::Component, public ShaderItem {
@@ -11,10 +12,19 @@ namespace Rife::Graphics {
         glm::quat m_rotation;
         glm::vec3 m_scale;
 
-        Transform() : m_position(glm::vec3(0.0f)), m_rotation(glm::vec3(0.0f)), m_scale(glm::vec3(1.0f)) {}
+        Transform() : m_position(glm::vec3(0.0f)), m_rotation(glm::vec3(0.0f)), m_scale(glm::vec3(1.0f)) {
+            m_name = "Transform";
+        }
 
         static size_t size() {
             return sizeof(glm::mat4);
+        }
+
+        void serialize(std::ofstream& file) {
+            std::string offset("    ");
+            file << (offset + NAME(m_position) + ": " + std::to_string(m_position) + "\n").c_str();
+            file << (offset + NAME(m_rotation) + ": " + std::to_string(m_rotation) + "\n").c_str();
+            file << (offset + NAME(m_scale) + ": " + std::to_string(m_scale) + "\n").c_str();
         }
 
         void apply(VkDeviceMemory* memory, VkDeviceSize offset) {

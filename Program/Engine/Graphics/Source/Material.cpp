@@ -4,6 +4,8 @@ namespace Rife::Graphics {
 
     Material::Material(Shader* shader, std::vector<Texture*> pTextures) {
 
+        m_name = "Material";
+
         m_pTextures = pTextures;
 
         p_shader = shader;

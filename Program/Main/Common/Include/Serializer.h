@@ -7,7 +7,7 @@
 
 namespace Rife::Data {
 
-    class Dataloader {
+    class Serializer {
     public:
         //static void loadObj(
         //    const char* path//,
@@ -18,6 +18,7 @@ namespace Rife::Data {
         //);
 
         static bool loadScene(const char* path, std::vector<Base::GameObject*>& gameObjects);
+        static void saveScene(const char* path, std::vector<Base::GameObject*>& gameObjects);
 
 
     };

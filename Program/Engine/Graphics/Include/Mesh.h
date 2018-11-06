@@ -19,6 +19,10 @@ namespace Rife::Graphics {
         VkDeviceMemory& getVertexBufferMemory() { return m_vertexBufferMemory; }
         VkDeviceMemory& getIndexBufferMemory() { return m_indexBufferMemory; }
 
+        void serialize(std::ofstream&) {
+
+        }
+
     private:
 
 		void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);

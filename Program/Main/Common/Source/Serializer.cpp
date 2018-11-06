@@ -1,4 +1,4 @@
-#include <DataLoader.h>
+#include <Serializer.h>
 #include <RifePath.h>
 
 #include <RifeScripts.h>
@@ -11,7 +11,7 @@
 
 namespace Rife::Data {
 
-    bool Dataloader::loadScene(const char* path, std::vector<Base::GameObject*>& gameObjects) {
+    bool Serializer::loadScene(const char* path, std::vector<Base::GameObject*>& gameObjects) {
         std::ifstream file(SCENE_FOLDER + std::string(path));
 
         if (!file.is_open()) {
@@ -46,6 +46,22 @@ namespace Rife::Data {
 
 
         }
+
+    }
+
+    void Serializer::saveScene(const char* path, std::vector<Base::GameObject*>& gameObjects) {
+        std::ofstream file((SCENE_FOLDER + std::string(path)));
+
+        if (!file.is_open()) {
+            std::cout << "Failed to save scene!" << std::endl;
+            return;
+        }
+
+        for (auto obj : gameObjects) {
+            obj->serialize(file);
+        }
+
+        file.close();
 
     }
 }

@@ -10,6 +10,10 @@ namespace Rife::Graphics {
 
     public:
 
+        void serialize(std::ofstream& file) {
+            //file << (m_name + "\n").c_str();
+        }
+
         void setup();
 
         void createCommandBuffers();

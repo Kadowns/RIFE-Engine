@@ -1,14 +1,13 @@
 include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
-set(COMMON_INCLUDE
-		Include/DataLoader.h
+set(COMMON_INCLUDE		
 		Include/RifeScripts.h
+		Include/Serializer.h
         Include/ScenePlayer.h	
 		Include/RotatingCube.h
 		Include/Movable.h
         )
 set(COMMON_SOURCE
-Include/DataLoader.h
-        Source/DataLoader.cpp
+        Source/Serializer.cpp
         Source/ScenePlayer.cpp
         )
 

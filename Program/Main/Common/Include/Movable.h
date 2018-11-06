@@ -22,6 +22,14 @@ namespace Script {
 
 	public:
 
+        Movable() {
+            m_name = "Movable";
+        }
+
+        void serialize(std::ofstream& file) {
+            
+        }
+
         static void mouseMoveCallback(void* caller, double x, double y) {
             auto camera = reinterpret_cast<Movable*>(caller);
 			camera->updateCameraDirection(x, y);         

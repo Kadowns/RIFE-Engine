@@ -17,6 +17,10 @@ namespace Rife::Graphics {
         VkSampler& getSampler() { return m_textureSampler; }
         VkDeviceMemory& getMemory() { return m_textureImageMemory; }
 
+        void serialize(std::ofstream& file) {
+            file << (m_name + "\n").c_str();
+        }
+
     private:
 
         VkImage m_textureImage;

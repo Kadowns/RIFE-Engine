@@ -11,8 +11,12 @@ namespace Rife::Graphics {
     class Camera : public Base::Component, public ShaderItem {
 
     public:
-		Camera() { s_instance = this; }
+		Camera() { m_name = "Camera"; s_instance = this; }
         Camera(float fov, float aspect, float near, float far);
+
+        void serialize(std::ofstream& file) {
+            //file << (m_name + "\n").c_str();
+        }
 
         float getFov() { return m_fov; }
         float getAspect() { return m_aspect; }

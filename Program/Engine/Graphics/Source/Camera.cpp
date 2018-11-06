@@ -8,6 +8,7 @@ namespace Rife::Graphics {
 
     Camera::Camera(float fov, float aspect, float near, float far) {
        
+        m_name = "Camera";
         updateProjection(fov, aspect, near, far);
         s_instance = this;
     }

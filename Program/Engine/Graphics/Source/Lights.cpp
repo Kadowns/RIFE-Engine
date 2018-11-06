@@ -4,6 +4,7 @@
 namespace Rife::Graphics {
 
     DirectionalLight::DirectionalLight(glm::vec3 direction, glm::vec3 color, float intensity) {
+        m_name = "DirectionalLight";
         m_direction = direction;
         m_color = color;
         m_intensity = intensity;
@@ -21,6 +22,7 @@ namespace Rife::Graphics {
     }
 
     PointLight::PointLight(float constant, float linear, float quadratic) {
+        m_name = "PointLight";
         m_constant = constant;
         m_linear = linear;
         m_quadratic = quadratic;

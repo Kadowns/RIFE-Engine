@@ -14,6 +14,10 @@ namespace Rife::Graphics {
 
 	public:
 
+        void serialize(std::ofstream& file) {
+           
+        }
+
 	protected:
 
 		glm::vec3 m_color;
@@ -24,7 +28,7 @@ namespace Rife::Graphics {
     class DirectionalLight : public Light {
     public:
 
-        DirectionalLight() {}
+        DirectionalLight() { m_name = "DirectionalLight"; }
 
         DirectionalLight(glm::vec3 direction, glm::vec3 color, float intensity);
 
@@ -40,7 +44,7 @@ namespace Rife::Graphics {
     class PointLight : public Light {
     public:
 
-        PointLight() {}
+        PointLight() { m_name = "PointLight"; }
         PointLight(float constant, float linear, float quadratic);
 
         void awake() {
