@@ -46,14 +46,14 @@ void ScenePlayer::init() {
 
     matProp.tiling = 1.0f;
     matProp.specularPower = 128.0f;
-    matProp.color = glm::vec4(0.9f, 0.5f, 0.5f, 1.0f);
+    matProp.color = glm::vec4(1.0f);
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
-    gameObjects[2]->addComponent(new Script::RotatingCube());
+    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("City"), MaterialInstance(DATABASE::getMaterial("City"), matProp)));
+    //gameObjects[2]->addComponent(new Script::RotatingCube());
     t = gameObjects[2]->getComponent<Transform>();
-    t->m_position = glm::vec3(0.0f, 4.0f, 30.0f);
-    t->m_rotation = glm::quat(glm::radians(glm::vec3(-90.0f, 0.0f, 0.0f)));
-    //t->m_scale = glm::vec3(10.0f);
+    t->m_position = glm::vec3(0.0f, 0.0f, 30.0f);
+  //  t->m_rotation = glm::quat(glm::radians(glm::vec3(-90.0f, 0.0f, 0.0f)));
+    t->m_scale = glm::vec3(0.1f);
 
     matProp.tiling = 2.0f;
 	int newSize = gameObjects.size() + 10;
