@@ -12,7 +12,7 @@ namespace Rife::Graphics {
 		
 		uint32_t attSize = 0;
 		for (auto att : m_attributes) {
-			attSize += att.first.size() * att.second;
+			attSize += att.second;
 		}
 
 		std::vector<float> vertices;
@@ -21,7 +21,7 @@ namespace Rife::Graphics {
 		for (uint32_t vert = 0; vert < verticesCount; vert++) {
 			for (auto att : m_attributes) {
 				for (uint8_t j = 0; j < att.second; j++) {
-					vertices[i] = att.first[j + vert * att.second];
+					vertices[i] = std::move(att.first[j + vert * att.second]);
 					i++;
 				}
 			}
