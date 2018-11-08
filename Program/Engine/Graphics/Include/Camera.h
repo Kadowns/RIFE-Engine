@@ -3,6 +3,7 @@
 #include <RifeCore.h>
 
 #include <ShaderItem.h>
+#include <string>
 
 #define CAMERA Rife::Graphics::Camera::getInstance()
 
@@ -15,6 +16,10 @@ namespace Rife::Graphics {
         Camera(float fov, float aspect, float near, float far);
 
         void serialize(std::ofstream& file) {
+            std::string offset("    ");
+            file << (offset + NAME(m_fov) + ": " + std::to_string(m_fov) + "\n").c_str();
+            file << (offset + NAME(m_near) + ": " + std::to_string(m_near) + "\n").c_str();
+            file << (offset + NAME(m_far) + ": " + std::to_string(m_far) + "\n").c_str();
             //file << (m_name + "\n").c_str();
         }
 

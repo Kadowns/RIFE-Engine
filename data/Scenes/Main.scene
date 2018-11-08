@@ -4,6 +4,9 @@ GameObject:
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:Camera:
+    m_fov: 55.000000
+    m_near: 0.010000
+    m_far: 1000.000000
   c:Movable:
 -
 GameObject:

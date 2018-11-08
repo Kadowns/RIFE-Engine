@@ -86,7 +86,7 @@ void ScenePlayer::init() {
     gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014));
 
     
-    Rife::Data::Serializer::saveScene("Main.scene", gameObjects);
+    Rife::Data::Serializer::saveScene("Main", gameObjects);
 
 	for (size_t i = 0; i < gameObjects.size(); i++) {
 		gameObjects[i]->setup();

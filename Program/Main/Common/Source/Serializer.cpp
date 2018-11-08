@@ -33,24 +33,16 @@ namespace Rife::Data {
                 while (header != "-g") {
 
                     word >> header;
-
-
-
                 }
-
-
-
             }
 
             file.close();
-
-
         }
 
     }
 
     void Serializer::saveScene(const char* path, std::vector<Base::GameObject*>& gameObjects) {
-        std::ofstream file((SCENE_FOLDER + std::string(path)));
+        std::ofstream file((SCENE_FOLDER + std::string(path) + ".scene"));
 
         if (!file.is_open()) {
             std::cout << "Failed to save scene!" << std::endl;

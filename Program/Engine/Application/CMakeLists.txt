@@ -8,7 +8,6 @@ set(APPLICATION_INCLUDE
 set(APPLICATION_SOURCE
         Source/Application.cpp
 		Source/Database.cpp
-
         )
 
 set(APPLICATION_ALL ${APPLICATION_INCLUDE} ${APPLICATION_SOURCE})
