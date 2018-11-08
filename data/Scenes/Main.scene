@@ -5,6 +5,7 @@ GameObject:
     m_scale: 1.000000 1.000000 1.000000
   c:Camera:
   c:Movable:
+  c:PointLight:
 -
 GameObject:
   c:Transform:
@@ -15,7 +16,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 0.000000 30.000000
+    m_position: 0.000000 0.000000 60.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 0.100000 0.100000 0.100000
   c:MeshRenderer:

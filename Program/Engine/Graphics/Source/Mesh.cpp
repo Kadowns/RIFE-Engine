@@ -13,7 +13,7 @@ namespace Rife::Graphics {
         vkFreeMemory(VK_DATA->getDevice(), m_indexBufferMemory, nullptr);
     }
 
-    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices) {
+    Mesh::Mesh(std::vector<float> vertices, std::vector<uint32_t> indices) {
         m_vertices = vertices;
         m_indices = indices;
 

@@ -9,8 +9,8 @@ namespace Rife::Graphics {
     public:
         Mesh() {}
         ~Mesh();
-        Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
-        std::vector<Vertex>& getVertices() { return m_vertices; }
+        Mesh(std::vector<float> vertices, std::vector<uint32_t> indices);
+        std::vector<float>& getVertices() { return m_vertices; }
         std::vector<uint32_t>& getIndices() { return m_indices; }
 
         VkBuffer& getVertexBuffer() { return m_vertexBuffer; }
@@ -28,7 +28,8 @@ namespace Rife::Graphics {
 		void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
 		void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
 
-        std::vector<Vertex> m_vertices;
+        std::vector<float> m_vertices;
+		uint32_t m_verticesCount = 0;
         std::vector<uint32_t> m_indices;
 
         VkBuffer m_vertexBuffer, m_indexBuffer;
