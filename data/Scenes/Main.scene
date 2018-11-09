@@ -8,6 +8,7 @@ GameObject:
     m_near: 0.010000
     m_far: 1000.000000
   c:Movable:
+  c:PointLight:
 -
 GameObject:
   c:Transform:
@@ -18,11 +19,10 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 4.000000 30.000000
-    m_rotation: -0.707107 0.000000 0.000000 0.707107
-    m_scale: 1.000000 1.000000 1.000000
+    m_position: 0.000000 0.000000 60.000000
+    m_rotation: 0.000000 0.000000 0.000000 1.000000
+    m_scale: 0.100000 0.100000 0.100000
   c:MeshRenderer:
-  c:RotatingCube:
 -
 GameObject:
   c:Transform:

@@ -29,7 +29,7 @@ void ScenePlayer::init() {
 		0.01f,
 		1000.0f
 	);
-   // GLOBAL_LIGHTS->addPointLight((PointLight*)gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031)));
+   gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031));
     
     
 
@@ -46,14 +46,14 @@ void ScenePlayer::init() {
 
     matProp.tiling = 1.0f;
     matProp.specularPower = 128.0f;
-    matProp.color = glm::vec4(0.9f, 0.5f, 0.5f, 1.0f);
+    matProp.color = glm::vec4(1.0f);
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
-    gameObjects[2]->addComponent(new Script::RotatingCube());
+    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Arc170"), MaterialInstance(DATABASE::getMaterial("Arc170"), matProp)));
+    //gameObjects[2]->addComponent(new Script::RotatingCube());
     t = gameObjects[2]->getComponent<Transform>();
-    t->m_position = glm::vec3(0.0f, 4.0f, 30.0f);
-    t->m_rotation = glm::quat(glm::radians(glm::vec3(-90.0f, 0.0f, 0.0f)));
-    //t->m_scale = glm::vec3(10.0f);
+    t->m_position = glm::vec3(0.0f, 0.0f, 60.0f);
+  //  t->m_rotation = glm::quat(glm::radians(glm::vec3(-90.0f, 0.0f, 0.0f)));
+    t->m_scale = glm::vec3(0.1f);
 
     matProp.tiling = 2.0f;
 	int newSize = gameObjects.size() + 10;
@@ -76,7 +76,7 @@ void ScenePlayer::init() {
     gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(30, 15.0f, 5.0f);
 
 
-	gameObjects[index]->addComponent(new DirectionalLight(glm::vec3(0, -1, 0), glm::vec3(1.0f), 0.0f));
+	gameObjects[index]->addComponent(new DirectionalLight(glm::vec3(0, -1, 0), glm::vec3(1.0f, 1.0f, 0.9f), 0.5f));
         
 
     gameObjects.push_back(new GameObject(new Transform()));

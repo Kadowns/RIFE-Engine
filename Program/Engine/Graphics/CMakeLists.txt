@@ -12,6 +12,7 @@ set(GRAPHICS_INCLUDE
 	Include/Renderer.h
 	Include/tiny_obj_loader.h
 	Include/Mesh.h
+	Include/MeshBuilder.h
 	Include/MeshFactory.h
 	Include/MeshRenderer.h
 	Include/Material.h
@@ -40,6 +41,7 @@ set(GRAPHICS_SOURCE
 	Source/Vertex.cpp 
 	Source/Renderer.cpp
 	Source/Mesh.cpp
+	Source/MeshBuilder.cpp
 	Source/MeshFactory.cpp
 	Source/MeshRenderer.cpp
 	Source/Material.cpp

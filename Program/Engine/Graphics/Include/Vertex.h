@@ -6,6 +6,22 @@
 
 namespace Rife::Graphics {
 
+	enum VERTEX_COMPONENT {
+		VERTEX_COMPONENT_POSITION = 0x0,
+		VERTEX_COMPONENT_COLOR = 0x1,
+		VERTEX_COMPONENT_NORMAL = 0x2,
+		VERTEX_COMPONENT_UV = 0x3
+	};
+
+	struct VertexLayout {
+
+		std::vector<VERTEX_COMPONENT> m_vertexComponents;
+
+		VertexLayout(std::vector<VERTEX_COMPONENT> components) {
+			m_vertexComponents = std::move(components);
+		}
+	};
+
     struct Vertex {
         glm::vec3 position;
         glm::vec3 normal;
