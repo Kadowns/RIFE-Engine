@@ -9,7 +9,8 @@ namespace Rife::Graphics {
 	public:
 
 		static Shader* surfaceShader(const std::string& vertShaderName, const std::string& fragShaderName);
-        static Shader* defaultShader(const std::string& vertShaderName, const std::string& fragShaderName);
+        static Shader* defaultShader();
+        static Shader* skyboxShader();
 
 	private:
 
@@ -39,7 +40,7 @@ namespace Rife::Graphics {
 
 		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo(
             VkVertexInputBindingDescription&,
-            std::array<VkVertexInputAttributeDescription, 3>
+            const std::vector<VkVertexInputAttributeDescription>&
         );
 		
 		static VkPipelineInputAssemblyStateCreateInfo createInputAssemblyInfo(

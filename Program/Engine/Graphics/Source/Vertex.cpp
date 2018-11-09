@@ -2,36 +2,59 @@
 
 namespace Rife::Graphics {
 
-	VkVertexInputBindingDescription Vertex::getBindingDescription() {
+    size_t VertexLayout::stride() {
+        size_t stride = 0;
+        for (auto comp : m_components) {
+            stride += size(comp);
+        }
+        return stride;
+    }
 
-		VkVertexInputBindingDescription bindingDescription = {};
-		bindingDescription.binding = 0;
-		bindingDescription.stride = sizeof(Vertex);
-		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    VkVertexInputBindingDescription VertexLayout::getBindingDescription() {
 
-		return bindingDescription;
-	}
+        VkVertexInputBindingDescription bindingDescription = {};
+        bindingDescription.binding = 0;
+        bindingDescription.stride = stride();
+        bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
-	std::array<VkVertexInputAttributeDescription, 3> Vertex::getAttributeDescriptions() {
+        return bindingDescription;
+    }
 
-		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
+    std::vector<VkVertexInputAttributeDescription> VertexLayout::getAttributeDescriptions() {
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+        attributeDescriptions.resize(m_components.size());
+        uint32_t offset = 0;
+        for (uint8_t i = 0; i < m_components.size(); i++) {
+            attributeDescriptions[i].binding = 0;
+            attributeDescriptions[i].location = i;
+            attributeDescriptions[i].format = componentFormat(m_components[i]);
+            attributeDescriptions[i].offset = offset;
+            offset += size(m_components[i]);
+        }
 
-		attributeDescriptions[0].binding = 0;
-		attributeDescriptions[0].location = 0;
-		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[0].offset = offsetof(Vertex, position);
+        return attributeDescriptions;
+    }
 
-		attributeDescriptions[1].binding = 0;
-		attributeDescriptions[1].location = 1;
-		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[1].offset = offsetof(Vertex, normal);
+    VkFormat VertexLayout::componentFormat(const VERTEX_COMPONENT& component) {
+        switch (component) {
+        case VERTEX_COMPONENT_UV:
+            return VK_FORMAT_R32G32_SFLOAT;
+        case VERTEX_COMPONENT_COLOR:
+            return VK_FORMAT_R32G32B32A32_SFLOAT;
+        default:
+            return VK_FORMAT_R32G32B32_SFLOAT;
+        }
+    }
 
-        attributeDescriptions[2].binding = 0;
-        attributeDescriptions[2].location = 2;
-        attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
-
-		return attributeDescriptions;
-	}
+    uint32_t VertexLayout::size(const VERTEX_COMPONENT& component) {
+        switch (component) {
+        case VERTEX_COMPONENT_UV:
+            return sizeof(float) * 2;
+        case VERTEX_COMPONENT_COLOR:
+            return sizeof(float) * 4;
+        default:
+            return sizeof(float) * 3;
+        }
+    }
+    
 }

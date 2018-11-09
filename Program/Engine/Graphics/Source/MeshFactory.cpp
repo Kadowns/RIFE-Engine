@@ -28,7 +28,17 @@ namespace Rife::Graphics {
     }
 
 	Mesh* MeshFactory::createSkybox() {
-		return nullptr;
+        std::vector<glm::vec3> positions;
+        std::vector<glm::vec2> uvs;
+        std::vector<uint32_t> indices;
+
+        generateCubeInfo(2, positions, uvs, indices);
+
+        return MeshBuilder()
+            .addVecAttribute(positions)
+            .addVecAttribute(uvs)
+            .setIndices(indices)
+            .create(positions.size());
 	}
 
     Mesh* MeshFactory::createPlane(uint8_t width, uint8_t depth) {
@@ -175,6 +185,7 @@ namespace Rife::Graphics {
         std::vector<glm::vec3> positions, normals;
 		std::vector<glm::vec2> uvs;
         std::vector<uint32_t> indices;
+
 
 		std::vector<Vertex> vertices;
 		std::unordered_map<Vertex, uint32_t> uniqueVertices = {};

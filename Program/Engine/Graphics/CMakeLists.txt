@@ -2,6 +2,8 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 
 find_package(Vulkan REQUIRED)
 find_package(GLFW REQUIRED)
+find_package(GLI REQUIRED)
+include_directories(${CMAKE_HOME_DIRECTORY}/libs/gli)
 
 set(GRAPHICS_INCLUDE
 	Include/VulkanInclude.h
@@ -62,4 +64,4 @@ set(GRAPHICS_ALL "${GRAPHICS_INCLUDE}" "${GRAPHICS_SOURCE}")
 
 CreateModule(Engine Graphics "${GRAPHICS_ALL}")
 
-target_link_libraries(Graphics GLFW Vulkan::Vulkan Base)
+target_link_libraries(Graphics GLFW Vulkan::Vulkan gli Base)

@@ -13,13 +13,24 @@ namespace Rife::Graphics {
 		VERTEX_COMPONENT_UV = 0x3
 	};
 
-	struct VertexLayout {
+	class VertexLayout {
 
-		std::vector<VERTEX_COMPONENT> m_vertexComponents;
-
+    public:
 		VertexLayout(std::vector<VERTEX_COMPONENT> components) {
-			m_vertexComponents = std::move(components);
+			m_components = std::move(components);
 		}
+
+        size_t stride();
+
+        VkVertexInputBindingDescription getBindingDescription();
+        std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
+
+    private:
+
+        VkFormat componentFormat(const VERTEX_COMPONENT& component);
+        uint32_t size(const VERTEX_COMPONENT& component);
+        std::vector<VERTEX_COMPONENT> m_components;
+
 	};
 
     struct Vertex {
@@ -27,14 +38,12 @@ namespace Rife::Graphics {
         glm::vec3 normal;
         glm::vec2 texCoord;
 
-        static VkVertexInputBindingDescription getBindingDescription();
-        static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions();
-
         bool operator==(const Vertex& other) const {
             return position == other.position && normal == other.normal && texCoord == other.texCoord;
         }
     };
 }
+
 namespace std {
     template<> struct hash<Rife::Graphics::Vertex> {
         size_t operator()(Rife::Graphics::Vertex const& vertex) const {

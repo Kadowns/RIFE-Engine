@@ -42,6 +42,7 @@ layout(push_constant, std140) uniform Material {
 
 layout(binding = 3) uniform sampler2D uMainTex;
 layout(binding = 4) uniform sampler2D uSpecularTex;
+layout(binding = 5) uniform samplerCube uCubemap; 
 
 
 layout(location = 0) in vec3 vPosition;

@@ -4,7 +4,7 @@ namespace Rife::Graphics {
 
     Material* MaterialFactory::defaultMaterial() {
 
-		auto shader = ShaderFactory::defaultShader("default_vert.spv", "default_frag.spv");
+		auto shader = ShaderFactory::defaultShader();
 
 		auto material = MaterialBuilder()
 	        .setShader(shader)
