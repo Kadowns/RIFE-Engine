@@ -5,17 +5,34 @@
 
 namespace Rife::Graphics {
 
+    struct TextureInfo {
+
+        VkImage image;
+        VkImageView imageView;
+        VkSampler sampler;
+        VkDeviceMemory memory;
+
+        struct {
+
+            uint32_t width, height;
+
+        } extent;
+
+        uint32_t mipLevels, layerCount;
+    };
+
+
     class Texture final : public Base::Object {
 
     public:
 
-        Texture(VkImage& image, VkImageView& imageView, VkDeviceMemory& memory, VkSampler& sampler);
+        Texture(const TextureInfo& textureInfo);
         ~Texture();
 
-        VkImage& getImage() { return m_textureImage; }
-        VkImageView& getImageView() { return m_textureImageView; }
-        VkSampler& getSampler() { return m_textureSampler; }
-        VkDeviceMemory& getMemory() { return m_textureImageMemory; }
+        VkImage& getImage() { return m_info.image; }
+        VkImageView& getImageView() { return m_info.imageView; }
+        VkSampler& getSampler() { return m_info.sampler; }
+        VkDeviceMemory& getMemory() { return m_info.memory; }
 
         void serialize(std::ofstream& file) {
             file << (m_name + "\n").c_str();
@@ -23,9 +40,6 @@ namespace Rife::Graphics {
 
     private:
 
-        VkImage m_textureImage;
-        VkImageView m_textureImageView;
-        VkSampler m_textureSampler;
-        VkDeviceMemory m_textureImageMemory;
+        TextureInfo m_info;
     };
 }

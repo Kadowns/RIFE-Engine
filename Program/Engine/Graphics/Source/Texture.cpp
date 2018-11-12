@@ -3,22 +3,18 @@
 
 namespace Rife::Graphics {
 
-    Texture::Texture(VkImage& image, VkImageView& imageView, VkDeviceMemory& memory, VkSampler& sampler) {
+    Texture::Texture(const TextureInfo& textureInfo) {
         m_name = "Texture";
-        m_textureImage = image;
-        m_textureImageView = imageView;
-        m_textureImageMemory = memory;
-        m_textureSampler = sampler;
-
+        m_info = textureInfo;
     }
 
     Texture::~Texture() {
-        vkDestroySampler(VK_DATA->getDevice(), m_textureSampler, nullptr);
+        vkDestroySampler(VK_DATA->getDevice(), m_info.sampler, nullptr);
 
-        vkDestroyImageView(VK_DATA->getDevice(), m_textureImageView, nullptr);
+        vkDestroyImageView(VK_DATA->getDevice(), m_info.imageView, nullptr);
 
-        vkDestroyImage(VK_DATA->getDevice(), m_textureImage, nullptr);
-        vkFreeMemory(VK_DATA->getDevice(), m_textureImageMemory, nullptr);
+        vkDestroyImage(VK_DATA->getDevice(), m_info.image, nullptr);
+        vkFreeMemory(VK_DATA->getDevice(), m_info.memory, nullptr);
     }
 }
 

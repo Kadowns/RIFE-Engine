@@ -39,7 +39,7 @@ namespace Rife::Graphics {
         vkFreeCommandBuffers(VK_DATA->getDevice(), VK_DATA->getCommandPool(), 1, &commandBuffer);
     }
 
-    void VulkanTools::createBuffer(
+    VkDeviceSize VulkanTools::createBuffer(
         VkDeviceSize size, VkBufferUsageFlags usage,
         VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory
     ) {
@@ -68,17 +68,21 @@ namespace Rife::Graphics {
         }
 
         vkBindBufferMemory(VK_DATA->getDevice(), buffer, bufferMemory, 0);
+        return memRequirements.size;
     }
 
     void VulkanTools::createImage(
         uint32_t width,
         uint32_t height,
+        uint32_t mipLevels,
+        uint32_t arrayLayers,
         VkFormat format,
         VkImageTiling tiling,
         VkImageUsageFlags usage,
         VkMemoryPropertyFlags properties,
         VkImage& image,
-        VkDeviceMemory& imageMemory
+        VkDeviceMemory& imageMemory,
+        const VkImageCreateFlags& flags
     ) {
 
         VkImageCreateInfo imageInfo = {};
@@ -87,14 +91,15 @@ namespace Rife::Graphics {
         imageInfo.extent.width = width;
         imageInfo.extent.height = height;
         imageInfo.extent.depth = 1;
-        imageInfo.mipLevels = 1;
-        imageInfo.arrayLayers = 1;
+        imageInfo.mipLevels = mipLevels;
+        imageInfo.arrayLayers = arrayLayers;
         imageInfo.format = format;
         imageInfo.tiling = tiling;
         imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         imageInfo.usage = usage;
         imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        imageInfo.flags = flags;
 
         if (vkCreateImage(VK_DATA->getDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
             throw std::runtime_error("failed to create image!");
@@ -115,18 +120,19 @@ namespace Rife::Graphics {
         vkBindImageMemory(VK_DATA->getDevice(), image, imageMemory, 0);
     }
 
-    VkImageView VulkanTools::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
+    VkImageView VulkanTools::createImageView(VkImage image, VkFormat format, VkImageSubresourceRange subresourceRange) {
 
         VkImageViewCreateInfo viewInfo = {};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
         viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = aspectFlags;
+        viewInfo.subresourceRange = subresourceRange;
+        /*viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = 0;
         viewInfo.subresourceRange.levelCount = 1;
         viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = 1;
+        viewInfo.subresourceRange.layerCount = 1;*/
 
         VkImageView imageView;
         if (vkCreateImageView(VK_DATA->getDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
@@ -136,7 +142,11 @@ namespace Rife::Graphics {
         return imageView;
     }
 
-    void VulkanTools::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
+    void VulkanTools::transitionImageLayout(
+        VkImage image, VkFormat format,
+        VkImageLayout oldLayout, VkImageLayout newLayout,
+        VkImageSubresourceRange subresourceRange
+    ) {
 
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -144,13 +154,12 @@ namespace Rife::Graphics {
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.oldLayout = oldLayout;
         barrier.newLayout = newLayout;
-
         barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-
         barrier.image = image;
+        barrier.subresourceRange = subresourceRange;
 
-        if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+       /* if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
             barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
             if (hasStencilComponent(format)) {
@@ -164,7 +173,7 @@ namespace Rife::Graphics {
         barrier.subresourceRange.baseMipLevel = 0;
         barrier.subresourceRange.levelCount = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
+        barrier.subresourceRange.layerCount = 1;*/
 
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;
@@ -205,39 +214,6 @@ namespace Rife::Graphics {
 
         endSingleTimeCommands(commandBuffer);
 
-    }
-
-    void VulkanTools::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
-
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-
-        VkBufferImageCopy region = {};
-        region.bufferOffset = 0;
-        region.bufferRowLength = 0;
-        region.bufferImageHeight = 0;
-
-        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        region.imageSubresource.mipLevel = 0;
-        region.imageSubresource.baseArrayLayer = 0;
-        region.imageSubresource.layerCount = 1;
-
-        region.imageOffset = { 0, 0, 0 };
-        region.imageExtent = {
-            width,
-            height,
-            1
-        };
-
-        vkCmdCopyBufferToImage(
-            commandBuffer,
-            buffer,
-            image,
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            1,
-            &region
-        );
-
-        endSingleTimeCommands(commandBuffer);
     }
 
 	void VulkanTools::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset) {

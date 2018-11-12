@@ -32,20 +32,12 @@ namespace Rife::Graphics {
         }
 
         glm::vec3 getFront() {
-            glm::vec3 front(0.0f, 0.0f, -1.0f);
-            return rotateVec(front);
+            return m_rotation * glm::vec3(0.0f, 0.0f, -1.0f);
         }
 
         glm::vec3 getUp() {
-            glm::vec3 up(0.0f, 1.0f, 0.0f);
-            return rotateVec(up);
+            return m_rotation * glm::vec3(0.0f, 1.0f, 0.0f);
         }
-
-        glm::vec3 rotateVec(glm::vec3 vec) {
-            glm::mat4 rotation = glm::mat4_cast(m_rotation);
-            return glm::vec3(rotation * glm::vec4(vec, 0.0f));
-        }
-
 
         glm::vec3 getEuler() { return glm::degrees(glm::eulerAngles(m_rotation)); }
 

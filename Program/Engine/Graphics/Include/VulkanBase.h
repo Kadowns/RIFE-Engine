@@ -70,7 +70,6 @@ namespace Rife::Graphics {
         VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 		VkFormat findDepthFormat();
         std::vector<const char*> getRequiredExtensions();	
-		bool hasStencilComponent(VkFormat format);
         bool checkValidationLayerSupport();
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         int rateDeviceSuitability(VkPhysicalDevice device);

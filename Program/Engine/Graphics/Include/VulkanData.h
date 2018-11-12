@@ -21,6 +21,8 @@ namespace Rife::Graphics {
         VkInstance& getVulkanInstance() { return m_instance; }
         VkPhysicalDevice& getPhysicalDevice() { return m_physicalDevice; }
         VkPhysicalDeviceProperties& getPhysicalDeviceProperties() { return m_physicalDeviceProperties; }
+        VkPhysicalDeviceFeatures& getPhysicalDeviceFeatures() { return m_physicalDeviceFeatures; }
+        VkFormatProperties& getFormatProperties() { return m_formatProperties; }
         VkDevice& getDevice() { return m_device; }
         VkQueue& getGraphicsQueue() { return m_graphicsQueue; }
         VkQueue& getPresentQueue() { return m_presentQueue; }
@@ -55,6 +57,8 @@ namespace Rife::Graphics {
         VkInstance m_instance;
         VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
         VkPhysicalDeviceProperties m_physicalDeviceProperties;
+        VkPhysicalDeviceFeatures m_physicalDeviceFeatures;
+        VkFormatProperties m_formatProperties;
         VkDevice m_device;
         VkQueue m_graphicsQueue, m_presentQueue;
 

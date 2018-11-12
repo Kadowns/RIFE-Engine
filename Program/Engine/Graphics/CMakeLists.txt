@@ -3,7 +3,7 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 find_package(Vulkan REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(GLI REQUIRED)
-include_directories(${CMAKE_HOME_DIRECTORY}/libs/gli)
+#include_directories(${CMAKE_HOME_DIRECTORY}/libs/gli)
 
 set(GRAPHICS_INCLUDE
 	Include/VulkanInclude.h

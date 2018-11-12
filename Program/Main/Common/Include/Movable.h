@@ -12,8 +12,9 @@ namespace Script {
 
 	private:
 
-		float moveSpeed = 10.0f;
-        float rotateSpeed = 50.0f;
+        const float baseSpeed = 50.0f;
+		float moveSpeed;
+        float rotateSpeed;
 
         glm::vec3 front, up;
 
@@ -41,7 +42,7 @@ namespace Script {
 		}
 
 		void awake() {
-			transform = p_gameObject->getComponent<Transform>();
+			transform = getComponent<Transform>();
 			input = KEYBOARD;
             MOUSE->setUpdatePositionCallback(this, mouseMoveCallback);
 		}
@@ -49,16 +50,23 @@ namespace Script {
 		void update() {
 
 			if (input->isDown(GLFW_KEY_LEFT_SHIFT)) {
-				moveSpeed = 30.0f;
+				moveSpeed = baseSpeed * 10;
+                rotateSpeed = baseSpeed * 5.0f;
 			}
-			else {
-				moveSpeed = 10.0f;
+			else if (input->isDown(GLFW_KEY_LEFT_CONTROL)){
+                moveSpeed = baseSpeed * 0.25f;
+                rotateSpeed = baseSpeed * 0.25f;
 			}
+            else {
+                moveSpeed = baseSpeed;
+                rotateSpeed = baseSpeed;
+            }
 
             float rotateAmount = 0.0f;
             front = transform->getFront();
             up = transform->getUp();
 			glm::vec3 moveDirection(0.0f);
+
 			if (input->isDown(GLFW_KEY_A)) {
 				moveDirection -= glm::normalize(glm::cross(front, up));
 			}

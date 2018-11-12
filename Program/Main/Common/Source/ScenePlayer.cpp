@@ -48,7 +48,7 @@ void ScenePlayer::init() {
     matProp.specularPower = 128.0f;
     matProp.color = glm::vec4(1.0f);
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Arc170"), MaterialInstance(DATABASE::getMaterial("Arc170"), matProp)));
+    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
     //gameObjects[2]->addComponent(new Script::RotatingCube());
     t = gameObjects[2]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, 0.0f, 60.0f);

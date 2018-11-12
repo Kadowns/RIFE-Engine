@@ -111,7 +111,7 @@ namespace Rife::Graphics {
 		const VkDebugUtilsMessengerCallbackDataEXT * pCallbackData,
 		void * pUserData) {
 
-		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+		std::cerr << "validation layer: " << pCallbackData->pMessage << "\n\n";
 
 		return VK_FALSE;
 	}
@@ -302,19 +302,22 @@ namespace Rife::Graphics {
 		//propriedades
 
 		vkGetPhysicalDeviceProperties(device, &VK_DATA->getPhysicalDeviceProperties());
-
 		//features
-		VkPhysicalDeviceFeatures deviceFeatures;
-		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+		VkPhysicalDeviceFeatures* deviceFeatures = &VK_DATA->getPhysicalDeviceFeatures();
+		vkGetPhysicalDeviceFeatures(device, deviceFeatures);
 
 		//se n�o tiver geometry shader, pula fora
-		if (!deviceFeatures.geometryShader) {
+		if (!deviceFeatures->geometryShader) {
 			return 0;
 		}
 
-		if (!deviceFeatures.samplerAnisotropy) {
+		if (!deviceFeatures->samplerAnisotropy) {
 			return 0;
 		}
+
+        if (!deviceFeatures->textureCompressionASTC_LDR && !deviceFeatures->textureCompressionETC2 && !deviceFeatures->textureCompressionBC) {
+            return 0;
+        }
 
 		//Verifica se possui suporte para os queue families
 		auto families = findQueueFamilies(device);
@@ -418,7 +421,7 @@ namespace Rife::Graphics {
 		///Application Info-----------------------------------------------
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "Vulkan triangle";
+		appInfo.pApplicationName = "Vulkan Rife";
 		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 		appInfo.pEngineName = "RIFE";
 		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -476,17 +479,27 @@ namespace Rife::Graphics {
 			queueCreateInfos.push_back(queueCreateInfo);
 		}
 
-		//soon
-		VkPhysicalDeviceFeatures deviceFeatures = {};
-		deviceFeatures.fillModeNonSolid = VK_TRUE;
-		deviceFeatures.samplerAnisotropy = VK_TRUE;
+        VkPhysicalDeviceFeatures deviceFeatures = VK_DATA->getPhysicalDeviceFeatures();
+		//NOW IT IS TIME
+		VkPhysicalDeviceFeatures enabledFeatures = {};
+		enabledFeatures.fillModeNonSolid = VK_TRUE;
+		enabledFeatures.samplerAnisotropy = VK_TRUE;
+        if (deviceFeatures.textureCompressionBC) {
+            enabledFeatures.textureCompressionBC = VK_TRUE;
+        }
+        else if (deviceFeatures.textureCompressionASTC_LDR) {
+            enabledFeatures.textureCompressionASTC_LDR = VK_TRUE;
+        }
+        else if (deviceFeatures.textureCompressionETC2) {
+            enabledFeatures.textureCompressionETC2 = VK_TRUE;
+        }
 
 		VkDeviceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());;
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
-		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.pEnabledFeatures = &enabledFeatures;
 
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
@@ -579,11 +592,18 @@ namespace Rife::Graphics {
 	void VulkanBase::createSwapChainImageViews() {
         VK_DATA->getSwapchainImageViews().resize(VK_DATA->getSwapchainImages().size());
 
+        VkImageSubresourceRange subresourceRange = {};
+        subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        subresourceRange.baseMipLevel = 0;
+        subresourceRange.levelCount = 1;
+        subresourceRange.baseArrayLayer = 0;
+        subresourceRange.layerCount = 1;
+
 		for (size_t i = 0; i < VK_DATA->getSwapchainImages().size(); i++) {
             VK_DATA->getSwapchainImageViews()[i] = VulkanTools::createImageView(
                 VK_DATA->getSwapchainImages()[i],
                 VK_DATA->getSwapchainImageFormat(),
-                VK_IMAGE_ASPECT_COLOR_BIT
+                subresourceRange
             );
 		}
 	}
@@ -695,20 +715,34 @@ namespace Rife::Graphics {
 		VkFormat depthFormat = findDepthFormat();
 
 		VulkanTools::createImage(
-            VK_DATA->getExtent().width, VK_DATA->getExtent().height,
+            VK_DATA->getExtent().width, VK_DATA->getExtent().height, 1, 1,
 			depthFormat,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            VK_DATA->getDepthImage(), VK_DATA->getDepthImageMemory()
+            VK_DATA->getDepthImage(), VK_DATA->getDepthImageMemory(), 0
 		);
 
-        VK_DATA->getDepthImageView() = VulkanTools::createImageView(VK_DATA->getDepthImage(), depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+        VkImageSubresourceRange subresourceRange = {};
+
+        subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        if (VulkanTools::hasStencilComponent(depthFormat)) {
+            subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+
+        subresourceRange.baseMipLevel = 0;
+        subresourceRange.levelCount = 1;
+        subresourceRange.baseArrayLayer = 0;
+        subresourceRange.layerCount = 1;
+
+        VK_DATA->getDepthImageView() = VulkanTools::createImageView(VK_DATA->getDepthImage(), depthFormat, subresourceRange);
 
 		VulkanTools::transitionImageLayout(
             VK_DATA->getDepthImage(), depthFormat,
 			VK_IMAGE_LAYOUT_UNDEFINED,
-			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            subresourceRange
 		);
 	}
 

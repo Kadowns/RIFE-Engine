@@ -12,19 +12,24 @@ namespace Rife::Graphics {
 
         static void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
-        static void createBuffer(
+        static VkDeviceSize createBuffer(
             VkDeviceSize size, VkBufferUsageFlags usage,
             VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory
         );
 
-        static void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
-            VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+        static void createImage(
+            uint32_t width, uint32_t height, uint32_t mipLevels, uint32_t arrayLayers,
+            VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
+            VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, const VkImageCreateFlags& flags
+        );
 
-        static VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+        static VkImageView createImageView(VkImage image, VkFormat format, VkImageSubresourceRange subresourceRange);
 
-        static void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-
-        static void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);       
+        static void transitionImageLayout(
+            VkImage image, VkFormat format,
+            VkImageLayout oldLayout, VkImageLayout newLayout,
+            VkImageSubresourceRange subresourceRange
+        );
 
 		static void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize offset);
 
