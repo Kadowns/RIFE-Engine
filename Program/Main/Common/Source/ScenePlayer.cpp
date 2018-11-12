@@ -32,15 +32,19 @@ void ScenePlayer::init() {
    gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031));
     
     
-
     Ubo::uMaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
-    
+
+    gameObjects.push_back(new GameObject(new Transform()));
+    gameObjects[1]->addComponent(new SkyboxRenderer(DATABASE::getMesh("Skybox"), MaterialInstance(DATABASE::getMaterial("Skybox"), matProp)));
+
+
+
     matProp.tiling = 32.0f;
 
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
-    t = gameObjects[1]->getComponent<Transform>();
+    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
+    t = gameObjects[2]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
     t->m_scale = glm::vec3(20.0f, 1.0f, 20.0f);
 
@@ -48,11 +52,9 @@ void ScenePlayer::init() {
     matProp.specularPower = 128.0f;
     matProp.color = glm::vec4(1.0f);
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
-    //gameObjects[2]->addComponent(new Script::RotatingCube());
-    t = gameObjects[2]->getComponent<Transform>();
+    gameObjects[3]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
+    t = gameObjects[3]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, 0.0f, 60.0f);
-  //  t->m_rotation = glm::quat(glm::radians(glm::vec3(-90.0f, 0.0f, 0.0f)));
     t->m_scale = glm::vec3(0.1f);
 
     matProp.tiling = 2.0f;

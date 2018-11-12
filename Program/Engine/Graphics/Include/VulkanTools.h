@@ -23,7 +23,7 @@ namespace Rife::Graphics {
             VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, const VkImageCreateFlags& flags
         );
 
-        static VkImageView createImageView(VkImage image, VkFormat format, VkImageSubresourceRange subresourceRange);
+        static VkImageView createImageView(VkImage image, VkFormat format, VkImageViewType viewType, VkImageSubresourceRange subresourceRange);
 
         static void transitionImageLayout(
             VkImage image, VkFormat format,

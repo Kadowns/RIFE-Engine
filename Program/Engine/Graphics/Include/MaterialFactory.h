@@ -11,6 +11,8 @@ namespace Rife::Graphics {
 
         static Material* defaultMaterial();
 
+        static Material* skyboxMaterial(Texture* cubemap);
+
         static Material* surfaceMaterial(
             Texture* diffuseTex,
             Texture* specularTex

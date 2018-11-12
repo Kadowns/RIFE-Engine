@@ -120,12 +120,12 @@ namespace Rife::Graphics {
         vkBindImageMemory(VK_DATA->getDevice(), image, imageMemory, 0);
     }
 
-    VkImageView VulkanTools::createImageView(VkImage image, VkFormat format, VkImageSubresourceRange subresourceRange) {
+    VkImageView VulkanTools::createImageView(VkImage image, VkFormat format, VkImageViewType viewType, VkImageSubresourceRange subresourceRange) {
 
         VkImageViewCreateInfo viewInfo = {};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
-        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.viewType = viewType;
         viewInfo.format = format;
         viewInfo.subresourceRange = subresourceRange;
         /*viewInfo.subresourceRange.aspectMask = aspectFlags;

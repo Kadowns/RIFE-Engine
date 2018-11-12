@@ -62,6 +62,8 @@ namespace Rife::Graphics {
 
 		static VkPipelineColorBlendStateCreateInfo createColorBlendInfo(VkPipelineColorBlendAttachmentState&);
 
-		static VkPipelineDepthStencilStateCreateInfo createDepthStencilInfo();
+		static VkPipelineDepthStencilStateCreateInfo createDepthStencilInfo(
+            const VkBool32& testEnabled, const VkBool32& writeEnabled, const VkCompareOp& compareOp
+        );
 	};
 }

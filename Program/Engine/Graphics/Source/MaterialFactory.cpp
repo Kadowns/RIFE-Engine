@@ -4,13 +4,17 @@ namespace Rife::Graphics {
 
     Material* MaterialFactory::defaultMaterial() {
 
-		auto shader = ShaderFactory::defaultShader();
-
-		auto material = MaterialBuilder()
-	        .setShader(shader)
+        return MaterialBuilder()
+            .setShader(ShaderFactory::defaultShader())
             .createMaterial();
-       
-        return material;
+    }
+
+    Material* MaterialFactory::skyboxMaterial(Texture* cubemap) {
+
+        return MaterialBuilder()
+            .setShader(ShaderFactory::skyboxShader())
+            .addTexture(cubemap, MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP)
+            .createMaterial();
     }
 
     Material* MaterialFactory::surfaceMaterial(
@@ -20,14 +24,11 @@ namespace Rife::Graphics {
         
         auto shader = ShaderFactory::surfaceShader("surface_vert.spv", "surface_frag.spv");
 
-
-        auto material = MaterialBuilder()
+        return MaterialBuilder()
             .setShader(shader)
             .addTexture(specularTex, MATERIAL_TEXTURE_TYPE_SPECULAR_MAP)
             .addTexture(diffuseTex, MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP)
             .createMaterial();
-
-        return material;
     }
 }
 

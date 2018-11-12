@@ -30,6 +30,7 @@ namespace Rife::Data {
 	void Database::loadMeshes() {
 		std::cout << "Loading Meshes..." << std::endl;
 		s_meshes["Cube"] = Graphics::MeshFactory::createCube();
+        s_meshes["Skybox"] = Graphics::MeshFactory::createSkybox();
 		s_meshes["Plane"] = Graphics::MeshFactory::createPlane(20, 20);
 		s_meshes["PolarSphere"] = Graphics::MeshFactory::createPolarSphere(32);
 		s_meshes["NormalizedSphere"] = Graphics::MeshFactory::createNormalizedSphere(32);
@@ -47,9 +48,10 @@ namespace Rife::Data {
     void Database::loadMaterials() {
         std::cout << "Loading Materials..." << std::endl;
         s_materials["Default"] = Graphics::MaterialFactory::defaultMaterial();
+        s_materials["Skybox"] = Graphics::MaterialFactory::skyboxMaterial(getTexture("Skybox"));
         s_materials["Box"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Box"), getTexture("Box_specular"));
         s_materials["Metal"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Metal"), getTexture("Metal"));
-        s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"));
+        s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"));  
         std::cout << "Materials loaded!" << std::endl;
     }
 

@@ -12,6 +12,13 @@ GameObject:
 -
 GameObject:
   c:Transform:
+    m_position: 0.000000 0.000000 0.000000
+    m_rotation: 0.000000 0.000000 0.000000 1.000000
+    m_scale: 1.000000 1.000000 1.000000
+  c::
+-
+GameObject:
+  c:Transform:
     m_position: 0.000000 -4.000000 0.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 20.000000 1.000000 20.000000
@@ -23,14 +30,6 @@ GameObject:
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 0.100000 0.100000 0.100000
   c:MeshRenderer:
--
-GameObject:
-  c:Transform:
-    m_position: -20.000000 0.000000 2.000000
-    m_rotation: 0.000000 0.000000 0.000000 1.000000
-    m_scale: 1.000000 1.000000 1.000000
-  c:MeshRenderer:
-  c:RotatingCube:
 -
 GameObject:
   c:Transform:
@@ -99,6 +98,14 @@ GameObject:
 GameObject:
   c:Transform:
     m_position: 40.000000 0.000000 -16.000000
+    m_rotation: 0.000000 0.000000 0.000000 1.000000
+    m_scale: 1.000000 1.000000 1.000000
+  c:MeshRenderer:
+  c:RotatingCube:
+-
+GameObject:
+  c:Transform:
+    m_position: 20.000000 0.000000 -18.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:

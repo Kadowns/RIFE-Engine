@@ -5,7 +5,7 @@ namespace Rife::Graphics {
 
     Texture::Texture(const TextureInfo& textureInfo) {
         m_name = "Texture";
-        m_info = textureInfo;
+        m_info = std::move(textureInfo);
     }
 
     Texture::~Texture() {

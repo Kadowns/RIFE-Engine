@@ -108,7 +108,7 @@ namespace Rife::Graphics {
         vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
 
 
-        texture.imageView = VulkanTools::createImageView(texture.image, format, subresourceRange);
+        texture.imageView = VulkanTools::createImageView(texture.image, format, VK_IMAGE_VIEW_TYPE_2D, subresourceRange);
 
         createTextureSampler(texture);
     }
@@ -155,6 +155,7 @@ namespace Rife::Graphics {
             throw std::runtime_error("Failed to find a supported texture format!");
         }
 
+
         VulkanTools::createImage(
             texture.extent.width, texture.extent.height, texture.mipLevels, 6,
             format, VK_IMAGE_TILING_OPTIMAL,
@@ -183,7 +184,7 @@ namespace Rife::Graphics {
         vkDestroyBuffer(VK_DATA->getDevice(), stagingBuffer, nullptr);
         vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
 
-        texture.imageView = VulkanTools::createImageView(texture.image, format, subresourceRange);
+        texture.imageView = VulkanTools::createImageView(texture.image, format, VK_IMAGE_VIEW_TYPE_CUBE, subresourceRange);
 
         createTextureSampler(texture);
     }

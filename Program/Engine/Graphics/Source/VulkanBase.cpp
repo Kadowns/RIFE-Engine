@@ -603,6 +603,7 @@ namespace Rife::Graphics {
             VK_DATA->getSwapchainImageViews()[i] = VulkanTools::createImageView(
                 VK_DATA->getSwapchainImages()[i],
                 VK_DATA->getSwapchainImageFormat(),
+                VK_IMAGE_VIEW_TYPE_2D,
                 subresourceRange
             );
 		}
@@ -736,7 +737,7 @@ namespace Rife::Graphics {
         subresourceRange.baseArrayLayer = 0;
         subresourceRange.layerCount = 1;
 
-        VK_DATA->getDepthImageView() = VulkanTools::createImageView(VK_DATA->getDepthImage(), depthFormat, subresourceRange);
+        VK_DATA->getDepthImageView() = VulkanTools::createImageView(VK_DATA->getDepthImage(), depthFormat, VK_IMAGE_VIEW_TYPE_2D, subresourceRange);
 
 		VulkanTools::transitionImageLayout(
             VK_DATA->getDepthImage(), depthFormat,

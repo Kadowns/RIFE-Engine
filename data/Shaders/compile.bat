@@ -6,4 +6,7 @@
 %VULKAN_SDK%/Bin32/glslangValidator.exe -V default.vert -o SPIR-V/default_vert.spv
 %VULKAN_SDK%/Bin32/glslangValidator.exe -V default.frag -o SPIR-V/default_frag.spv
 
+%VULKAN_SDK%/Bin32/glslangValidator.exe -V skybox.vert -o SPIR-V/skybox_vert.spv
+%VULKAN_SDK%/Bin32/glslangValidator.exe -V skybox.frag -o SPIR-V/skybox_frag.spv
+
 pause

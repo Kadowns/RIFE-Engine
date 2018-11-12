@@ -36,7 +36,6 @@ namespace Rife::Graphics {
 
         return MeshBuilder()
             .addVecAttribute(positions)
-            .addVecAttribute(uvs)
             .setIndices(indices)
             .create(positions.size());
 	}

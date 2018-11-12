@@ -3,7 +3,6 @@ include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 find_package(Vulkan REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(GLI REQUIRED)
-#include_directories(${CMAKE_HOME_DIRECTORY}/libs/gli)
 
 set(GRAPHICS_INCLUDE
 	Include/VulkanInclude.h
@@ -25,8 +24,9 @@ set(GRAPHICS_INCLUDE
 	Include/ShaderBuilder.h
 	Include/ShaderFactory.h
 	Include/ShaderItem.h
+	Include/Skybox.h
+	Include/SkyboxRenderer.h
 	Include/Transform.h
-	Include/stb_image.h
 	Include/Texture.h
 	Include/TextureFactory.h
 	Include/Camera.h
@@ -53,6 +53,8 @@ set(GRAPHICS_SOURCE
 	Source/Shader.cpp
 	Source/ShaderBuilder.cpp
 	Source/ShaderFactory.cpp
+	Source/Skybox.cpp
+	Source/SkyboxRenderer.cpp
 	Source/Texture.cpp
 	Source/TextureFactory.cpp
 	Source/Camera.cpp

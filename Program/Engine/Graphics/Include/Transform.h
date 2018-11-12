@@ -41,6 +41,10 @@ namespace Rife::Graphics {
 
         glm::vec3 getEuler() { return glm::degrees(glm::eulerAngles(m_rotation)); }
 
+        glm::mat4 getRotationMatrix() {
+            return glm::mat4_cast(m_rotation);
+        }
+
         glm::mat4 getModelMatrix() {
             glm::mat4 translate = glm::translate(glm::mat4(1.0f), m_position);
             glm::mat4 rotate = glm::mat4_cast(m_rotation);

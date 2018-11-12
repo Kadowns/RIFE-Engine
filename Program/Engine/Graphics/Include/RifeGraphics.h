@@ -3,6 +3,7 @@
 #include <VulkanBase.h>
 #include <VulkanData.h>
 #include <MeshRenderer.h>
+#include <SkyboxRenderer.h>
 #include <MeshFactory.h>
 #include <Lights.h>
 #include <GlobalLights.h>

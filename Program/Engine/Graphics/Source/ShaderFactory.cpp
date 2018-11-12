@@ -6,6 +6,7 @@
 #include <Vertex.h>
 #include <Camera.h>
 #include <Transform.h>
+#include <Skybox.h>
 #include <GlobalLights.h>
 
 #include <fstream>
@@ -142,7 +143,7 @@ namespace Rife::Graphics {
         //--------------
 
         //depth stencil
-        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo();
+        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //--------------
 
         auto shader = ShaderBuilder()
@@ -318,7 +319,7 @@ namespace Rife::Graphics {
 		//--------------
 
 		//depth stencil
-		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo();
+		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
 		//--------------
 
 		auto shader = ShaderBuilder()
@@ -347,7 +348,7 @@ namespace Rife::Graphics {
     Shader* ShaderFactory::skyboxShader() {
         //Layout bindings
         std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
-        //model
+        //skybox
         layoutBindings.push_back(createDescriptorSetLayoutBinding(
             0,									//binding
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
@@ -356,39 +357,16 @@ namespace Rife::Graphics {
             nullptr								//immutabble samplers
         ));
 
-        //camera
+        //cubemap
         layoutBindings.push_back(createDescriptorSetLayoutBinding(
-            1,									//binding
-            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
-            1,									//descriptor count
-            VK_SHADER_STAGE_VERTEX_BIT,			//shader stage
-            nullptr								//immutabble samplers
-        ));
-
-        //light
-        layoutBindings.push_back(createDescriptorSetLayoutBinding(
-            2,									//binding
-            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
-            1,									//descriptor count
-            VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
-            nullptr								//immutabble samplers
-        ));
-
-        layoutBindings.push_back(createDescriptorSetLayoutBinding(
-            3,                                          //binding
+            1,                                          //binding
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
             1,                                          //descriptor count
             VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
             nullptr                                     //immutable samplers
         ));
 
-        layoutBindings.push_back(createDescriptorSetLayoutBinding(
-            4,                                          //binding
-            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
-            1,                                          //descriptor count
-            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
-            nullptr                                     //immutable samplers
-        ));
+       
 
         VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
         descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -397,24 +375,14 @@ namespace Rife::Graphics {
         //----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size());
-        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size());
-        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size());
-        //UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
-
-        //pushConstant
-        VkPushConstantRange materialPushConstant = createPushConstantRange(
-            VK_SHADER_STAGE_FRAGMENT_BIT,
-            sizeof(Ubo::uMaterialProperties),
-            0
-        );
+        UniformBufferObjectInfo modelInfo = createUboInfo(Skybox::size());
 
         //----------------------------------------------------------------------------------
 
         //Shaders------------------------------
 
-        std::vector<char> vertShaderCode = loadShaderFile("foo");
-        std::vector<char> fragShaderCode = loadShaderFile("foo");
+        std::vector<char> vertShaderCode = loadShaderFile("skybox_vert.spv");
+        std::vector<char> fragShaderCode = loadShaderFile("skybox_frag.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -428,8 +396,6 @@ namespace Rife::Graphics {
         //vertex input
         VertexLayout vertexLayout({
            VERTEX_COMPONENT_POSITION,
-           VERTEX_COMPONENT_NORMAL,
-           VERTEX_COMPONENT_UV
             });
         VkVertexInputBindingDescription vertexBinding = vertexLayout.getBindingDescription();
         std::vector<VkVertexInputAttributeDescription> vertexAttribute = vertexLayout.getAttributeDescriptions();
@@ -467,7 +433,7 @@ namespace Rife::Graphics {
         VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
             VK_FALSE,
             VK_POLYGON_MODE_FILL,
-            VK_CULL_MODE_BACK_BIT,
+            VK_CULL_MODE_FRONT_BIT,
             VK_FRONT_FACE_COUNTER_CLOCKWISE
         );
         //---------------
@@ -490,16 +456,14 @@ namespace Rife::Graphics {
         VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
         //--------------
 
-        //depth stencil
-        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo();
-        //--------------
+
+        //depth stencil ----------------- disabled
+        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_FALSE, VK_FALSE, VK_COMPARE_OP_LESS_OR_EQUAL);
+        //-------------
 
         auto shader = ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
-            .addUniformBufferObjectInfo(cameraInfo)
-            .addUniformBufferObjectInfo(lightInfo)
-            .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
             .setShaderStages(shaderStages, 2)
             .setVertexInputState(vertexInputInfo)
@@ -701,14 +665,16 @@ namespace Rife::Graphics {
 		return colorBlending;
 	}
 
-	VkPipelineDepthStencilStateCreateInfo ShaderFactory::createDepthStencilInfo(){
+	VkPipelineDepthStencilStateCreateInfo ShaderFactory::createDepthStencilInfo(
+        const VkBool32& testEnabled, const VkBool32& writeEnabled, const VkCompareOp& compareOp
+    ){
 		
 		VkPipelineDepthStencilStateCreateInfo depthStencil = {};
 
 		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		depthStencil.depthTestEnable = VK_TRUE;
-		depthStencil.depthWriteEnable = VK_TRUE;
-		depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+		depthStencil.depthTestEnable = testEnabled;
+		depthStencil.depthWriteEnable = writeEnabled;
+		depthStencil.depthCompareOp = compareOp;
 
 		depthStencil.depthBoundsTestEnable = VK_FALSE;
 		depthStencil.minDepthBounds = 0.0f; // Optional
