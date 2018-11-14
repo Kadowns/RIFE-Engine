@@ -2,6 +2,7 @@
 #include <VulkanTools.h>
 
 namespace Rife::Graphics {
+
     void Transform::setupBuffer() {
 
         BufferInfo info = {};

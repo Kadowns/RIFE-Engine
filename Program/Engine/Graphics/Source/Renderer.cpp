@@ -14,23 +14,10 @@ namespace Rife::Graphics {
 
         vkDestroyDescriptorPool(VK_DATA->getDevice(), m_descriptorPool, nullptr);
 
-        for (int i = 0; i < m_uniformBuffers.size(); i++) {
-            vkDestroyBuffer(VK_DATA->getDevice(), m_uniformBuffers[i], nullptr);
-            vkFreeMemory(VK_DATA->getDevice(), m_uniformBuffersMemory[i], nullptr);
-        }
-
         freeCommandBuffers();
     }
 
     void Renderer::setup() {
-
-        VkDeviceSize bufferSize = m_material.getShader()->getUboOffset(m_material.getShader()->getUboSize());
-        m_uniformBuffers.resize(VK_DATA->getSwapchainImages().size());
-        m_uniformBuffersMemory.resize(VK_DATA->getSwapchainImages().size());
-        for (int i = 0; i < m_uniformBuffers.size(); i++) {
-            createUniformBuffer(m_uniformBuffers[i], m_uniformBuffersMemory[i], bufferSize);
-
-        }
 
         createDescriptorPool();
         createDescriptorSets();
@@ -46,16 +33,6 @@ namespace Rife::Graphics {
             m_commandBuffers.data()
         );
     }
-
-    void Renderer::createUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize) {
-		VulkanTools::createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			buffer,
-			memory
-		);
-	}
 
     void Renderer::createDescriptorPool() {
         auto layoutBindings = m_material.getShader()->getLayoutBindings();

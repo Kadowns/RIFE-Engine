@@ -39,7 +39,7 @@ namespace Rife::Graphics {
 
         void update();
 
-        static size_t size();
+        size_t size();
 
         void apply(VkDeviceMemory* memory, VkDeviceSize offset);
         // Inherited via ShaderItem

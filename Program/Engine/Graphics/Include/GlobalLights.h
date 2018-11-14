@@ -27,7 +27,7 @@ namespace Rife::Graphics {
 
     public:
 
-        static size_t size() {
+        size_t size() {
             return sizeof(m_ubo_lights);
         }
 
@@ -58,5 +58,8 @@ namespace Rife::Graphics {
 
         DirectionalLight* m_directionalLight = nullptr;
         std::vector<PointLight*> m_pointLights;
+
+        // Inherited via ShaderItem
+        virtual void setupBuffer() override;
     };
 }

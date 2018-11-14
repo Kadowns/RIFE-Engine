@@ -16,7 +16,7 @@ namespace Rife::Graphics {
             m_name = "Transform";
         }
 
-        static size_t size() {
+        size_t size() {
             return sizeof(glm::mat4);
         }
 
