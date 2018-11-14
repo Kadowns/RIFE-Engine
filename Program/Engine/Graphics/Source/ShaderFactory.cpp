@@ -50,9 +50,9 @@ namespace Rife::Graphics {
         //----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size());
-        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size());
-        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size());
+        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size(), SHADER_ITEM_TYPE_TRANSFORM);
+        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size(), SHADER_ITEM_TYPE_CAMERA);
+        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size(), SHADER_ITEM_TYPE_LIGHTS);
 
         //pushConstant
         VkPushConstantRange materialPushConstant = createPushConstantRange(
@@ -218,6 +218,15 @@ namespace Rife::Graphics {
             nullptr                                     //immutable samplers
         ));
 
+		layoutBindings.push_back(createDescriptorSetLayoutBinding(
+			5,                                          //binding
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+			1,                                          //descriptor count
+			VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+			nullptr                                     //immutable samplers
+		));
+
+
 		VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
 		descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		descriptorSetLayoutInfo.bindingCount = static_cast<uint32_t>(layoutBindings.size());
@@ -225,9 +234,9 @@ namespace Rife::Graphics {
 		//----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size());
-        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size());
-        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size());
+		UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size(), SHADER_ITEM_TYPE_TRANSFORM);
+		UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size(), SHADER_ITEM_TYPE_CAMERA);
+		UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size(), SHADER_ITEM_TYPE_LIGHTS);
         //UniformBufferObjectInfo materialInfo = createUboInfo(sizeof(Ubo::uMaterialProperties) - shaderItemSize);
 
         //pushConstant
@@ -375,7 +384,7 @@ namespace Rife::Graphics {
         //----------------------------------------------------------------------------
 
         //UniformBufferObjectInfo-------------
-        UniformBufferObjectInfo modelInfo = createUboInfo(Skybox::size());
+        UniformBufferObjectInfo modelInfo = createUboInfo(Skybox::size(), SHADER_ITEM_TYPE_SKYBOX);
 
         //----------------------------------------------------------------------------------
 
@@ -529,13 +538,13 @@ namespace Rife::Graphics {
         return pushConstant;
     }
 
-    UniformBufferObjectInfo ShaderFactory::createUboInfo(ShaderItem* item) {
+    UniformBufferObjectInfo ShaderFactory::createUboInfo(VkDeviceSize size, SHADER_ITEM_TYPE type) {
         
         VkDeviceSize minAlignment = VK_DATA->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
         UniformBufferObjectInfo uboInfo = {};
-        uboInfo.offset = (item->size() / minAlignment) * minAlignment + ((item->size() % minAlignment) > 0 ? minAlignment : 0);
-        uboInfo.range = item->size();
-        uboInfo.buffer = item->getBuffer();
+        uboInfo.offset = (size / minAlignment) * minAlignment + ((size % minAlignment) > 0 ? minAlignment : 0);
+		uboInfo.range = size;
+		uboInfo.type = type;
         return uboInfo;
     }
 

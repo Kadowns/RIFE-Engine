@@ -26,6 +26,7 @@ struct MaterialProperties {
 	vec4 color;
 	float specularPower;
 	float tiling;
+	float reflectionPower;
 };
 
 layout(binding = 2, std140) uniform Lights {
@@ -42,6 +43,7 @@ layout(push_constant, std140) uniform Material {
 
 layout(binding = 3) uniform sampler2D uMainTex;
 layout(binding = 4) uniform sampler2D uSpecularTex;
+layout(binding = 5) uniform samplerCube uSkybox;
 
 
 layout(location = 0) in vec3 vPosition;
@@ -114,6 +116,11 @@ void main() {
 		color += calculatePointLight(uLights.point[i], texCoord);
 	}
 
-    outColor = vec4(color, 1.0);
+    vec3 R = reflect(vViewPath, normalize(vNormal));
+	R.y *= -1.0;
+	vec3 skyColor = texture(uSkybox, R).rgb;
+	vec4 finalColor = vec4(mix(color, skyColor, uMaterial.properties.reflectionPower), 1.0);
+
+    outColor = finalColor;
 }
 //é, preciso usar vec4 pra essas merdas pq glsl É UMA MERDA

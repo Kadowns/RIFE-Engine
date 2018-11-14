@@ -11,7 +11,7 @@ namespace Rife::Graphics {
         std::vector<void*> pDatas;
         VkDeviceSize offset;
         VkDeviceSize range;
-        Buffer buffer;
+		SHADER_ITEM_TYPE type;
     };
 
 	class Shader : public Base::Object {

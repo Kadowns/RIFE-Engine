@@ -27,7 +27,7 @@ namespace Rife::Graphics {
 
     public:
 
-        size_t size() {
+		static size_t size() {
             return sizeof(m_ubo_lights);
         }
 
@@ -39,14 +39,13 @@ namespace Rife::Graphics {
 
         void setDirectionalLight(DirectionalLight* directional);
 
-
-        void updateLightInfo();
-
-        void apply(VkDeviceMemory* memory, VkDeviceSize offset);
+        void apply();
 
     private:
 
-        GlobalLights() {}
+        GlobalLights() {
+			setupBuffer();
+		}
 
         struct {
             uDirectionalLight directional;
@@ -61,5 +60,8 @@ namespace Rife::Graphics {
 
         // Inherited via ShaderItem
         virtual void setupBuffer() override;
-    };
+
+		// Inherited via ShaderItem
+		virtual void updateUniformBuffer() override;
+	};
 }

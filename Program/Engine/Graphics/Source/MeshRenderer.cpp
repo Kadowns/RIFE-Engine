@@ -81,10 +81,6 @@ namespace Rife::Graphics {
 
     void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
 
-        m_material.getShader()
-            ->bindUniformBufferMemory(&m_uniformBuffersMemory[imageIndex])
-            .setItem(*getComponent<Transform>())
-            .setItem(*CAMERA)
-            .setItem(*GLOBAL_LIGHTS);
+		getComponent<Transform>()->apply();
     }
 }

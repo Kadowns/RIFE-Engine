@@ -17,15 +17,13 @@ namespace Rife::Graphics {
         static Skybox* getInstance();
 
 
-        size_t size();
+		static size_t size();
 
         void serialize(std::ofstream& file) {
 
         }
 
-        void update();
-
-        void apply(VkDeviceMemory* memory, VkDeviceSize offset);
+        void apply();
 
     private:
 
@@ -40,5 +38,9 @@ namespace Rife::Graphics {
         // Inherited via ShaderItem
         virtual void setupBuffer() override;
 
-    };
+
+		// Inherited via ShaderItem
+		virtual void updateUniformBuffer() override;
+
+	};
 }

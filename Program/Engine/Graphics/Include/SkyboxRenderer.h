@@ -15,8 +15,6 @@ namespace Rife::Graphics {
         SkyboxRenderer(Mesh* mesh, const MaterialInstance& material);
         ~SkyboxRenderer();
 
-        void update();
-
         void createCommandBuffers();
         void submitUniformBuffersInfo(const uint32_t& imageIndex);
 

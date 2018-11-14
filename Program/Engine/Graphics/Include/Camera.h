@@ -12,9 +12,7 @@ namespace Rife::Graphics {
     class Camera : public Base::Component, public ShaderItem {
 
     public:
-		Camera() { m_name = "Camera"; s_instance = this; }
-        Camera(float fov, float aspect, float near, float far);
-        ~Camera();
+		Camera() { m_name = "Camera"; s_instance = this; setupBuffer(); }
 
         void serialize(std::ofstream& file) {
             std::string offset("    ");
@@ -39,9 +37,9 @@ namespace Rife::Graphics {
 
         void update();
 
-        size_t size();
+		static size_t size();
 
-        void apply(VkDeviceMemory* memory, VkDeviceSize offset);
+        void apply();
         // Inherited via ShaderItem
         static Camera* getInstance();
 
@@ -61,7 +59,8 @@ namespace Rife::Graphics {
 
         virtual void setupBuffer() override;
 
-        
+		// Inherited via ShaderItem
+		virtual void updateUniformBuffer() override;
 
-    };
+	};
 }

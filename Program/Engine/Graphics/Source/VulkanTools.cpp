@@ -39,7 +39,7 @@ namespace Rife::Graphics {
         vkFreeCommandBuffers(VK_DATA->getDevice(), VK_DATA->getCommandPool(), 1, &commandBuffer);
     }
 
-    VkResult VulkanTools::createBuffer(const VkDeviceSize& size, const BufferInfo& info, Buffer& buffer, void* data = nullptr) {
+    VkResult VulkanTools::createBuffer(const VkDeviceSize& size, const BufferInfo& info, Buffer& buffer, void* data) {
 
         VkResult result;
         VkBufferCreateInfo bufferInfo = {};

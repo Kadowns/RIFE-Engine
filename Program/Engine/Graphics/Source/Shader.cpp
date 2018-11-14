@@ -79,7 +79,7 @@ namespace Rife::Graphics {
     }
 
     Shader& Shader::setItem(ShaderItem& item) {
-        item.apply(p_uniformBufferMemory, m_uboOffset);
+       // item.apply(p_uniformBufferMemory, m_uboOffset);
         m_itemIndex++;
         m_uboOffset += m_uboInfo[m_itemIndex - 1].offset;
         return *this;

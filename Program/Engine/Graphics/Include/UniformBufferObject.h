@@ -12,6 +12,7 @@ namespace Rife::Graphics {
             glm::vec4 color;
             float specularPower;
             float tiling;
+			float reflectionPower;
         };
     }
 }

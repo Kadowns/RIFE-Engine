@@ -19,15 +19,15 @@ namespace Rife::Graphics {
 
     Material* MaterialFactory::surfaceMaterial(
         Texture* diffuseTex,
-        Texture* specularTex
+        Texture* specularTex,
+		Texture* reflectionCube
     ) {
         
-        auto shader = ShaderFactory::surfaceShader("surface_vert.spv", "surface_frag.spv");
-
         return MaterialBuilder()
-            .setShader(shader)
+            .setShader(ShaderFactory::surfaceShader("surface_vert.spv", "surface_frag.spv"))
             .addTexture(specularTex, MATERIAL_TEXTURE_TYPE_SPECULAR_MAP)
             .addTexture(diffuseTex, MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP)
+			.addTexture(reflectionCube, MATERIAL_TEXTURE_TYPE_REFLECTION_CUBEMAP)
             .createMaterial();
     }
 }

@@ -768,9 +768,7 @@ namespace Rife::Graphics {
 	}
 
 	void VulkanBase::submitUniformBuffersInfo(uint32_t imageIndex) {
-		for (int i = 0; i < m_renderers.size(); i++) {
-			m_renderers[i]->submitUniformBuffersInfo(imageIndex);
-		}
+		ShaderItem::updateUniformBuffers();
 	}
 
 	void VulkanBase::submitFrame(

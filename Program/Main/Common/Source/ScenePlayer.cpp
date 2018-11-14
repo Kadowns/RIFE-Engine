@@ -18,42 +18,36 @@ void ScenePlayer::init() {
 
 
 	gameObjects.push_back(new GameObject(new Transform()));
-    auto t = gameObjects[0]->getComponent<Transform>();
-    t->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
+    gameObjects[0]->getComponent<Transform>()->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
     gameObjects[0]->addComponent(new Script::Movable());
-
 	gameObjects[0]->addComponent(new Camera());
 	CAMERA->updateProjection(
 		55.0f,
 		(float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(),
 		0.01f,
-		1000.0f
+		10000.0f
 	);
    gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031));
     
     
     Ubo::uMaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
-
-
+	matProp.reflectionPower = Random::range(0.0f, 1.0f);
+	matProp.specularPower = 128.0f;
 
 
     matProp.tiling = 32.0f;
 
     gameObjects.push_back(new GameObject(new Transform()));
     gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
-    t = gameObjects[1]->getComponent<Transform>();
+    auto t = gameObjects[1]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
     t->m_scale = glm::vec3(20.0f, 1.0f, 20.0f);
 
     matProp.tiling = 1.0f;
     matProp.specularPower = 128.0f;
     matProp.color = glm::vec4(1.0f);
-   /* gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
-    t = gameObjects[2]->getComponent<Transform>();
-    t->m_position = glm::vec3(0.0f, 0.0f, 60.0f);
-    t->m_scale = glm::vec3(0.1f);*/
+	matProp.reflectionPower = Random::range(0.0f, 1.0f);
 
     matProp.tiling = 2.0f;
 	int newSize = gameObjects.size() + 10;
@@ -61,7 +55,8 @@ void ScenePlayer::init() {
         gameObjects.push_back(new GameObject(new Transform()));
 
         matProp.color = glm::vec4(Random::range(0.4f, 1.0f), Random::range(0.2f, 0.6f), Random::range(0.9f, 1.0f), 1.0f);
-        matProp.specularPower = Random::range(1.0f, 64.0f);
+        matProp.specularPower = Random::range(1.0f, 256.0f);
+		matProp.reflectionPower = Random::range(0.0f, 1.0f);
         gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh("PolarSphere"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
         gameObjects[i]->addComponent(new Script::RotatingCube());
         t = gameObjects[i]->getComponent<Transform>();
@@ -109,7 +104,7 @@ void ScenePlayer::update() {
         gameObjects[i]->update();
     }
     CAMERA->update();
-    GLOBAL_LIGHTS->updateLightInfo();
+    
 }
 
 void ScenePlayer::draw() {

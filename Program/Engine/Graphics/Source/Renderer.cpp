@@ -7,6 +7,11 @@
 #include <Shader.h>
 #include <Texture.h>
 
+#include <Transform.h>
+#include <Camera.h>
+#include <GlobalLights.h>
+#include <Skybox.h>
+
 
 namespace Rife::Graphics {
 
@@ -79,8 +84,25 @@ namespace Rife::Graphics {
         for (size_t i = 0; i < m_descriptorSets.size(); i++) {
 
             for (size_t j = 0; j < bufferInfos.size(); j++) {
-                bufferInfos[j].buffer = m_uniformBuffers[i];
-                bufferInfos[j].offset = shader->getUboOffset(j);
+				switch (shader->getUboInfo(j).type) {
+				case SHADER_ITEM_TYPE_TRANSFORM:
+					bufferInfos[j].buffer = getComponent<Transform>()->getBuffer().buffer;
+					break;
+				case SHADER_ITEM_TYPE_CAMERA:
+					bufferInfos[j].buffer = CAMERA->getBuffer().buffer;
+					break;
+				case SHADER_ITEM_TYPE_LIGHTS:
+					bufferInfos[j].buffer = GLOBAL_LIGHTS->getBuffer().buffer;
+					break;
+				case SHADER_ITEM_TYPE_SKYBOX:
+					bufferInfos[j].buffer = SKYBOX->getBuffer().buffer;
+					break;
+				default:
+					std::cout << "Invalid shader item!\n";
+					break;
+				}
+                
+				bufferInfos[j].offset = 0;//shader->getUboOffset(j);
                 bufferInfos[j].range = shader->getUboInfo(j).range;
             }
             for (size_t j = 0; j < imageInfos.size(); j++) {

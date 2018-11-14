@@ -11,5 +11,9 @@ namespace Rife::Graphics {
         VulkanTools::createBuffer(sizeof(glm::mat4), info, m_buffer);
         m_buffer.map();
     }
+
+	void Transform::updateUniformBuffer() {
+		apply();
+	}
 }
 

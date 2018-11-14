@@ -6,7 +6,7 @@ GameObject:
   c:Camera:
     m_fov: 55.000000
     m_near: 0.010000
-    m_far: 1000.000000
+    m_far: 10000.000000
   c:Movable:
   c:PointLight:
 -

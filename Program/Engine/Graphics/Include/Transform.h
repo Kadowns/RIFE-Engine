@@ -14,9 +14,10 @@ namespace Rife::Graphics {
 
         Transform() : m_position(glm::vec3(0.0f)), m_rotation(glm::vec3(0.0f)), m_scale(glm::vec3(1.0f)) {
             m_name = "Transform";
+			setupBuffer();
         }
 
-        size_t size() {
+        static size_t size() {
             return sizeof(glm::mat4);
         }
 
@@ -27,7 +28,7 @@ namespace Rife::Graphics {
             file << (offset + NAME(m_scale) + ": " + std::to_string(m_scale) + "\n").c_str();
         }
 
-        void apply(VkDeviceMemory* memory, VkDeviceSize offset) {
+        void apply() {
             flushData(&getModelMatrix());
         }
 
@@ -54,5 +55,7 @@ namespace Rife::Graphics {
 
         // Inherited via ShaderItem
         virtual void setupBuffer() override;
+
+		virtual void updateUniformBuffer() override;
     };
 }

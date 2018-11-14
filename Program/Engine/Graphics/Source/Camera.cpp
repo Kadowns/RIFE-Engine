@@ -6,17 +6,7 @@ namespace Rife::Graphics {
 
     Camera* Camera::s_instance = nullptr;
 
-    Camera::Camera(float fov, float aspect, float near, float far) {
-       
-        m_name = "Camera";
-        updateProjection(fov, aspect, near, far);
-        setupBuffer();
-        s_instance = this;      
-    }
-
-    Camera::~Camera() {
-        m_buffer.destroy();
-    }
+    
 
     glm::vec3 Camera::getPosition() { return getComponent<Transform>()->m_position; }
 
@@ -41,16 +31,14 @@ namespace Rife::Graphics {
     }
 
     void Camera::update() {
-        updateView();
-        m_ubo.position = glm::vec4(m_position, 0.0f);
-        m_ubo.vp = m_projection * m_view;
+        updateView();     
     }
 
     size_t Camera::size() {
         return sizeof(m_ubo);
     }
 
-    void Camera::apply(VkDeviceMemory* memory, VkDeviceSize offset) {
+    void Camera::apply() {
         flushData(&m_ubo);
     }
 
@@ -66,4 +54,10 @@ namespace Rife::Graphics {
         VulkanTools::createBuffer(sizeof(m_ubo), info, m_buffer);
         m_buffer.map();
     }
+
+	void Camera::updateUniformBuffer() {
+		m_ubo.position = glm::vec4(m_position, 0.0f);
+		m_ubo.vp = m_projection * m_view;
+		apply();
+	}
 }

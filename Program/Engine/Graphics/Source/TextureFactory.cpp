@@ -10,6 +10,7 @@
 
 #include <gli/gli.hpp>
 
+#include <Buffer.h>
 
 namespace Rife::Graphics {
 
@@ -51,21 +52,17 @@ namespace Rife::Graphics {
         texture.mipLevels = tex.levels();
         texture.layerCount = tex.layers();
 
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+		Buffer stagingBuffer;
+		BufferInfo info = {};
+		info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		info.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         
-        auto memSize = VulkanTools::createBuffer(
-            tex.size(),
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            stagingBuffer,
-            stagingBufferMemory
+		VulkanTools::createBuffer(
+			tex.size(),
+			info,
+			stagingBuffer,
+			tex.data()
         );
-
-        void* data;
-        vkMapMemory(VK_DATA->getDevice(), stagingBufferMemory, 0, memSize, 0, &data);
-        memcpy(data, tex.data(), tex.size());
-        vkUnmapMemory(VK_DATA->getDevice(), stagingBufferMemory);
 
         VkFormat format;
         VkPhysicalDeviceFeatures deviceFeatures = VK_DATA->getPhysicalDeviceFeatures();
@@ -101,12 +98,10 @@ namespace Rife::Graphics {
         subresourceRange.layerCount = 1; 
 
         VulkanTools::transitionImageLayout(texture.image, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, subresourceRange);
-        copyBufferToImage(stagingBuffer, texture.image, texture.extent.width, texture.extent.height);
+        copyBufferToImage(stagingBuffer.buffer, texture.image, texture.extent.width, texture.extent.height);
         VulkanTools::transitionImageLayout(texture.image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, subresourceRange);
 
-        vkDestroyBuffer(VK_DATA->getDevice(), stagingBuffer, nullptr);
-        vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
-
+		stagingBuffer.destroy();
 
         texture.imageView = VulkanTools::createImageView(texture.image, format, VK_IMAGE_VIEW_TYPE_2D, subresourceRange);
 
@@ -124,21 +119,19 @@ namespace Rife::Graphics {
         texture.mipLevels = texCube.levels();
         texture.layerCount = texCube.layers();
 
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+		Buffer stagingBuffer;
 
-        auto memSize = VulkanTools::createBuffer(
-            texCube.size(),
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            stagingBuffer,
-            stagingBufferMemory
-        );
+		BufferInfo info = {};
+		info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		info.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-        void* data;
-        vkMapMemory(VK_DATA->getDevice(), stagingBufferMemory, 0, memSize, 0, &data);
-        memcpy(data, texCube.data(), texCube.size());
-        vkUnmapMemory(VK_DATA->getDevice(), stagingBufferMemory);
+		VulkanTools::createBuffer(
+			texCube.size(),
+			info,
+			stagingBuffer,
+			texCube.data()
+		);
+
 
         VkFormat format;
         VkPhysicalDeviceFeatures deviceFeatures = VK_DATA->getPhysicalDeviceFeatures();
@@ -176,13 +169,12 @@ namespace Rife::Graphics {
         VulkanTools::transitionImageLayout(
             texture.image, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, subresourceRange
         );
-        copyBufferToCubemap(stagingBuffer, texture.image, texCube);
+        copyBufferToCubemap(stagingBuffer.buffer, texture.image, texCube);
         VulkanTools::transitionImageLayout(
             texture.image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, subresourceRange
         );
         
-        vkDestroyBuffer(VK_DATA->getDevice(), stagingBuffer, nullptr);
-        vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
+		stagingBuffer.destroy();
 
         texture.imageView = VulkanTools::createImageView(texture.image, format, VK_IMAGE_VIEW_TYPE_CUBE, subresourceRange);
 

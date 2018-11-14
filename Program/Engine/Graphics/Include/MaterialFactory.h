@@ -15,7 +15,8 @@ namespace Rife::Graphics {
 
         static Material* surfaceMaterial(
             Texture* diffuseTex,
-            Texture* specularTex
+            Texture* specularTex,
+			Texture* reflectionCube
         );
 
     };

@@ -49,8 +49,8 @@ namespace Rife::Data {
         std::cout << "Loading Materials..." << std::endl;
         s_materials["Default"] = Graphics::MaterialFactory::defaultMaterial();
         s_materials["Skybox"] = Graphics::MaterialFactory::skyboxMaterial(getTexture("Skybox"));
-        s_materials["Box"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Box"), getTexture("Box_specular"));
-        s_materials["Metal"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Metal"), getTexture("Metal"));
+        s_materials["Box"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Box"), getTexture("Box_specular"), getTexture("Skybox"));
+        s_materials["Metal"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Metal"), getTexture("Metal"), getTexture("Skybox"));
        // s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"));  
         std::cout << "Materials loaded!" << std::endl;
     }
