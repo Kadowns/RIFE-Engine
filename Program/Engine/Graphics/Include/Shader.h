@@ -2,7 +2,7 @@
 
 #include <VulkanInclude.h>
 #include <RifeCore.h>
-
+#include <Buffer.h>
 #include <UniformBufferObject.h>
 
 namespace Rife::Graphics {
@@ -11,6 +11,7 @@ namespace Rife::Graphics {
         std::vector<void*> pDatas;
         VkDeviceSize offset;
         VkDeviceSize range;
+        Buffer buffer;
     };
 
 	class Shader : public Base::Object {

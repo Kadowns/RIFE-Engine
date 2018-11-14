@@ -20,6 +20,7 @@ out gl_PerVertex {
 void main() {
 
 	vTexCoord = aPosition;
-	gl_Position = uSkyBox.projection * uSkyBox.view * vec4(aPosition, 1.0);
+	vec4 position = uSkyBox.projection * uSkyBox.view * vec4(aPosition, 1.0); 
+	gl_Position = position.xyww;
 
 }

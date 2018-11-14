@@ -1,5 +1,6 @@
 #include <GlobalLights.h>
 #include <Lights.h>
+#include <VulkanTools.h>
 
 namespace Rife::Graphics {
 
@@ -24,10 +25,13 @@ namespace Rife::Graphics {
     }
 
     void GlobalLights::apply(VkDeviceMemory* memory, VkDeviceSize offset) {
-        flushData(memory, size(), offset, &m_ubo_lights);
+        flushData(&m_ubo_lights);
     }
 
-
-
-
+    void GlobalLights::setupBuffer() {
+        BufferInfo info = {};
+        info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        info.usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+        VulkanTools::createBuffer(sizeof(m_ubo_lights), info, m_buffer);
+    }
 }

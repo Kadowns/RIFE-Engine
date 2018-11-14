@@ -1,6 +1,6 @@
 #include <VulkanTools.h>
 #include <VulkanData.h>
-
+#include <Buffer.h>
 #include <vector>
 
 namespace Rife::Graphics {
@@ -39,36 +39,46 @@ namespace Rife::Graphics {
         vkFreeCommandBuffers(VK_DATA->getDevice(), VK_DATA->getCommandPool(), 1, &commandBuffer);
     }
 
-    VkDeviceSize VulkanTools::createBuffer(
-        VkDeviceSize size, VkBufferUsageFlags usage,
-        VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory
-    ) {
+    VkResult VulkanTools::createBuffer(const VkDeviceSize& size, const BufferInfo& info, Buffer& buffer, void* data = nullptr) {
 
+        VkResult result;
         VkBufferCreateInfo bufferInfo = {};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
-        bufferInfo.usage = usage;
+        bufferInfo.usage = info.usageFlags;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateBuffer(VK_DATA->getDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create buffer!");
+        if ((result = vkCreateBuffer(VK_DATA->getDevice(), &bufferInfo, nullptr, &buffer.buffer)) != VK_SUCCESS) {
+            return result;
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(VK_DATA->getDevice(), buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(VK_DATA->getDevice(), buffer.buffer, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
+        allocInfo.memoryTypeIndex = VulkanTools::findMemoryType(memRequirements.memoryTypeBits, info.memoryPropertyFlags);
 
         //TODO --- implementar solução top de alocação de memória (ver vulkan tutorial)
-        if (vkAllocateMemory(VK_DATA->getDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-            throw std::runtime_error("failed to allocate buffer memory!");
+        if ((result = vkAllocateMemory(VK_DATA->getDevice(), &allocInfo, nullptr, &buffer.memory)) != VK_SUCCESS) {
+            return result;
         }
 
-        vkBindBufferMemory(VK_DATA->getDevice(), buffer, bufferMemory, 0);
-        return memRequirements.size;
+        buffer.size = allocInfo.allocationSize;
+        buffer.info = info;
+
+        if (data != nullptr) {
+            if ((result = buffer.map()) != VK_SUCCESS) {
+                return result;
+            }
+            memcpy(buffer.mapped, data, size);
+            /*if ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
+                buffer.flush();*/
+            buffer.unmap();
+        }
+
+        return buffer.bind();
     }
 
     void VulkanTools::createImage(

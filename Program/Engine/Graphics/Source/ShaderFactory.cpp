@@ -457,8 +457,9 @@ namespace Rife::Graphics {
         //--------------
 
 
-        //depth stencil ----------------- disabled
-        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_FALSE, VK_FALSE, VK_COMPARE_OP_LESS_OR_EQUAL);
+        //depth stencil ----------------- HABILITADO pq agora a skybox é desenhada por ultimo,
+        //e a gente mente pro depth buffer falando que ela ta lonjão
+        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //-------------
 
         auto shader = ShaderBuilder()
@@ -528,12 +529,13 @@ namespace Rife::Graphics {
         return pushConstant;
     }
 
-    UniformBufferObjectInfo ShaderFactory::createUboInfo(VkDeviceSize range) {
+    UniformBufferObjectInfo ShaderFactory::createUboInfo(ShaderItem* item) {
         
         VkDeviceSize minAlignment = VK_DATA->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
         UniformBufferObjectInfo uboInfo = {};
-        uboInfo.offset = (range / minAlignment) * minAlignment + ((range % minAlignment) > 0 ? minAlignment : 0);
-        uboInfo.range = range;
+        uboInfo.offset = (item->size() / minAlignment) * minAlignment + ((item->size() % minAlignment) > 0 ? minAlignment : 0);
+        uboInfo.range = item->size();
+        uboInfo.buffer = item->getBuffer();
         return uboInfo;
     }
 

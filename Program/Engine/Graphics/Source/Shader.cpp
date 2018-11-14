@@ -42,9 +42,9 @@ namespace Rife::Graphics {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 
-        m_name = "Shader";
-        m_uboInfo = uboInfo;
-        m_layoutBindings = layoutBindings;
+        m_name = std::move("Shader");
+        m_uboInfo = std::move(uboInfo);
+        m_layoutBindings = std::move(layoutBindings);
 	}
 
 	Shader::~Shader() {

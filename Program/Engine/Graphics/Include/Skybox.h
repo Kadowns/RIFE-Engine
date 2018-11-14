@@ -4,13 +4,20 @@
 #include <ShaderItem.h>
 #include <RifeMath.h>
 
+#define SKYBOX Rife::Graphics::Skybox::getInstance()
+
 namespace Rife::Graphics {
 
     class Skybox : public ShaderItem {
 
     public:
 
-        static size_t size();
+        Skybox();
+
+        static Skybox* getInstance();
+
+
+        size_t size();
 
         void serialize(std::ofstream& file) {
 
@@ -28,6 +35,10 @@ namespace Rife::Graphics {
             glm::mat4 m_view;
 
         } m_ubo;     
+
+
+        // Inherited via ShaderItem
+        virtual void setupBuffer() override;
 
     };
 }

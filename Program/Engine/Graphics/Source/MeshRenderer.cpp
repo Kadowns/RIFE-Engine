@@ -59,11 +59,11 @@ namespace Rife::Graphics {
 
             vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *m_material.getShader()->getPipeline());
 
-            VkBuffer vertexBuffers[] = { p_mesh->getVertexBuffer() };
+            VkBuffer vertexBuffers[] = { p_mesh->getVertexBuffer().buffer };
             VkDeviceSize offsets[] = { 0 };
             vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
-            vkCmdBindIndexBuffer(m_commandBuffers[i], p_mesh->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+            vkCmdBindIndexBuffer(m_commandBuffers[i], p_mesh->getIndexBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);
 
             vkCmdBindDescriptorSets(
                 m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,

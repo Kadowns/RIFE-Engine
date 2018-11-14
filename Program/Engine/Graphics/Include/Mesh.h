@@ -1,9 +1,11 @@
 #pragma once
 #include <VulkanInclude.h>
 #include <Vertex.h>
+#include <Buffer.h>
 #include <vector>
 
 namespace Rife::Graphics {
+
     class Mesh {
 
     public:
@@ -13,11 +15,8 @@ namespace Rife::Graphics {
         std::vector<float>& getVertices() { return m_vertices; }
         std::vector<uint32_t>& getIndices() { return m_indices; }
 
-        VkBuffer& getVertexBuffer() { return m_vertexBuffer; }
-        VkBuffer& getIndexBuffer() { return m_indexBuffer; }
-
-        VkDeviceMemory& getVertexBufferMemory() { return m_vertexBufferMemory; }
-        VkDeviceMemory& getIndexBufferMemory() { return m_indexBufferMemory; }
+        Buffer& getVertexBuffer() { return m_vertexBuffer; }
+        Buffer& getIndexBuffer() { return m_indexBuffer; }
 
         void serialize(std::ofstream&) {
 
@@ -25,15 +24,16 @@ namespace Rife::Graphics {
 
     private:
 
-		void createVertexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* verticesData);
-		void createIndexBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize bufferSize, void* indicesData);
+		void createVertexBuffer(Buffer& buffer, VkDeviceSize bufferSize, void* verticesData);
+		void createIndexBuffer(Buffer& buffer, VkDeviceSize bufferSize, void* indicesData);
 
         std::vector<float> m_vertices;
 		uint32_t m_verticesCount = 0;
         std::vector<uint32_t> m_indices;
+        Buffer m_vertexBuffer, m_indexBuffer;
 
-        VkBuffer m_vertexBuffer, m_indexBuffer;
-        VkDeviceMemory m_vertexBufferMemory, m_indexBufferMemory;
+        /*VkBuffer m_vertexBuffer, m_indexBuffer;
+        VkDeviceMemory m_vertexBufferMemory, m_indexBufferMemory;*/
 
     };
 }

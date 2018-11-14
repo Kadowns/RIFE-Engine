@@ -35,27 +35,25 @@ void ScenePlayer::init() {
     Ubo::uMaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
 
-    gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[1]->addComponent(new SkyboxRenderer(DATABASE::getMesh("Skybox"), MaterialInstance(DATABASE::getMaterial("Skybox"), matProp)));
 
 
 
     matProp.tiling = 32.0f;
 
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
-    t = gameObjects[2]->getComponent<Transform>();
+    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
+    t = gameObjects[1]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
     t->m_scale = glm::vec3(20.0f, 1.0f, 20.0f);
 
     matProp.tiling = 1.0f;
     matProp.specularPower = 128.0f;
     matProp.color = glm::vec4(1.0f);
-    gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[3]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
-    t = gameObjects[3]->getComponent<Transform>();
+   /* gameObjects.push_back(new GameObject(new Transform()));
+    gameObjects[2]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
+    t = gameObjects[2]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, 0.0f, 60.0f);
-    t->m_scale = glm::vec3(0.1f);
+    t->m_scale = glm::vec3(0.1f);*/
 
     matProp.tiling = 2.0f;
 	int newSize = gameObjects.size() + 10;
@@ -86,6 +84,11 @@ void ScenePlayer::init() {
     gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(-30, 15.0f, -5.0f);
     gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
     gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014));
+
+
+    gameObjects.push_back(new GameObject(new Transform()));
+    index = gameObjects.size() - 1;
+    gameObjects[index]->addComponent(new SkyboxRenderer(DATABASE::getMesh("Skybox"), MaterialInstance(DATABASE::getMaterial("Skybox"), matProp)));
 
     
     Rife::Data::Serializer::saveScene("Main", gameObjects);

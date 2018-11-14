@@ -5,16 +5,20 @@
 
 namespace Rife::Graphics {
 
+    struct Buffer;
+    struct BufferInfo;
     class VulkanTools final {
     public:
 
         static VkCommandBuffer beginSingleTimeCommands();
-
+        
         static void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
-        static VkDeviceSize createBuffer(
-            VkDeviceSize size, VkBufferUsageFlags usage,
-            VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory
+        static VkResult createBuffer(
+            const VkDeviceSize& size,
+            const BufferInfo& info,
+            Buffer& buffer,
+            void* data = nullptr
         );
 
         static void createImage(

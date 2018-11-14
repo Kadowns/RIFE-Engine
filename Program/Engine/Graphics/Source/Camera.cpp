@@ -1,5 +1,5 @@
 #include <Camera.h>
-
+#include <VulkanTools.h>
 #include <Transform.h>
 
 namespace Rife::Graphics {
@@ -10,10 +10,15 @@ namespace Rife::Graphics {
        
         m_name = "Camera";
         updateProjection(fov, aspect, near, far);
-        s_instance = this;
+        setupBuffer();
+        s_instance = this;      
     }
 
-    glm::vec3 Camera::getPosition() { return p_gameObject->getComponent<Transform>()->m_position; }
+    Camera::~Camera() {
+        m_buffer.destroy();
+    }
+
+    glm::vec3 Camera::getPosition() { return getComponent<Transform>()->m_position; }
 
     Camera* Camera::updateProjection(float fov, float aspect, float near, float far) {
         m_fov = fov;
@@ -26,7 +31,7 @@ namespace Rife::Graphics {
     }
 
     Camera* Camera::updateView() {
-        auto t = p_gameObject->getComponent<Transform>();
+        auto t = getComponent<Transform>();
 
         m_position = t->m_position;
         m_target = m_position + t->getFront();
@@ -45,11 +50,20 @@ namespace Rife::Graphics {
         return sizeof(m_ubo);
     }
 
-    void Camera::apply(VkDeviceMemory * memory, VkDeviceSize offset) {
-        flushData(memory, size(), offset, &m_ubo);
+    void Camera::apply(VkDeviceMemory* memory, VkDeviceSize offset) {
+        flushData(&m_ubo);
     }
 
     Camera* Camera::getInstance() {
         return s_instance;
+    }
+
+    void Camera::setupBuffer() {
+
+        BufferInfo info = {};
+        info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        info.usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+        VulkanTools::createBuffer(sizeof(m_ubo), info, m_buffer);
+        m_buffer.map();
     }
 }

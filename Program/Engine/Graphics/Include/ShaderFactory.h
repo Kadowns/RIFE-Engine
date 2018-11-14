@@ -27,7 +27,7 @@ namespace Rife::Graphics {
         static VkPushConstantRange createPushConstantRange(VkShaderStageFlags stage, uint32_t range, uint32_t offset);
 
         static UniformBufferObjectInfo createUboInfo(
-            VkDeviceSize range
+            ShaderItem* item
         );
 
 		static VkShaderModule createShaderModule(const std::vector<char>& code);

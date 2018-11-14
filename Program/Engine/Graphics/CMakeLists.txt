@@ -10,6 +10,7 @@ set(GRAPHICS_INCLUDE
 	Include/VulkanTools.h
 	Include/VulkanData.h
 	Include/Vertex.h
+	Include/Buffer.h
 	Include/Renderer.h
 	Include/tiny_obj_loader.h
 	Include/Mesh.h
@@ -41,6 +42,7 @@ set(GRAPHICS_SOURCE
 	Source/VulkanTools.cpp
 	Source/VulkanData.cpp
 	Source/Vertex.cpp 
+	Source/Buffer.cpp
 	Source/Renderer.cpp
 	Source/Mesh.cpp
 	Source/MeshBuilder.cpp
@@ -53,8 +55,10 @@ set(GRAPHICS_SOURCE
 	Source/Shader.cpp
 	Source/ShaderBuilder.cpp
 	Source/ShaderFactory.cpp
+	Source/ShaderItem.cpp
 	Source/Skybox.cpp
 	Source/SkyboxRenderer.cpp
+	Source/Transform.cpp
 	Source/Texture.cpp
 	Source/TextureFactory.cpp
 	Source/Camera.cpp

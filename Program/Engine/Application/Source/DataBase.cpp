@@ -16,7 +16,7 @@ namespace Rife::Data {
 		s_textures["Box_specular"] = Graphics::TextureFactory::loadTexture("box_specular.ktx");
         s_textures["Metal"] = Graphics::TextureFactory::loadTexture("metal.ktx");
 		s_textures["Default"] = Graphics::TextureFactory::loadTexture("default_texture.ktx");
-        s_textures["Ship"] = Graphics::TextureFactory::loadTexture("ship.ktx");
+       // s_textures["Ship"] = Graphics::TextureFactory::loadTexture("ship.ktx");
 		std::cout << "Textures loaded!" << std::endl;
 	}
 
@@ -34,7 +34,7 @@ namespace Rife::Data {
 		s_meshes["Plane"] = Graphics::MeshFactory::createPlane(20, 20);
 		s_meshes["PolarSphere"] = Graphics::MeshFactory::createPolarSphere(32);
 		s_meshes["NormalizedSphere"] = Graphics::MeshFactory::createNormalizedSphere(32);
-        s_meshes["Ship"] = Graphics::MeshFactory::loadMesh("Arc170.obj");
+       // s_meshes["Ship"] = Graphics::MeshFactory::loadMesh("Arc170.obj");
 		std::cout << "Meshes loaded!" << std::endl;
 	}
 
@@ -51,7 +51,7 @@ namespace Rife::Data {
         s_materials["Skybox"] = Graphics::MaterialFactory::skyboxMaterial(getTexture("Skybox"));
         s_materials["Box"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Box"), getTexture("Box_specular"));
         s_materials["Metal"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Metal"), getTexture("Metal"));
-        s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"));  
+       // s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"));  
         std::cout << "Materials loaded!" << std::endl;
     }
 

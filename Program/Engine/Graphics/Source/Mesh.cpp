@@ -6,11 +6,8 @@ namespace Rife::Graphics {
 
     Mesh::~Mesh() {
 
-        vkDestroyBuffer(VK_DATA->getDevice(), m_vertexBuffer, nullptr);
-        vkFreeMemory(VK_DATA->getDevice(), m_vertexBufferMemory, nullptr);
-
-        vkDestroyBuffer(VK_DATA->getDevice(), m_indexBuffer, nullptr);
-        vkFreeMemory(VK_DATA->getDevice(), m_indexBufferMemory, nullptr);
+        m_vertexBuffer.destroy();
+        m_indexBuffer.destroy();
     }
 
     Mesh::Mesh(std::vector<float> vertices, std::vector<uint32_t> indices) {
@@ -18,83 +15,77 @@ namespace Rife::Graphics {
         m_indices = indices;
 
         VkDeviceSize bufferSize = sizeof(m_vertices[0]) * m_vertices.size();
-		createVertexBuffer(m_vertexBuffer, m_vertexBufferMemory, bufferSize, m_vertices.data());
+		createVertexBuffer(m_vertexBuffer, bufferSize, m_vertices.data());
 
         bufferSize = sizeof(m_indices[0]) * m_indices.size();
-		createIndexBuffer(m_indexBuffer, m_indexBufferMemory, bufferSize, m_indices.data());
+		createIndexBuffer(m_indexBuffer, bufferSize, m_indices.data());
     }
 
 	void Mesh::createVertexBuffer(
-		VkBuffer& buffer,
-		VkDeviceMemory& memory,
+		Buffer& buffer,
 		VkDeviceSize bufferSize,
 		void* verticesData
 	){
 
-		VulkanTools::createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			buffer,
-			memory
-		);
+        BufferInfo info = {};
+        info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        info.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		VulkanTools::createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory
-		);
+        Buffer stagingBuffer;
+        VulkanTools::createBuffer(
+            bufferSize,
+            info,
+            stagingBuffer,
+            verticesData
+        );
 
-		void* data;
-		vkMapMemory(VK_DATA->getDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, verticesData, (size_t)bufferSize);//copia os dados da memoria dos vertices pra gpu
-		vkUnmapMemory(VK_DATA->getDevice(), stagingBufferMemory);
 
-		VulkanTools::copyBuffer(stagingBuffer, buffer, bufferSize, 0);
+        info.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+        info.usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
-		vkDestroyBuffer(VK_DATA->getDevice(), stagingBuffer, nullptr);
-		vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
+        VulkanTools::createBuffer(
+            bufferSize,
+            info,
+            buffer
+        );
+
+        VulkanTools::copyBuffer(stagingBuffer.buffer, buffer.buffer, bufferSize, 0);
+
+        stagingBuffer.destroy();
 
 	}
 
 	void Mesh::createIndexBuffer(
-		VkBuffer& buffer,
-		VkDeviceMemory& memory,
+		Buffer& buffer,
 		VkDeviceSize bufferSize,
 		void* indicesData
 	) {
+		
+        BufferInfo info = {};
+        info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        info.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
+        Buffer stagingBuffer;
 		VulkanTools::createBuffer(
 			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			buffer,
-			memory
+			info, 
+            stagingBuffer,
+            indicesData
 		);
+        
 
+        info.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+        info.usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		VulkanTools::createBuffer(
-			bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory
-		);
+        VulkanTools::createBuffer(
+            bufferSize,
+            info,
+            buffer
+        );
 
-		void* data;
-		vkMapMemory(VK_DATA->getDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, indicesData, (size_t)bufferSize);
-		vkUnmapMemory(VK_DATA->getDevice(), stagingBufferMemory);
+		VulkanTools::copyBuffer(stagingBuffer.buffer, buffer.buffer, bufferSize, 0);
 
-		VulkanTools::copyBuffer(stagingBuffer, buffer, bufferSize, 0);
-
-		vkDestroyBuffer(VK_DATA->getDevice(), stagingBuffer, nullptr);
-		vkFreeMemory(VK_DATA->getDevice(), stagingBufferMemory, nullptr);
+        stagingBuffer.destroy();
 	}
 
 }

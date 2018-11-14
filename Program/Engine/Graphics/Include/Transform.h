@@ -28,7 +28,7 @@ namespace Rife::Graphics {
         }
 
         void apply(VkDeviceMemory* memory, VkDeviceSize offset) {
-            flushData(memory, size(), offset, &getModelMatrix());
+            flushData(&getModelMatrix());
         }
 
         glm::vec3 getFront() {
@@ -51,5 +51,8 @@ namespace Rife::Graphics {
             glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_scale);
             return translate * rotate * scale;
         }
-	};
+
+        // Inherited via ShaderItem
+        virtual void setupBuffer() override;
+    };
 }
