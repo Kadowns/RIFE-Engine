@@ -78,9 +78,4 @@ namespace Rife::Graphics {
         }
         VK_BASE->bindCommandBuffer(&m_commandBuffers);
     }
-
-    void MeshRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
-
-		getComponent<Transform>()->apply();
-    }
 }

@@ -28,11 +28,11 @@ namespace Rife::Graphics {
 		};
         virtual void apply() = 0;
         virtual void setupBuffer() = 0;
-		virtual void updateUniformBuffer() = 0;
+		virtual void updateBuffer() = 0;
 
         Buffer& getBuffer();
 
-		static void updateUniformBuffers();
+		static void updateBuffers();
 
     protected:
 

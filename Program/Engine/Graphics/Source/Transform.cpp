@@ -12,7 +12,7 @@ namespace Rife::Graphics {
         m_buffer.map();
     }
 
-	void Transform::updateUniformBuffer() {
+	void Transform::updateBuffer() {
 		apply();
 	}
 }

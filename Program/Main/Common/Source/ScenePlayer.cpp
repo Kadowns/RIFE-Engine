@@ -22,27 +22,29 @@ void ScenePlayer::init() {
     gameObjects[0]->addComponent(new Script::Movable());
 	gameObjects[0]->addComponent(new Camera());
 	CAMERA->updateProjection(
-		55.0f,
+		60.0f,
 		(float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(),
 		0.01f,
 		10000.0f
 	);
-   gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031));
+  // gameObjects[0]->addComponent(new PointLight(1.0, 0.09, 0.031));
     
     
     Ubo::uMaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
-	matProp.reflectionPower = Random::range(0.0f, 1.0f);
+	matProp.reflectionPower = 1.0f;
 	matProp.specularPower = 128.0f;
 
 
     matProp.tiling = 32.0f;
-
+    //
     gameObjects.push_back(new GameObject(new Transform()));
-    gameObjects[1]->addComponent(new MeshRenderer(DATABASE::getMesh("Plane"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
+    gameObjects[1]->addComponent(new MeshRenderer(
+        DATABASE::insertMesh(Rife::Graphics::MeshFactory::createTerrain(128, 128, 1), "Terrain"),
+        MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
     auto t = gameObjects[1]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, -4.0f, 0.0f);
-    t->m_scale = glm::vec3(20.0f, 1.0f, 20.0f);
+    t->m_scale = glm::vec3(3.0f, 1.5f, 3.0f);
 
     matProp.tiling = 1.0f;
     matProp.specularPower = 128.0f;
@@ -71,12 +73,12 @@ void ScenePlayer::init() {
     gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(30, 15.0f, 5.0f);
 
 
-	gameObjects[index]->addComponent(new DirectionalLight(glm::vec3(0, -1, 0), glm::vec3(1.0f, 1.0f, 0.9f), 0.5f));
+	gameObjects[index]->addComponent(new DirectionalLight(glm::normalize(glm::vec3(0.2, -1, -1)), glm::vec3(1.0f, 1.0f, 0.9f), 0.0f));
         
 
     gameObjects.push_back(new GameObject(new Transform()));
     index = gameObjects.size() - 1;
-    gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(-30, 15.0f, -5.0f);
+    gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(-30, 2.0f, -5.0f);
     gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
     gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014));
 
@@ -132,6 +134,8 @@ void ScenePlayer::deinit() {
 	for (int i = 0; i < gameObjects.size(); i++) {
 		delete gameObjects[i];
 	}
+    delete GLOBAL_LIGHTS;
+    delete SKYBOX;
 }
 
 void ScenePlayer::windowResized(const uint32_t& width, const uint32_t& height) {

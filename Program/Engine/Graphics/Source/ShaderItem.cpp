@@ -9,9 +9,9 @@ namespace Rife::Graphics {
 
 	std::vector<ShaderItem*> ShaderItem::s_items;
 
-	void ShaderItem::updateUniformBuffers() {
+	void ShaderItem::updateBuffers() {
 		for (auto& it : s_items) {
-			it->updateUniformBuffer();
+			it->updateBuffer();
 		}
 	}
 

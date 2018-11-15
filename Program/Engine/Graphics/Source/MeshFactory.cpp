@@ -90,6 +90,62 @@ namespace Rife::Graphics {
 			.create(positions.size());
     }
 
+    Mesh* MeshFactory::createTerrain(uint8_t width, uint8_t depth, size_t seed) {
+
+        Math::PerlinNoise perlin(seed);
+       
+
+        float_t hw = width / 2.0f;
+        float_t hd = depth / 2.0f;
+
+        std::vector<glm::vec3> positions;
+        for (uint32_t z = 0; z < depth; z++) {
+            for (uint32_t x = 0; x < width; x++) {            
+                double h = x * z * perlin.noise(x, z, 0.8);
+                h = h - floor(h);
+
+                positions.push_back(glm::vec3(x - hw, h, z - hd));
+            }
+        }
+
+        std::vector<uint32_t> indices;
+        for (uint8_t z = 0; z < depth - 1; z++) {
+            for (uint8_t x = 0; x < width - 1; x++) {
+                uint32_t zero = x + z * width;
+                uint32_t one = (x + 1) + z * width;
+                uint32_t two = x + (z + 1) * width;
+                uint32_t three = (x + 1) + (z + 1) * width;
+
+                indices.push_back(zero);
+                indices.push_back(three);
+                indices.push_back(one);
+
+                indices.push_back(zero);
+                indices.push_back(two);
+                indices.push_back(three);
+            }
+        }
+
+        std::vector<glm::vec3> normals = calculateNormals(positions, indices);
+
+        float tx = 1.0f / width;
+        float ty = 1.0f / depth;
+        std::vector<glm::vec2> uvs;
+        for (int z = 0; z < depth; z++) {
+            for (int x = 0; x < width; x++) {
+                uvs.push_back(glm::vec2(x * tx, z * ty));
+            }
+        }
+
+
+        return MeshBuilder()
+            .addVecAttribute(positions)
+            .addVecAttribute(normals)
+            .addVecAttribute(uvs)
+            .setIndices(indices)
+            .create(positions.size());
+    }
+
 	Mesh* MeshFactory::createPolarSphere(uint8_t resolution) {
 
 		std::vector<glm::vec3> positions;

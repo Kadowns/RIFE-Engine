@@ -35,7 +35,7 @@ namespace Rife::Graphics {
         m_buffer.map();
     }
 
-	void Skybox::updateUniformBuffer() {
+	void Skybox::updateBuffer() {
 		m_ubo.m_projection = CAMERA->getProjection();
 		m_ubo.m_view = glm::mat3(CAMERA->getView());
 		apply();

@@ -1,5 +1,9 @@
 #include <Random.h>
 
+#include <cmath>
+#include <random>
+#include <algorithm>
+#include <numeric>
 #include <cstdlib>
 
 namespace Rife::Tools {

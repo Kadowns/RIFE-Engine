@@ -55,7 +55,7 @@ namespace Rife::Graphics {
         m_buffer.map();
     }
 
-	void Camera::updateUniformBuffer() {
+	void Camera::updateBuffer() {
 		m_ubo.position = glm::vec4(m_position, 0.0f);
 		m_ubo.vp = m_projection * m_view;
 		apply();

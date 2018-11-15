@@ -13,9 +13,9 @@ namespace Rife::Graphics {
     public:
 
         Skybox();
+        virtual ~Skybox(){}
 
         static Skybox* getInstance();
-
 
 		static size_t size();
 
@@ -40,7 +40,7 @@ namespace Rife::Graphics {
 
 
 		// Inherited via ShaderItem
-		virtual void updateUniformBuffer() override;
+		virtual void updateBuffer() override;
 
 	};
 }

@@ -16,7 +16,7 @@ namespace Rife::Data {
 		s_textures["Box_specular"] = Graphics::TextureFactory::loadTexture("box_specular.ktx");
         s_textures["Metal"] = Graphics::TextureFactory::loadTexture("metal.ktx");
 		s_textures["Default"] = Graphics::TextureFactory::loadTexture("default_texture.ktx");
-       // s_textures["Ship"] = Graphics::TextureFactory::loadTexture("ship.ktx");
+        s_textures["Ship"] = Graphics::TextureFactory::loadTexture("ship.ktx");
 		std::cout << "Textures loaded!" << std::endl;
 	}
 
@@ -38,6 +38,14 @@ namespace Rife::Data {
 		std::cout << "Meshes loaded!" << std::endl;
 	}
 
+    Graphics::Mesh* Database::insertMesh(Graphics::Mesh* mesh, const char* name) {
+        if (s_meshes.count(name) != 0) {
+            throw std::runtime_error("A mesh with the name " + std::string(name) + " already exists!");
+        }
+        s_meshes[name] = mesh;
+        return mesh;
+    }
+
 	void Database::unloadMeshes() {
 		for (auto it : s_meshes) {
 			delete it.second;
@@ -51,7 +59,7 @@ namespace Rife::Data {
         s_materials["Skybox"] = Graphics::MaterialFactory::skyboxMaterial(getTexture("Skybox"));
         s_materials["Box"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Box"), getTexture("Box_specular"), getTexture("Skybox"));
         s_materials["Metal"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Metal"), getTexture("Metal"), getTexture("Skybox"));
-       // s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"));  
+        s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"), getTexture("Skybox"));
         std::cout << "Materials loaded!" << std::endl;
     }
 

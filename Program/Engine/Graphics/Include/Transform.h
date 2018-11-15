@@ -56,6 +56,6 @@ namespace Rife::Graphics {
         // Inherited via ShaderItem
         virtual void setupBuffer() override;
 
-		virtual void updateUniformBuffer() override;
+		virtual void updateBuffer() override;
     };
 }

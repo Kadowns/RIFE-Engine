@@ -92,8 +92,6 @@ namespace Rife::Graphics {
         void createSyncObjects();
         //---------------------
 
-		void submitUniformBuffersInfo(uint32_t imageIndex);
-
 		void cleanupSwapChain();
 
     public:

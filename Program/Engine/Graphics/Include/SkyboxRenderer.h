@@ -10,13 +10,10 @@ namespace Rife::Graphics {
 
     public:
 
-        
-
         SkyboxRenderer(Mesh* mesh, const MaterialInstance& material);
         ~SkyboxRenderer();
 
         void createCommandBuffers();
-        void submitUniformBuffersInfo(const uint32_t& imageIndex);
 
         void serialize(std::ofstream& file) {
 

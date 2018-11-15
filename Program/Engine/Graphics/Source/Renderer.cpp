@@ -102,7 +102,7 @@ namespace Rife::Graphics {
 					break;
 				}
                 
-				bufferInfos[j].offset = 0;//shader->getUboOffset(j);
+				bufferInfos[j].offset = 0;
                 bufferInfos[j].range = shader->getUboInfo(j).range;
             }
             for (size_t j = 0; j < imageInfos.size(); j++) {

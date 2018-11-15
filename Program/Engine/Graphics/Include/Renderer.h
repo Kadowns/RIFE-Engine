@@ -13,7 +13,6 @@ namespace Rife::Graphics {
         virtual void setup();
 
         virtual void createCommandBuffers() = 0;
-        virtual void submitUniformBuffersInfo(const uint32_t& imageIndex) = 0;
         virtual void freeCommandBuffers();
 
     protected:

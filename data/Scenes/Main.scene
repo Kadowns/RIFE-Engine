@@ -4,17 +4,16 @@ GameObject:
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:Camera:
-    m_fov: 55.000000
+    m_fov: 60.000000
     m_near: 0.010000
     m_far: 10000.000000
   c:Movable:
-  c:PointLight:
 -
 GameObject:
   c:Transform:
     m_position: 0.000000 -4.000000 0.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
-    m_scale: 20.000000 1.000000 20.000000
+    m_scale: 3.000000 1.500000 3.000000
   c:MeshRenderer:
 -
 GameObject:
@@ -108,7 +107,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: -30.000000 15.000000 -5.000000
+    m_position: -30.000000 2.000000 -5.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:

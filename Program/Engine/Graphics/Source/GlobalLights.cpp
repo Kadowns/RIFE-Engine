@@ -27,7 +27,7 @@ namespace Rife::Graphics {
 		m_buffer.map();
     }
 
-	void GlobalLights::updateUniformBuffer() {
+	void GlobalLights::updateBuffer() {
 		if (m_directionalLight != nullptr) {
 			m_directionalLight->apply(m_ubo_lights.directional);
 		}

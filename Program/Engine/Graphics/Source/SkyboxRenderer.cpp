@@ -70,8 +70,4 @@ namespace Rife::Graphics {
         }
         VK_BASE->bindCommandBuffer(&m_commandBuffers);
     }
-
-    void SkyboxRenderer::submitUniformBuffersInfo(const uint32_t& imageIndex) {
-		m_skybox.apply();
-    }
 }

@@ -14,7 +14,6 @@ namespace Rife::Graphics {
         ~MeshRenderer() {}
 
         void createCommandBuffers();
-        void submitUniformBuffersInfo(const uint32_t& imageIndex);
 
         void serialize(std::ofstream& file) {
 

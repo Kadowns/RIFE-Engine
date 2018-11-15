@@ -767,16 +767,12 @@ namespace Rife::Graphics {
 		return result;
 	}
 
-	void VulkanBase::submitUniformBuffersInfo(uint32_t imageIndex) {
-		ShaderItem::updateUniformBuffers();
-	}
-
 	void VulkanBase::submitFrame(
 		uint32_t& imageIndex,
 		std::vector<VkSemaphore>& waitSemaphores,
 		std::vector<VkSemaphore>& signalSemaphores
 	) {
-		submitUniformBuffersInfo(imageIndex);
+        ShaderItem::updateBuffers();
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

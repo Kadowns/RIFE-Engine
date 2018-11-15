@@ -53,17 +53,13 @@ layout(location = 3) in vec2 vTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
-vec3 calculateDirectionalLight(in DirectionalLight light, in vec2 texCoord) {
-
-	//ambient
-	vec3 ambient = (light.color.xyz * texture(uMainTex, texCoord).xyz) * light.intensitys.x;
-	//------
+vec3 calculateDirectionalLight(in DirectionalLight light, in vec3 texColor, in float texSpecular) {
 
 	//diffuse
 	vec3 L = normalize(light.direction.xyz);
 	vec3 N = normalize(vNormal);
     float diffuseIntensity = max(dot(N, -L), 0.0);
-    vec3 diffuse = diffuseIntensity * light.color.xyz * texture(uMainTex, texCoord).xyz;
+    vec3 diffuse = diffuseIntensity * light.color.xyz * texColor;
 	//------
 
 	//specular
@@ -73,19 +69,19 @@ vec3 calculateDirectionalLight(in DirectionalLight light, in vec2 texCoord) {
         vec3 R = reflect(L, N);
         specularIntensity = pow(max(dot(R, V), 0.0), uMaterial.properties.specularPower);
     }
-    vec3 specular = specularIntensity * light.color.xyz * texture(uSpecularTex, texCoord).x;
+    vec3 specular = specularIntensity * light.color.xyz * texSpecular;
 	//--------
-	vec3 color = (clamp(ambient + diffuse + specular, 0.0, 1.0) * uMaterial.properties.color.xyz) * light.intensitys.y;
+	vec3 color = (clamp(diffuse + specular, 0.0, 1.0) * uMaterial.properties.color.xyz) * light.intensitys.y;
 	return color;
 }
 
-vec3 calculatePointLight(in PointLight light, in vec2 texCoord){
+vec3 calculatePointLight(in PointLight light, in vec3 texColor, in float texSpecular){
 
 	//diffuse
 	vec3 L = normalize(light.position.xyz - vPosition); 
 	vec3 N = normalize(vNormal);
     float diffuseIntensity = max(dot(N, L), 0.0);
-    vec3 diffuse = diffuseIntensity * light.color.xyz * texture(uMainTex, texCoord).xyz;
+    vec3 diffuse = diffuseIntensity * light.color.xyz * texColor;
 
 	//specular
 	float specularIntensity = 0.0;
@@ -94,7 +90,7 @@ vec3 calculatePointLight(in PointLight light, in vec2 texCoord){
 		vec3 R = reflect(-L, N);
 		specularIntensity = pow(max(dot(R, V), 0.0), uMaterial.properties.specularPower);
 	}
-	vec3 specular = specularIntensity * light.color.xyz *  texture(uSpecularTex, texCoord).x;
+	vec3 specular = specularIntensity * light.color.xyz *  texSpecular;
 	//---------------------
 	float dist = length(light.position.xyz - vPosition);
 	float attenuation = 1.0 / (light.intensitys.x + light.intensitys.y * dist + light.intensitys.z * (dist * dist));    
@@ -108,19 +104,27 @@ vec3 calculatePointLight(in PointLight light, in vec2 texCoord){
 
 void main() {
 
-	vec2 texCoord = vTexCoord * uMaterial.properties.tiling;
+	vec3 texColor = texture(uMainTex, vTexCoord * uMaterial.properties.tiling).xyz;
+	vec3 temp = texture(uSpecularTex, vTexCoord * uMaterial.properties.tiling).xyz;
+	float texSpecular = (temp.r + temp.g + temp.b) / 3;
 
-	vec3 color = calculateDirectionalLight(uLights.directional, texCoord);
+	vec3 color = calculateDirectionalLight(uLights.directional, texColor, texSpecular);
 
 	for (int i = 0; i < uLights.pointLightCount; i++){
-		color += calculatePointLight(uLights.point[i], texCoord);
+		color += calculatePointLight(uLights.point[i], texColor, texSpecular);
 	}
 
-    vec3 R = reflect(vViewPath, normalize(vNormal));
-	R.y *= -1.0;
-	vec3 skyColor = texture(uSkybox, R).rgb;
-	vec4 finalColor = vec4(mix(color, skyColor, uMaterial.properties.reflectionPower), 1.0);
+	float brightness = (color.r + color.g + color.b) / 3;
+	//tive que inverter o viewpath pq tava tudo ao contrario (acho que deve ta certo assim)
+	vec3 R = reflect(-vViewPath, normalize(vNormal));	
+	vec3 sky = uMaterial.properties.color.rgb 
+	* mix(vec3(1.0, 1.0, 1.0), texture(uSkybox, R).rgb, uMaterial.properties.reflectionPower)
+	* clamp(texSpecular + brightness, 0.0, 1.0);
 
-    outColor = finalColor;
+	color += sky;
+
+	
+
+    outColor = vec4(clamp(color, 0.0, 1.0), 1.0);
 }
 //é, preciso usar vec4 pra essas merdas pq glsl É UMA MERDA

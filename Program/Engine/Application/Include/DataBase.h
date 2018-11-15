@@ -16,6 +16,8 @@ namespace Rife::Data {
 		static void unloadData();
 		
 		
+        static Graphics::Mesh* insertMesh(Graphics::Mesh* mesh, const char* name);
+
 		static Graphics::Mesh* getMesh(const char* name);
 		static Graphics::Texture* getTexture(const char* name);
         static Graphics::Material* getMaterial(const char* name);

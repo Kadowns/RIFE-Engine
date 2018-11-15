@@ -11,8 +11,7 @@ namespace Rife::Tools {
         static int number(int value);
 
     private:
-
-
-
     };
+
+    
 }

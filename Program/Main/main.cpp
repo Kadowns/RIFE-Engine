@@ -6,7 +6,7 @@ int main() {
     srand(time(0));
 
     Scene *scene = new ScenePlayer();
-    Application *app = new Application(scene, "Test", 800, 600);
+    Application *app = new Application(scene, "Rife&Vulkan", 1080, 720);
     try {
         app->show();
     }

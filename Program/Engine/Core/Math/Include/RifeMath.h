@@ -1,6 +1,6 @@
 #pragma once
 #include <MathIncludes.h>
-
+#include <PerlinNoise.h>
 
 namespace Rife::Math {
 
