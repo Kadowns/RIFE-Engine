@@ -42,7 +42,7 @@ namespace Rife::Math {
 
         // Initialize a random engine with seed
         std::default_random_engine engine(seed);
-
+        
         // Suffle  using the above random engine
         std::shuffle(p.begin(), p.end(), engine);
 

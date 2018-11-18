@@ -7,12 +7,11 @@ namespace Rife::Graphics {
         return *this;
     }
 
-
-    MaterialBuilder& MaterialBuilder::addTexture(Texture* texture, MATERIAL_TEXTURE_TYPE textureType) {
-        if (m_pTextures.size() <= textureType) {
-            m_pTextures.resize(textureType + 1);
+    MaterialBuilder& MaterialBuilder::addTexture(Texture* texture, uint8_t textureIndex) {
+        if (m_pTextures.size() <= textureIndex) {
+            m_pTextures.resize(textureIndex + 1);
         }
-        m_pTextures[textureType] = texture;
+        m_pTextures[textureIndex] = texture;
         return *this;
     }
 

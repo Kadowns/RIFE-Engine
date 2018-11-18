@@ -11,6 +11,7 @@ namespace Rife::Graphics {
 		static Shader* surfaceShader(const std::string& vertShaderName, const std::string& fragShaderName);
         static Shader* defaultShader();
         static Shader* skyboxShader();
+        static Shader* terrainShader();
 
 	private:
 

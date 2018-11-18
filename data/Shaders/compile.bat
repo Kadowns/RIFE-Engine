@@ -9,4 +9,7 @@
 %VULKAN_SDK%/Bin32/glslangValidator.exe -V skybox.vert -o SPIR-V/skybox_vert.spv
 %VULKAN_SDK%/Bin32/glslangValidator.exe -V skybox.frag -o SPIR-V/skybox_frag.spv
 
+%VULKAN_SDK%/Bin32/glslangValidator.exe -V terrain.vert -o SPIR-V/terrain_vert.spv
+%VULKAN_SDK%/Bin32/glslangValidator.exe -V terrain.frag -o SPIR-V/terrain_frag.spv
+
 pause

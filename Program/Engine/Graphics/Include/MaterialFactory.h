@@ -19,5 +19,7 @@ namespace Rife::Graphics {
 			Texture* reflectionCube
         );
 
+        static Material* terrainMaterial(Texture* tex1, Texture* tex2, Texture* tex3, Texture* tex4);
+
     };
 }

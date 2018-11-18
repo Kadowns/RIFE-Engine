@@ -14,8 +14,6 @@ namespace Rife::Graphics {
         
         static Mesh* createPlane(uint8_t width, uint8_t depth);
 
-        static Mesh* createTerrain(uint8_t width, uint8_t depth, size_t seed);
-
 		static Mesh* createPolarSphere(uint8_t resolution);
 
 		static Mesh* createNormalizedSphere(uint8_t resolution);

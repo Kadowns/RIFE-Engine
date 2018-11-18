@@ -13,7 +13,7 @@ namespace Rife::Graphics {
 
         return MaterialBuilder()
             .setShader(ShaderFactory::skyboxShader())
-            .addTexture(cubemap, MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP)
+            .addTexture(cubemap, 0)
             .createMaterial();
     }
 
@@ -25,9 +25,19 @@ namespace Rife::Graphics {
         
         return MaterialBuilder()
             .setShader(ShaderFactory::surfaceShader("surface_vert.spv", "surface_frag.spv"))
-            .addTexture(specularTex, MATERIAL_TEXTURE_TYPE_SPECULAR_MAP)
-            .addTexture(diffuseTex, MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP)
-			.addTexture(reflectionCube, MATERIAL_TEXTURE_TYPE_REFLECTION_CUBEMAP)
+            .addTexture(reflectionCube, 2)
+            .addTexture(specularTex, 1)
+            .addTexture(diffuseTex, 0)
+            .createMaterial();
+    }
+
+    Material* MaterialFactory::terrainMaterial(Texture* tex1, Texture* tex2, Texture* tex3, Texture* tex4) {
+        return MaterialBuilder()
+            .setShader(ShaderFactory::terrainShader())
+            .addTexture(tex4, 3)
+            .addTexture(tex3, 2)
+            .addTexture(tex2, 1)
+            .addTexture(tex1, 0)
             .createMaterial();
     }
 }

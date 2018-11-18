@@ -41,6 +41,8 @@ namespace Rife::Graphics {
             return VK_FORMAT_R32G32_SFLOAT;
         case VERTEX_COMPONENT_COLOR:
             return VK_FORMAT_R32G32B32A32_SFLOAT;
+        case VERTEX_COMPONENT_TEXTURE_WEIGHT:
+            return VK_FORMAT_R32G32B32A32_SFLOAT;
         default:
             return VK_FORMAT_R32G32B32_SFLOAT;
         }
@@ -51,6 +53,8 @@ namespace Rife::Graphics {
         case VERTEX_COMPONENT_UV:
             return sizeof(float) * 2;
         case VERTEX_COMPONENT_COLOR:
+            return sizeof(float) * 4;
+        case VERTEX_COMPONENT_TEXTURE_WEIGHT:
             return sizeof(float) * 4;
         default:
             return sizeof(float) * 3;

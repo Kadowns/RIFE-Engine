@@ -491,6 +491,196 @@ namespace Rife::Graphics {
         return shader;
     }
 
+    Shader* ShaderFactory::terrainShader() {
+        std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
+        //model
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            0,									//binding
+            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
+            1,									//descriptor count
+            VK_SHADER_STAGE_VERTEX_BIT,			//shader stage
+            nullptr								//immutabble samplers
+        ));
+
+        //camera
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            1,									//binding
+            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
+            1,									//descriptor count
+            VK_SHADER_STAGE_VERTEX_BIT,			//shader stage
+            nullptr								//immutabble samplers
+        ));
+
+        //light
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            2,									//binding
+            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,	//binding type
+            1,									//descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,		//shader stage
+            nullptr								//immutabble samplers
+        ));
+
+        //textures------------------------------------------------
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            3,                                          //binding
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+            1,                                          //descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+            nullptr                                     //immutable samplers
+        ));
+
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            4,                                          //binding
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+            1,                                          //descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+            nullptr                                     //immutable samplers
+        ));
+
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            5,                                          //binding
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+            1,                                          //descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+            nullptr                                     //immutable samplers
+        ));
+
+        layoutBindings.push_back(createDescriptorSetLayoutBinding(
+            6,                                          //binding
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,  //binding type
+            1,                                          //descriptor count
+            VK_SHADER_STAGE_FRAGMENT_BIT,               //shader stage
+            nullptr                                     //immutable samplers
+        ));
+        //-----------
+
+        VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
+        descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        descriptorSetLayoutInfo.bindingCount = static_cast<uint32_t>(layoutBindings.size());
+        descriptorSetLayoutInfo.pBindings = layoutBindings.data();
+        //----------------------------------------------------------------------------
+
+        //UniformBufferObjectInfo-------------
+        UniformBufferObjectInfo modelInfo = createUboInfo(Transform::size(), SHADER_ITEM_TYPE_TRANSFORM);
+        UniformBufferObjectInfo cameraInfo = createUboInfo(Camera::size(), SHADER_ITEM_TYPE_CAMERA);
+        UniformBufferObjectInfo lightInfo = createUboInfo(GlobalLights::size(), SHADER_ITEM_TYPE_LIGHTS);
+
+        //pushConstant
+        VkPushConstantRange materialPushConstant = createPushConstantRange(
+            VK_SHADER_STAGE_FRAGMENT_BIT,
+            sizeof(Ubo::uMaterialProperties),
+            0
+        );
+
+        //----------------------------------------------------------------------------------
+
+
+        //Shaders------------------------------
+
+        std::vector<char> vertShaderCode = loadShaderFile("terrain_vert.spv");
+        std::vector<char> fragShaderCode = loadShaderFile("terrain_frag.spv");
+
+        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+
+        VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
+        VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
+
+        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+        //--------------------------------------------------------------
+
+        //vertex input
+        VertexLayout vertexLayout({
+            VERTEX_COMPONENT_POSITION,
+            VERTEX_COMPONENT_NORMAL,
+            VERTEX_COMPONENT_UV,
+            VERTEX_COMPONENT_TEXTURE_WEIGHT
+            });
+        VkVertexInputBindingDescription vertexBinding = vertexLayout.getBindingDescription();
+        std::vector<VkVertexInputAttributeDescription> vertexAttribute = vertexLayout.getAttributeDescriptions();
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
+        //---------------
+
+        //input assembly
+        VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssemblyInfo(
+            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+            VK_FALSE,
+            nullptr
+        );
+        //--------------
+
+        //viewport & scissor
+        VkViewport viewport = {};
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        auto extent = VK_DATA->getExtent();
+        viewport.width = (float)extent.width;
+        viewport.height = (float)extent.height;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+
+        VkRect2D scissor = {};
+        scissor.offset = { 0, 0 };
+        scissor.extent = extent;
+
+        VkPipelineViewportStateCreateInfo viewportInfo = createViewportInfo(viewport, scissor);
+        //--------------
+
+        //rasterizer
+        VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
+            VK_FALSE,
+            VK_POLYGON_MODE_FILL,
+            VK_CULL_MODE_BACK_BIT,
+            VK_FRONT_FACE_COUNTER_CLOCKWISE
+        );
+        //---------------
+
+        //multisample
+        VkPipelineMultisampleStateCreateInfo multisample = createMultisampleInfo();
+        //---------------
+
+        //color blend
+        VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+        VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
+        //--------------
+
+        //depth stencil
+        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
+        //--------------
+
+        auto shader = ShaderBuilder()
+            .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
+            .addUniformBufferObjectInfo(modelInfo)
+            .addUniformBufferObjectInfo(cameraInfo)
+            .addUniformBufferObjectInfo(lightInfo)
+            .addPushConstantRange(materialPushConstant)
+            .setLayoutBindings(layoutBindings)
+            .setShaderStages(shaderStages, 2)
+            .setVertexInputState(vertexInputInfo)
+            .setInputAssemblyState(inputAssembly)
+            .setViewportState(viewportInfo)
+            .setRasterizationState(rasterizer)
+            .setMultisampleState(multisample)
+            .setColorBlendState(colorBlend)
+            .setDepthStencilState(depthStencil)
+            .createShader();
+
+        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
+        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
+
+        return shader;
+    }
+
 	std::vector<char> ShaderFactory::loadShaderFile(const std::string& filename) {
 		//abre o arquivo, começa a ler pelo final e em binario
 		std::ifstream file(SHADER_FOLDER + filename, std::ios::ate | std::ios::binary);

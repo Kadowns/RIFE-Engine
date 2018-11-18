@@ -5,12 +5,6 @@
 
 namespace Rife::Graphics {
 
-    enum MATERIAL_TEXTURE_TYPE {
-        MATERIAL_TEXTURE_TYPE_DIFFUSE_MAP = 0,
-        MATERIAL_TEXTURE_TYPE_SPECULAR_MAP = 1,
-		MATERIAL_TEXTURE_TYPE_REFLECTION_CUBEMAP = 2
-    };
-
     class Material : public Base::Object {
 
     public:

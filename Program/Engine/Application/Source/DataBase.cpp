@@ -11,12 +11,16 @@ namespace Rife::Data {
 
 	void Database::loadTextures() {
 		std::cout << "Loading Textures..." << std::endl;
-        s_textures["Skybox"] = Graphics::TextureFactory::loadCubemap("skybox.ktx");
-		s_textures["Box"] = Graphics::TextureFactory::loadTexture("box.ktx");
-		s_textures["Box_specular"] = Graphics::TextureFactory::loadTexture("box_specular.ktx");
-        s_textures["Metal"] = Graphics::TextureFactory::loadTexture("metal.ktx");
+        s_textures["Skybox"] = Graphics::TextureFactory::loadCubemap("Skybox/skybox.ktx");
+        s_textures["Sand"] = Graphics::TextureFactory::loadTexture("Terrain/sand.ktx");
+		s_textures["Grass"] = Graphics::TextureFactory::loadTexture("Terrain/grass.ktx");                
+        s_textures["Rock"] = Graphics::TextureFactory::loadTexture("Terrain/rock.ktx");
+        s_textures["Snow"] = Graphics::TextureFactory::loadTexture("Terrain/snow.ktx");
+		s_textures["Box_specular"] = Graphics::TextureFactory::loadTexture("Objects/box_specular.ktx");
+        s_textures["Metal"] = Graphics::TextureFactory::loadTexture("Objects/metal.ktx");
+        s_textures["Ship"] = Graphics::TextureFactory::loadTexture("Objects/ship.ktx");
 		s_textures["Default"] = Graphics::TextureFactory::loadTexture("default_texture.ktx");
-        s_textures["Ship"] = Graphics::TextureFactory::loadTexture("ship.ktx");
+        
 		std::cout << "Textures loaded!" << std::endl;
 	}
 
@@ -57,9 +61,14 @@ namespace Rife::Data {
         std::cout << "Loading Materials..." << std::endl;
         s_materials["Default"] = Graphics::MaterialFactory::defaultMaterial();
         s_materials["Skybox"] = Graphics::MaterialFactory::skyboxMaterial(getTexture("Skybox"));
-        s_materials["Box"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Box"), getTexture("Box_specular"), getTexture("Skybox"));
         s_materials["Metal"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Metal"), getTexture("Metal"), getTexture("Skybox"));
         s_materials["Ship"] = Graphics::MaterialFactory::surfaceMaterial(getTexture("Ship"), getTexture("Default"), getTexture("Skybox"));
+        s_materials["Terrain"] = Graphics::MaterialFactory::terrainMaterial(
+            getTexture("Snow"),
+            getTexture("Rock"),
+            getTexture("Grass"),
+            getTexture("Sand")
+        );
         std::cout << "Materials loaded!" << std::endl;
     }
 

@@ -9,7 +9,7 @@ namespace Rife::Graphics {
     public:
 
         MaterialBuilder& setShader(Shader* shader);
-        MaterialBuilder& addTexture(Texture* texture, MATERIAL_TEXTURE_TYPE textureType);
+        MaterialBuilder& addTexture(Texture* texture, uint8_t textureIndex);
         Material* createMaterial();
 
     private:
