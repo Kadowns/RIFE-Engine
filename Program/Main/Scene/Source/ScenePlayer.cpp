@@ -21,9 +21,9 @@ void ScenePlayer::init() {
     gameObjects[0]->getComponent<Transform>()->m_position = glm::vec3(0.0f, 0.2f, 6.0f);
     gameObjects[0]->addComponent(new Movable());
 	gameObjects[0]->addComponent(new Camera());
-    //gameObjects[0]->addComponent(new PointLight(1.0, 0.21, 0.07));
     
-    Ubo::uMaterialProperties matProp = {};
+    
+    Ubo::MaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
 	matProp.reflectionPower = 0;
 	matProp.specularPower = 0;
@@ -65,7 +65,7 @@ void ScenePlayer::init() {
 
         matProp.color = glm::vec4(Random::range(0.5f, 1.0f), Random::range(0.5f, 1.0f), Random::range(0.5f, 1.0f), 1.0f);
         matProp.specularPower = Random::range(1.0f, 256.0f);
-        matProp.reflectionPower = Random::range(0.0f, 2.0f);
+        matProp.reflectionPower = Random::range(0.5f, 1.0f);
 
         gameObjects[i]->addComponent(new MeshRenderer(DATABASE::getMesh("PolarSphere"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
         gameObjects[i]->addComponent(new RotatingCube());
@@ -76,11 +76,11 @@ void ScenePlayer::init() {
     gameObjects.push_back(new GameObject(new Transform()));
     int index = gameObjects.size() - 1;
     matProp.color = glm::vec4(1.0f);
+    matProp.reflectionPower = 0;
+    matProp.specularPower = 0;
     gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
-  //  gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014));
+    gameObjects[index]->addComponent(new PointLight(1.0, 0.9, 0.029));
     gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(30, 15.0f, 5.0f);
-
-
 	gameObjects[index]->addComponent(new DirectionalLight(glm::normalize(glm::vec3(0.2, -1, -1)), glm::vec3(1.0f, 1.0f, 0.9f), 1.0f));
         
 
@@ -88,8 +88,15 @@ void ScenePlayer::init() {
     index = gameObjects.size() - 1;
     gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(-30, 2.0f, -5.0f);
     gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Default"), matProp)));
-    //gameObjects[index]->addComponent(new PointLight(1.0, 0.03, 0.0014));
+    gameObjects[index]->addComponent(new PointLight(1.0, 0.09, 0.03));
 
+    matProp.reflectionPower = 0.4f;
+    matProp.specularPower = 64.0f;
+    gameObjects.push_back(new GameObject(new Transform()));
+    index = gameObjects.size() - 1;
+    gameObjects[index]->getComponent<Transform>()->m_position = glm::vec3(-70, 30.0f, -50.0f);
+    gameObjects[index]->addComponent(new MeshRenderer(DATABASE::getMesh("Ship"), MaterialInstance(DATABASE::getMaterial("Ship"), matProp)));
+    gameObjects[index]->addComponent(new PointLight(1.0, 0.09, 0.03));
 
     gameObjects.push_back(new GameObject(new Transform()));
     index = gameObjects.size() - 1;

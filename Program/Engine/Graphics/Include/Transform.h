@@ -18,7 +18,7 @@ namespace Rife::Graphics {
         }
 
         static size_t size() {
-            return sizeof(glm::mat4);
+            return sizeof(m_ubo);
         }
 
         void serialize(std::ofstream& file) {
@@ -29,7 +29,7 @@ namespace Rife::Graphics {
         }
 
         void apply() {
-            flushData(&getModelMatrix());
+            flushData(&m_ubo);
         }
 
         glm::vec3 getFront() {
@@ -57,5 +57,11 @@ namespace Rife::Graphics {
         virtual void setupBuffer() override;
 
 		virtual void updateBuffer() override;
+
+    private:
+        struct {
+            glm::mat4 model;
+            glm::mat4 inverse;
+        } m_ubo;
     };
 }

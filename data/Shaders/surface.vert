@@ -3,6 +3,7 @@
 
 layout(binding = 0) uniform Model {
 	mat4 m;	
+	mat4 inverse;
 } uModel;
 
 layout(binding = 1) uniform Camera { 
@@ -30,7 +31,7 @@ void main() {
     gl_Position = uCamera.vp * worldPosition;
 	
 	vPosition = worldPosition.xyz;
-	vNormal = mat3(inverse(transpose(uModel.m))) * aNormal; 
+	vNormal = mat3(uModel.inverse) * aNormal; 
 	vViewPath = uCamera.position.xyz - worldPosition.xyz;
 	vTexCoord = aTexCoord;
 }

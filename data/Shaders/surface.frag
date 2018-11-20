@@ -53,7 +53,7 @@ layout(location = 3) in vec2 vTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
-vec3 calculateDirectionalLight(in DirectionalLight light, in float texSpecular) {
+void calculateDirectionalLight(in DirectionalLight light, in float texSpecular, out vec3 diff, out vec3 spec) {
 
 	//ambient
 	vec3 ambient = light.intensitys.x * light.color.rgb;
@@ -74,10 +74,12 @@ vec3 calculateDirectionalLight(in DirectionalLight light, in float texSpecular) 
     }
     vec3 specular = specularIntensity * light.color.xyz * texSpecular;
 	//--------
-	return clamp(ambient + diffuse + specular, 0.0, 1.0) * light.intensitys.y;
+
+	diff = clamp(ambient + diffuse, 0.0, 1.0) * light.intensitys.y;
+	spec = clamp(specular, 0.0, 1.0) * light.intensitys.y;
 }
 
-vec3 calculatePointLight(in PointLight light, in float texSpecular){
+void calculatePointLight(in PointLight light, in float texSpecular, out vec3 diff, out vec3 spec){
 
 	//diffuse
 	vec3 L = normalize(light.position.xyz - vPosition); 
@@ -99,8 +101,8 @@ vec3 calculatePointLight(in PointLight light, in float texSpecular){
 
 	diffuse  *= attenuation;
 	specular *= attenuation;
-
-	return clamp(diffuse + specular, 0.0, 1.0) * light.intensitys.w;
+	diff += clamp(diffuse, 0.0, 1.0) * light.intensitys.w;
+	spec += clamp(specular, 0.0, 1.0) * light.intensitys.w;
 }
 
 void main() {
@@ -109,21 +111,23 @@ void main() {
 	vec3 temp = texture(uSpecularTex, vTexCoord * uMaterial.properties.tiling).xyz;
 	float texSpecular = (temp.r + temp.g + temp.b) / 3;
 
-	vec3 illumination = calculateDirectionalLight(uLights.directional, texSpecular);
+	vec3 diffuse = vec3(0.0, 0.0, 0.0);
+	vec3 specular = vec3(0.0, 0.0, 0.0);
+
+	calculateDirectionalLight(uLights.directional, texSpecular, diffuse, specular);
 
 	for (int i = 0; i < uLights.pointLightCount; i++){
 
-		illumination += calculatePointLight(uLights.point[i], texSpecular);
+		calculatePointLight(uLights.point[i], texSpecular, diffuse, specular);
 	}
-
-	float brightness = (illumination.r + illumination.g + illumination.b) / 3;
+	
+	float brightness = (diffuse.r + diffuse.g + diffuse.b) / 3;
 	vec3 R = reflect(-vViewPath, normalize(vNormal));	
 	vec3 sky = texture(uSkybox, R).rgb * clamp(brightness, 0.0, 1.0);
+	diffuse = mix(diffuse, sky, uMaterial.properties.reflectionPower);
 
-	vec3 finalLightColor = mix(illumination, sky, uMaterial.properties.reflectionPower);	
 
 	vec3 texel = texColor * uMaterial.properties.color.rgb;
 
-    outColor = vec4(clamp(texel * finalLightColor, 0.0, 1.0), 1.0);
+    outColor = vec4(clamp(texel * diffuse + specular, 0.0, 1.0), 1.0);
 }
-//é, preciso usar vec4 pra essas merdas pq glsl É UMA MERDA

@@ -10,13 +10,13 @@ namespace Rife::Graphics {
     public:
 
         MaterialInstance() { m_name = "MaterialInstance"; }
-        MaterialInstance(Material* baseMaterial, Ubo::uMaterialProperties properties);
+        MaterialInstance(Material* baseMaterial, Ubo::MaterialProperties properties);
 
         Material* getBaseMaterial() { return p_baseMaterial; }
         size_t getTexturesSize() { return p_baseMaterial->getTexturesSize(); }
         std::vector<Texture*>& getTextures() { return p_baseMaterial->getTextures(); }
         Shader* getShader() { return p_baseMaterial->getShader(); }
-        Ubo::uMaterialProperties& getProperties() { return m_properties; }
+        Ubo::MaterialProperties& getProperties() { return m_properties; }
 
         void serialize(std::ofstream& file) {
             file << (m_name + "\n").c_str();
@@ -25,7 +25,7 @@ namespace Rife::Graphics {
     private:
 
         Material* p_baseMaterial;
-        Ubo::uMaterialProperties m_properties;
+        Ubo::MaterialProperties m_properties;
 
     };
 }

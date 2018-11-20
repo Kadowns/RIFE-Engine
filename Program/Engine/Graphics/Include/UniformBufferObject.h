@@ -7,7 +7,7 @@
 
 namespace Rife::Graphics {
     namespace Ubo {
-        struct uMaterialProperties final {
+        struct MaterialProperties final {
 
             glm::vec4 color;
             float specularPower;

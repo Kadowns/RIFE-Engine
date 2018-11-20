@@ -57,7 +57,7 @@ namespace Rife::Graphics {
         //pushConstant
         VkPushConstantRange materialPushConstant = createPushConstantRange(
             VK_SHADER_STAGE_FRAGMENT_BIT,
-            sizeof(Ubo::uMaterialProperties),
+            sizeof(Ubo::MaterialProperties),
             0
         );
 
@@ -242,7 +242,7 @@ namespace Rife::Graphics {
         //pushConstant
         VkPushConstantRange materialPushConstant = createPushConstantRange(
             VK_SHADER_STAGE_FRAGMENT_BIT,
-            sizeof(Ubo::uMaterialProperties),
+            sizeof(Ubo::MaterialProperties),
             0
         );
 
@@ -568,7 +568,7 @@ namespace Rife::Graphics {
         //pushConstant
         VkPushConstantRange materialPushConstant = createPushConstantRange(
             VK_SHADER_STAGE_FRAGMENT_BIT,
-            sizeof(Ubo::uMaterialProperties),
+            sizeof(Ubo::MaterialProperties),
             0
         );
 

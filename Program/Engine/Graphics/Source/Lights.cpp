@@ -18,7 +18,7 @@ namespace Rife::Graphics {
     void DirectionalLight::apply(uDirectionalLight& ubo) {
         ubo.color = glm::vec4(m_color, 1.0f);
         ubo.direction = glm::vec4(getComponent<Transform>()->m_rotation * m_direction, 1.0f);
-        ubo.intensitys = glm::vec4(0.1f, m_intensity, 0.0f, 0.0f);
+        ubo.intensitys = glm::vec4(0.3f, m_intensity, 0.0f, 0.0f);
     }
 
     PointLight::PointLight(float constant, float linear, float quadratic) {

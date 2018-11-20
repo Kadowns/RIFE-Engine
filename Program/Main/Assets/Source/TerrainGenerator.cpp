@@ -44,12 +44,16 @@ namespace Scripts {
             for (uint32_t x = 0; x < width; x++) {
                 float h = noiseMap[x][z];
                 h /= maxH;
-                weights.push_back(glm::vec4(
+
+                glm::vec4 texWeight(
                     Math::linear(settings.weights[3].min, settings.weights[3].max, h, false),
                     Math::piramid(settings.weights[2].min, settings.weights[2].max, h),
                     Math::piramid(settings.weights[1].min, settings.weights[1].max, h),
                     Math::linear(settings.weights[0].min, settings.weights[0].max, h, true)
-                ));
+                );
+
+                float t = texWeight.x + texWeight.y + texWeight.z + texWeight.w;
+                weights.push_back(texWeight / t);
             }
         }
 

@@ -1,9 +1,14 @@
 #include <Application.h>
 #include <ScenePlayer.h>
 
+#include <thread>
+
 int main() {
 
     srand(time(0));
+
+    int threads = std::thread::hardware_concurrency();
+    std::cout << "Available threads: " << threads << "\n";
 
     Scene *scene = new ScenePlayer();
     Application *app = new Application(scene, "Rife&Vulkan", 1080, 720);

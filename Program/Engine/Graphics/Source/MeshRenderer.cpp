@@ -53,7 +53,7 @@ namespace Rife::Graphics {
                 *m_material.getShader()->getPipelineLayout(),
                 VK_SHADER_STAGE_FRAGMENT_BIT,
                 0,
-                sizeof(Ubo::uMaterialProperties),
+                sizeof(Ubo::MaterialProperties),
                 (void*)&m_material.getProperties()
             );
 
