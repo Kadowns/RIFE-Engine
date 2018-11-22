@@ -22,8 +22,10 @@ namespace Rife::Graphics {
 			VkGraphicsPipelineCreateInfo&,
 			std::vector<VkDescriptorSetLayoutCreateInfo>&,
 			std::vector<VkPushConstantRange>&,
-            std::vector<UniformBufferObjectInfo>&,
-            std::vector<VkDescriptorSetLayoutBinding>&
+			std::vector<UniformBufferObjectInfo>&,
+			std::vector<VkDescriptorSetLayoutBinding>&,
+			std::vector<std::string>& shaderNames,
+			VkPipelineViewportStateCreateInfo& viewportInfo
 		);
         Shader() { m_name = "Shader"; }
 
@@ -33,12 +35,10 @@ namespace Rife::Graphics {
 
 		~Shader();
 
-        Shader& bindUniformBufferMemory(VkDeviceMemory* memory);
-        Shader& setItem(ShaderItem& item);
-
 		void clearPipeline();
 		VkPipeline* getPipeline() { return &m_pipeline; }
 		VkPipelineLayout* getPipelineLayout() { return &m_pipelineLayout; }
+		void createPipeline(VkPipelineViewportStateCreateInfo& viewportInfo);
 
         UniformBufferObjectInfo getUboInfo(size_t index);
         size_t getUboSize();
@@ -47,14 +47,14 @@ namespace Rife::Graphics {
         std::vector<VkDescriptorSetLayoutBinding>& getLayoutBindings() { return m_layoutBindings; }
 		std::vector<VkDescriptorSetLayout>& getDescriptorSetLayouts() { return m_descriptorSetLayouts; }
 
+		
+
 	private:
 
-        VkDeviceMemory* p_uniformBufferMemory = nullptr;
-        VkDeviceSize m_uboOffset;
-        size_t m_itemIndex;
-
+		VkGraphicsPipelineCreateInfo m_pipelineInfo;
 		VkPipeline m_pipeline;
 		VkPipelineLayout m_pipelineLayout;
+		std::vector<std::string> m_shaderNames;
 
         std::vector<UniformBufferObjectInfo> m_uboInfo;
         std::vector<VkDescriptorSetLayoutBinding> m_layoutBindings;

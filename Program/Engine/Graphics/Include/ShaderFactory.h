@@ -13,9 +13,18 @@ namespace Rife::Graphics {
         static Shader* skyboxShader();
         static Shader* terrainShader();
 
-	private:
 
 		static std::vector<char> loadShaderFile(const std::string& filename);
+		static VkShaderModule createShaderModule(const std::vector<char>& code);
+		static VkPipelineShaderStageCreateInfo createShaderStage(
+			VkShaderStageFlagBits stage,
+			VkShaderModule module,
+			const char* pName
+		);
+
+	private:
+
+		
 
 		static VkDescriptorSetLayoutBinding createDescriptorSetLayoutBinding(
 			uint32_t binding,
@@ -31,13 +40,7 @@ namespace Rife::Graphics {
 			VkDeviceSize size, SHADER_ITEM_TYPE type
         );
 
-		static VkShaderModule createShaderModule(const std::vector<char>& code);
-
-		static VkPipelineShaderStageCreateInfo createShaderStage(
-			VkShaderStageFlagBits stage,
-			VkShaderModule module,
-			const char* pName
-		);
+		
 
 		static VkPipelineVertexInputStateCreateInfo createVertexInputInfo(
             VkVertexInputBindingDescription&,

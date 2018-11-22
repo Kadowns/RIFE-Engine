@@ -30,8 +30,8 @@ void ScenePlayer::init() {
     matProp.tiling = 4.0f;
     
     TerrainCreateInfo terrainInfo = {};
-    terrainInfo.extent.x = 128;
-    terrainInfo.extent.z = 128;
+    terrainInfo.extent.x = 64;
+    terrainInfo.extent.z = 64;
     terrainInfo.seed = 0;
     terrainInfo.octaves = 8;
     terrainInfo.scale = 16.0f;
@@ -56,7 +56,7 @@ void ScenePlayer::init() {
         MaterialInstance(DATABASE::getMaterial("Terrain"), matProp)));
     auto t = gameObjects[1]->getComponent<Transform>();
     t->m_position = glm::vec3(0.0f, -450.0f, 0.0f);
-    t->m_scale = glm::vec3(50.0f, 480.0f, 50.0f);
+    t->m_scale = glm::vec3(100.0f, 480.0f, 100.0f);
 
     matProp.tiling = 1.0f;
 	int newSize = gameObjects.size() + 10;

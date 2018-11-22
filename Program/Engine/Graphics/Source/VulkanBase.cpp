@@ -35,8 +35,7 @@ namespace Rife::Graphics {
 		createSwapchain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
 		createSwapChainImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
 		createRenderPass();//Cria o render pass que eu n faço ideia do que é  
-		createCommandPool();
-		//createGraphicsPipeline();//CRIA A FUCKING GRAPHICS PIPELINE   
+		createCommandPool();  
 	}
 
 	void VulkanBase::finalSetup() {

@@ -1,13 +1,16 @@
 #include <Shader.h>
 #include <VulkanData.h>
+#include <ShaderFactory.h>
 
 namespace Rife::Graphics {
 
-	Shader::Shader(VkGraphicsPipelineCreateInfo & pipelineCreateInfo,
+	Shader::Shader(VkGraphicsPipelineCreateInfo& pipelineCreateInfo,
 		std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
 		std::vector<VkPushConstantRange>& pushConstantRanges,
         std::vector<UniformBufferObjectInfo>& uboInfo,
-        std::vector<VkDescriptorSetLayoutBinding>& layoutBindings
+        std::vector<VkDescriptorSetLayoutBinding>& layoutBindings,
+		std::vector<std::string>& shaderNames,
+		VkPipelineViewportStateCreateInfo& viewportInfo
     ) {
 
 		m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
@@ -30,17 +33,10 @@ namespace Rife::Graphics {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
 
-		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-		pipelineCreateInfo.basePipelineIndex = -1; // Optional
-		pipelineCreateInfo.renderPass = VK_DATA->getRenderPass();
-		pipelineCreateInfo.subpass = 0;
-		pipelineCreateInfo.layout = m_pipelineLayout;
-
-
-		if (vkCreateGraphicsPipelines(VK_DATA->getDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create graphics pipeline!");
-		}
+		m_shaderNames = std::move(shaderNames);
+		m_pipelineInfo = std::move(pipelineCreateInfo);
+		createPipeline(viewportInfo);
+		
 
         m_name = std::move("Shader");
         m_uboInfo = std::move(uboInfo);
@@ -54,15 +50,35 @@ namespace Rife::Graphics {
 		}
 	}
 
+	void Shader::createPipeline(VkPipelineViewportStateCreateInfo& viewportInfo) {
 
-    Shader& Shader::bindUniformBufferMemory(VkDeviceMemory* memory) {
-        p_uniformBufferMemory = memory;
-        m_uboOffset = 0;
-        m_itemIndex = 0;
-        return *this;
-    }
+		m_pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		m_pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+		m_pipelineInfo.basePipelineIndex = -1; // Optional
+		m_pipelineInfo.renderPass = VK_DATA->getRenderPass();
+		m_pipelineInfo.subpass = 0;
+		m_pipelineInfo.layout = m_pipelineLayout;
+		m_pipelineInfo.pViewportState = &viewportInfo;
 
-    UniformBufferObjectInfo Shader::getUboInfo(size_t index) {
+		std::vector<char> vertShaderCode = ShaderFactory::loadShaderFile(m_shaderNames[0]);
+		std::vector<char> fragShaderCode = ShaderFactory::loadShaderFile(m_shaderNames[1]);
+
+		VkShaderModule vertShaderModule = ShaderFactory::createShaderModule(vertShaderCode);
+		VkShaderModule fragShaderModule = ShaderFactory::createShaderModule(fragShaderCode);
+
+		VkPipelineShaderStageCreateInfo vertShaderStageInfo = ShaderFactory::createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
+		VkPipelineShaderStageCreateInfo fragShaderStageInfo = ShaderFactory::createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
+
+		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+		m_pipelineInfo.pStages = shaderStages;
+		m_pipelineInfo.stageCount = 2;
+
+		if (vkCreateGraphicsPipelines(VK_DATA->getDevice(), VK_NULL_HANDLE, 1, &m_pipelineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create graphics pipeline!");
+		}
+	}
+
+	UniformBufferObjectInfo Shader::getUboInfo(size_t index) {
         return m_uboInfo[index];
     }
 
@@ -76,13 +92,6 @@ namespace Rife::Graphics {
 
     size_t Shader::getUboSize() {
         return m_uboInfo.size();
-    }
-
-    Shader& Shader::setItem(ShaderItem& item) {
-       // item.apply(p_uniformBufferMemory, m_uboOffset);
-        m_itemIndex++;
-        m_uboOffset += m_uboInfo[m_itemIndex - 1].offset;
-        return *this;
     }
 
 	void Shader::clearPipeline() {

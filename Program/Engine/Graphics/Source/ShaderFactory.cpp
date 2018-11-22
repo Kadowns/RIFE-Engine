@@ -331,6 +331,8 @@ namespace Rife::Graphics {
 		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
 		//--------------
 
+
+
 		auto shader = ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
