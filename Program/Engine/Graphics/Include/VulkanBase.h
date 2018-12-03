@@ -108,7 +108,7 @@ namespace Rife::Graphics {
         VulkanBase(GLFWwindow *window);
         void initialSetup();
 		void finalSetup();
-		void recreateSwapChain();
+		void onWindowResized();
         void terminateVulkan();
 
 		VkResult prepareFrame(uint32_t* imageIndex);    
