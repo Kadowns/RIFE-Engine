@@ -52,7 +52,7 @@ namespace Rife::Graphics {
 		createSyncObjects();
 	}
 
-	void VulkanBase::recreateSwapChain() {
+	void VulkanBase::onWindowResized() {
 
 		int width = 0, height = 0;
 		while (width == 0 || height == 0) {

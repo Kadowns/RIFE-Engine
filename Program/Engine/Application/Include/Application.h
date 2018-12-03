@@ -21,7 +21,7 @@ private :
     int m_height;
     std::string m_title;
     bool m_initialized = false;
-	bool m_framebufferResized = false;
+	bool m_windowResized = false;
 
     Scene *m_scene;
     GLFWwindow *m_window;
@@ -44,15 +44,15 @@ private :
 
 public:
 
-	static void frameBufferResizedCallback(GLFWwindow *window, int width, int height);
+	static void onWindowResized(GLFWwindow *window, int width, int height);
 
-	static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void onKeyboardAction(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-    static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+    static void onMouseAction(GLFWwindow* window, double xpos, double ypos);
 
     static Application *getInstance();
 
-	bool* framebufferResized() { return &m_framebufferResized; }
+	bool* windowResized() { return &m_windowResized; }
 	
     int getWidth();
 

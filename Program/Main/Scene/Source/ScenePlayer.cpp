@@ -138,7 +138,7 @@ void ScenePlayer::draw() {
 	VkResult result = VK_BASE->prepareFrame(&imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-		VK_BASE->recreateSwapChain();
+		VK_BASE->onWindowResized();
 		return;
 	}
 	std::vector<VkSemaphore> waitSemaphores, signalSemaphores;
@@ -146,9 +146,9 @@ void ScenePlayer::draw() {
 	
 	result = VK_BASE->presentFrame(imageIndex, signalSemaphores);
 
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || *APPLICATION->framebufferResized()) {
-		*APPLICATION->framebufferResized() = false;
-		VK_BASE->recreateSwapChain();
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || *APPLICATION->windowResized()) {
+		*APPLICATION->windowResized() = false;
+		VK_BASE->onWindowResized();
 		windowResized(APPLICATION->getWidth(), APPLICATION->getHeight());
     }
 }
