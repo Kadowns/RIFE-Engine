@@ -76,6 +76,9 @@ namespace Rife::Graphics {
 		if (vkCreateGraphicsPipelines(VK_DATA->getDevice(), VK_NULL_HANDLE, 1, &m_pipelineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
+
+        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
+        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
 	}
 
 	UniformBufferObjectInfo Shader::getUboInfo(size_t index) {

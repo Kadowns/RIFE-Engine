@@ -22,11 +22,10 @@ namespace Rife::Graphics {
         return *this;
     }
 
-	ShaderBuilder& ShaderBuilder::setShaderStages(VkPipelineShaderStageCreateInfo* shaderStages, const uint32_t& stageCount) {
-		m_pipelineInfo.stageCount = stageCount;
-		m_pipelineInfo.pStages = shaderStages;
-		return *this;
-	}
+    ShaderBuilder & ShaderBuilder::setShaderNames(std::vector<std::string>& names) {
+        m_names = std::move(names);
+        return *this;
+    }
 
 	ShaderBuilder& ShaderBuilder::setVertexInputState(VkPipelineVertexInputStateCreateInfo& vertexInputInfo) {
 		m_pipelineInfo.pVertexInputState = &vertexInputInfo;
@@ -39,7 +38,7 @@ namespace Rife::Graphics {
 	}
 
 	ShaderBuilder& ShaderBuilder::setViewportState(VkPipelineViewportStateCreateInfo& viewportState) {
-		m_pipelineInfo.pViewportState = &viewportState;
+        m_viewport = viewportState;
 		return *this;
 	}
 
@@ -64,6 +63,14 @@ namespace Rife::Graphics {
 	}
 
 	Shader* ShaderBuilder::createShader() {
-		return new Shader(m_pipelineInfo, m_descriptorSetLayoutInfos, m_pushConstantRanges, m_uboInfo, m_layoutBindings);
+        return new Shader(
+            m_pipelineInfo,
+            m_descriptorSetLayoutInfos,
+            m_pushConstantRanges,
+            m_uboInfo,
+            m_layoutBindings,
+            m_names,
+            m_viewport
+        );
 	}
 }

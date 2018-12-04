@@ -63,21 +63,6 @@ namespace Rife::Graphics {
 
         //----------------------------------------------------------------------------------
 
-
-        //Shaders------------------------------
-
-        std::vector<char> vertShaderCode = loadShaderFile("default_vert.spv");
-        std::vector<char> fragShaderCode = loadShaderFile("default_frag.spv");
-
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
-
-        VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
-
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-        //--------------------------------------------------------------
-
         //vertex input
         VertexLayout vertexLayout({
             VERTEX_COMPONENT_POSITION,
@@ -146,6 +131,17 @@ namespace Rife::Graphics {
         VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //--------------
 
+
+        //Shaders------------------------------
+
+        std::vector<std::string> names = {
+            "default_vert.spv",
+            "default_frag.spv"
+        };
+
+        //--------------------------------------------------------------
+
+
         auto shader = ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
@@ -153,7 +149,7 @@ namespace Rife::Graphics {
             .addUniformBufferObjectInfo(lightInfo)
             .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
-            .setShaderStages(shaderStages, 2)
+            .setShaderNames(names)
             .setVertexInputState(vertexInputInfo)
             .setInputAssemblyState(inputAssembly)
             .setViewportState(viewportInfo)
@@ -163,11 +159,7 @@ namespace Rife::Graphics {
             .setDepthStencilState(depthStencil)
             .createShader();
 
-        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
-        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
-
         return shader;
-
     }
 
 
@@ -248,20 +240,6 @@ namespace Rife::Graphics {
 
         //----------------------------------------------------------------------------------
 
-		//Shaders------------------------------
-
-		std::vector<char> vertShaderCode = loadShaderFile(vertShaderName);
-        std::vector<char> fragShaderCode = loadShaderFile(fragShaderName);
-
-		VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-		VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
-
-	    VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
-
-		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-		//--------------------------------------------------------------
-
 		//vertex input
         VertexLayout vertexLayout({
            VERTEX_COMPONENT_POSITION,
@@ -331,16 +309,22 @@ namespace Rife::Graphics {
 		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
 		//--------------
 
+        std::vector<char> vertShaderCode = loadShaderFile(vertShaderName);
+        std::vector<char> fragShaderCode = loadShaderFile(fragShaderName);
 
+        std::vector<std::string> names = {
+           vertShaderName,
+           fragShaderName
+        };
 
-		auto shader = ShaderBuilder()
+        auto shader = ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
             .addUniformBufferObjectInfo(cameraInfo)
             .addUniformBufferObjectInfo(lightInfo)
             .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
-			.setShaderStages(shaderStages, 2)
+            .setShaderNames(names)
 			.setVertexInputState(vertexInputInfo)
 			.setInputAssemblyState(inputAssembly)
 			.setViewportState(viewportInfo)
@@ -349,10 +333,6 @@ namespace Rife::Graphics {
 			.setColorBlendState(colorBlend)
 			.setDepthStencilState(depthStencil)
 			.createShader();
-
-		vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
-		vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
-
 		return shader;
 	}
 
@@ -389,20 +369,6 @@ namespace Rife::Graphics {
         UniformBufferObjectInfo modelInfo = createUboInfo(Skybox::size(), SHADER_ITEM_TYPE_SKYBOX);
 
         //----------------------------------------------------------------------------------
-
-        //Shaders------------------------------
-
-        std::vector<char> vertShaderCode = loadShaderFile("skybox_vert.spv");
-        std::vector<char> fragShaderCode = loadShaderFile("skybox_frag.spv");
-
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
-
-        VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
-
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-        //--------------------------------------------------------------
 
         //vertex input
         VertexLayout vertexLayout({
@@ -473,11 +439,17 @@ namespace Rife::Graphics {
         VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //-------------
 
+
+        std::vector<std::string> names = {
+            "skybox_vert.spv",
+            "skybox_frag.spv"
+        };
+
         auto shader = ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
             .setLayoutBindings(layoutBindings)
-            .setShaderStages(shaderStages, 2)
+            .setShaderNames(names)
             .setVertexInputState(vertexInputInfo)
             .setInputAssemblyState(inputAssembly)
             .setViewportState(viewportInfo)
@@ -486,9 +458,6 @@ namespace Rife::Graphics {
             .setColorBlendState(colorBlend)
             .setDepthStencilState(depthStencil)
             .createShader();
-
-        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
-        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
 
         return shader;
     }
@@ -576,21 +545,6 @@ namespace Rife::Graphics {
 
         //----------------------------------------------------------------------------------
 
-
-        //Shaders------------------------------
-
-        std::vector<char> vertShaderCode = loadShaderFile("terrain_vert.spv");
-        std::vector<char> fragShaderCode = loadShaderFile("terrain_frag.spv");
-
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
-
-        VkPipelineShaderStageCreateInfo vertShaderStageInfo = createShaderStage(VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main");
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo = createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
-
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-        //--------------------------------------------------------------
-
         //vertex input
         VertexLayout vertexLayout({
             VERTEX_COMPONENT_POSITION,
@@ -660,6 +614,13 @@ namespace Rife::Graphics {
         VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //--------------
 
+        //Shaders------------------------------
+        std::vector<std::string> names = {
+            "terrain_vert.spv",
+            "terrain_frag.spv"
+        };
+        //--------------------------------------------------------------
+
         auto shader = ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
@@ -667,7 +628,7 @@ namespace Rife::Graphics {
             .addUniformBufferObjectInfo(lightInfo)
             .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
-            .setShaderStages(shaderStages, 2)
+            .setShaderNames(names)
             .setVertexInputState(vertexInputInfo)
             .setInputAssemblyState(inputAssembly)
             .setViewportState(viewportInfo)
@@ -676,9 +637,6 @@ namespace Rife::Graphics {
             .setColorBlendState(colorBlend)
             .setDepthStencilState(depthStencil)
             .createShader();
-
-        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
-        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
 
         return shader;
     }

@@ -23,6 +23,9 @@ namespace Scripts {
 		Transform* transform;
 	    Keyboard* input;
 
+        MouseMoveEvent::EventListener callback;
+
+
 	public:
 
         Movable() {
@@ -33,9 +36,8 @@ namespace Scripts {
             
         }
 
-        static void mouseMoveCallback(void* caller, double x, double y) {
-            auto camera = reinterpret_cast<Movable*>(caller);
-			camera->updateCameraDirection(x, y);         
+        void OnMouseMove(double x, double y) {
+			updateCameraDirection(x, y);         
         }
 
 		void updateCameraDirection(double x, double y) {
@@ -46,7 +48,9 @@ namespace Scripts {
 		void awake() {
 			transform = getComponent<Transform>();
 			input = KEYBOARD;
-            MOUSE->setUpdatePositionCallback(this, mouseMoveCallback);
+            using namespace std::placeholders;
+            callback = std::bind(&Movable::OnMouseMove, this, _1, _2);
+            MOUSE->OnMouseMove() += &callback;
 		}
 
 		void update() {

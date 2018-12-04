@@ -26,9 +26,11 @@ namespace Rife::Tools {
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
-        for (int i = 0; i < m_callbacks.size(); i++) {
+
+        m_onMouseMove(xoffset, yoffset);
+        /*for (int i = 0; i < m_callbacks.size(); i++) {
             m_callbacks[i].second(m_callbacks[i].first, xoffset, yoffset);
-        }
+        }*/
     }
 
 

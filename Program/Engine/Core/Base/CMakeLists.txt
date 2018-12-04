@@ -5,6 +5,7 @@ set(BASE_INCLUDE
 	Include/Object.h
 	Include/GameObject.h
 	Include/Clock.h
+	Include/Event.h
 	Include/RifeCore.h
 	Include/RifePath.h
 	)
