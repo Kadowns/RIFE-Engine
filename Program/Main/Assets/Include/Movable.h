@@ -25,7 +25,6 @@ namespace Scripts {
 
         MouseMoveEvent::EventListener callback;
 
-
 	public:
 
         Movable() {
@@ -37,19 +36,16 @@ namespace Scripts {
         }
 
         void OnMouseMove(double x, double y) {
-			updateCameraDirection(x, y);         
-        }
-
-		void updateCameraDirection(double x, double y) {
             transform->m_rotation *= glm::quat(glm::radians(glm::vec3(y, -x, 0)));
             glm::normalize(transform->m_rotation);
-		}
+        }
 
 		void awake() {
 			transform = getComponent<Transform>();
 			input = KEYBOARD;
-            using namespace std::placeholders;
-            callback = std::bind(&Movable::OnMouseMove, this, _1, _2);
+            callback = [this](double x, double y) {
+                this->OnMouseMove(x, y);
+            };
             MOUSE->OnMouseMove() += &callback;
 		}
 
