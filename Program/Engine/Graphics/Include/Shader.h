@@ -1,7 +1,8 @@
 #pragma once
 
-#include <VulkanInclude.h>
 #include <RifeCore.h>
+#include <VulkanInclude.h>
+
 #include <Buffer.h>
 #include <UniformBufferObject.h>
 
@@ -18,14 +19,17 @@ namespace Rife::Graphics {
 	
 	public:
 
-		Shader(
-			VkGraphicsPipelineCreateInfo&,
-			std::vector<VkDescriptorSetLayoutCreateInfo>&,
-			std::vector<VkPushConstantRange>&,
-			std::vector<UniformBufferObjectInfo>&,
-			std::vector<VkDescriptorSetLayoutBinding>&,
-			std::vector<std::string>& shaderNames,
-			VkPipelineViewportStateCreateInfo& viewportInfo
+        Shader(
+            std::vector<VkDescriptorSetLayoutCreateInfo>&,
+            std::vector<VkPushConstantRange>&,
+            std::vector<UniformBufferObjectInfo>&,
+            std::vector<VkDescriptorSetLayoutBinding>&,
+            std::vector<std::string>& filePaths,
+            VkVertexInputBindingDescription& vertexBinding,
+            std::vector<VkVertexInputAttributeDescription>& vertexAttributes,
+            VkPipelineDepthStencilStateCreateInfo& depthStencil,
+            VkPipelineColorBlendAttachmentState& colorBlend,
+            VkPipelineRasterizationStateCreateInfo& rasterizer
 		);
         Shader() { m_name = "Shader"; }
 
@@ -38,7 +42,7 @@ namespace Rife::Graphics {
 		void clearPipeline();
 		VkPipeline* getPipeline() { return &m_pipeline; }
 		VkPipelineLayout* getPipelineLayout() { return &m_pipelineLayout; }
-		void createPipeline(VkPipelineViewportStateCreateInfo& viewportInfo);
+		void createPipeline();
 
         UniformBufferObjectInfo getUboInfo(size_t index);
         size_t getUboSize();
@@ -51,14 +55,24 @@ namespace Rife::Graphics {
 
 	private:
 
-		VkGraphicsPipelineCreateInfo m_pipelineInfo;
+		
 		VkPipeline m_pipeline;
 		VkPipelineLayout m_pipelineLayout;
-		std::vector<std::string> m_shaderNames;
+        VkVertexInputBindingDescription m_vertexBinding;
+        std::vector<VkVertexInputAttributeDescription> m_vertexAttributes;
+        VkPipelineDepthStencilStateCreateInfo m_depthStencil;
+        VkPipelineColorBlendAttachmentState m_colorBlend;
+        VkPipelineRasterizationStateCreateInfo m_rasterizer;
 
+		std::vector<std::string> m_filePaths;
         std::vector<UniformBufferObjectInfo> m_uboInfo;
         std::vector<VkDescriptorSetLayoutBinding> m_layoutBindings;
 		std::vector<VkDescriptorSetLayout> m_descriptorSetLayouts;
+        std::vector<VkPushConstantRange> m_pushConstantRanges;
+
+        OnCleanupPipeline::EventListener m_pipelineCleanupCallback;
+        OnRecreatePipeline::EventListener m_pipelineRecreateCallback;
+
 
 	};
 

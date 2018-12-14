@@ -44,11 +44,11 @@ private :
 
 public:
 
-	static void onWindowResized(GLFWwindow *window, int width, int height);
+	static void glfwWindowResizedCallback(GLFWwindow *window, int width, int height);
 
-	static void onKeyboardAction(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-    static void onMouseAction(GLFWwindow* window, double xpos, double ypos);
+    static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
 
     static Application *getInstance();
 

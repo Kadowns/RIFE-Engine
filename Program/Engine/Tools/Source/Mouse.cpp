@@ -10,7 +10,7 @@ namespace Rife::Tools {
         return s_instance != nullptr ? s_instance : (s_instance = new Mouse());
     }
 
-    void Mouse::updatePosition(double x, double y) {
+    void Mouse::mouseMove(double x, double y) {
 
         if (m_firstMove) {
             m_lastPosition = glm::dvec2(x, y);
@@ -27,14 +27,6 @@ namespace Rife::Tools {
         yoffset *= sensitivity;
 
 
-        m_onMouseMove(xoffset, yoffset);
-        /*for (int i = 0; i < m_callbacks.size(); i++) {
-            m_callbacks[i].second(m_callbacks[i].first, xoffset, yoffset);
-        }*/
-    }
-
-
-    void Mouse::setUpdatePositionCallback(void* caller, std::function<void(void* caller, double xoffset, double yoffset)> callback) {
-        m_callbacks.push_back(std::pair<void*, std::function<void(void* caller, double xoffset, double yoffset)>>(caller, callback));
+        m_onMouseMoveEvent(xoffset, yoffset);
     }
 }

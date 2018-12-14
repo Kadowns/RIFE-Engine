@@ -12,13 +12,11 @@ namespace Rife::Graphics {
         ShaderBuilder& addUniformBufferObjectInfo(UniformBufferObjectInfo& uboInfo);
         ShaderBuilder& setLayoutBindings(std::vector<VkDescriptorSetLayoutBinding>& layoutBindings);
         ShaderBuilder& setShaderNames(std::vector<std::string>& m_names);
-		ShaderBuilder& setVertexInputState(VkPipelineVertexInputStateCreateInfo& vertexInputInfo);
-		ShaderBuilder& setInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo& inputAssembly);
-		ShaderBuilder& setViewportState(VkPipelineViewportStateCreateInfo& viewportState);
-		ShaderBuilder& setRasterizationState(VkPipelineRasterizationStateCreateInfo& rasterizer);
-		ShaderBuilder& setMultisampleState(VkPipelineMultisampleStateCreateInfo& multisampling);
-		ShaderBuilder& setDepthStencilState(VkPipelineDepthStencilStateCreateInfo& depthStencil);
-		ShaderBuilder& setColorBlendState(VkPipelineColorBlendStateCreateInfo& colorBlending);
+        ShaderBuilder& setRasterizer(VkPipelineRasterizationStateCreateInfo& rasterizer);
+		ShaderBuilder& setVertexInputBinding(VkVertexInputBindingDescription& vertexInputBinding);
+        ShaderBuilder& setVertexAttribute(std::vector<VkVertexInputAttributeDescription>& vertexAttribute);	
+		ShaderBuilder& setDepthStencil(VkPipelineDepthStencilStateCreateInfo& depthStencil);
+		ShaderBuilder& setColorBlend(VkPipelineColorBlendAttachmentState& colorBlending);
 		Shader* createShader();
 
 	private:
@@ -28,10 +26,12 @@ namespace Rife::Graphics {
         std::vector<UniformBufferObjectInfo> m_uboInfo;
         std::vector<VkDescriptorSetLayoutBinding> m_layoutBindings;
         std::vector<std::string> m_names;
-        VkPipelineViewportStateCreateInfo m_viewport;
 
-        VkGraphicsPipelineCreateInfo m_pipelineInfo;
-
+        VkVertexInputBindingDescription m_vertexBinding;
+        std::vector<VkVertexInputAttributeDescription> m_vertexAttributes;
+        VkPipelineRasterizationStateCreateInfo m_rasterizer;
+        VkPipelineDepthStencilStateCreateInfo m_depthStencil;
+        VkPipelineColorBlendAttachmentState m_colorBlend;
 
 	};
 

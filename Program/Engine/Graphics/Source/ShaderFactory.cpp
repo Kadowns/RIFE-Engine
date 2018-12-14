@@ -71,47 +71,7 @@ namespace Rife::Graphics {
             });
         VkVertexInputBindingDescription vertexBinding = vertexLayout.getBindingDescription();
         std::vector<VkVertexInputAttributeDescription> vertexAttribute = vertexLayout.getAttributeDescriptions();
-
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
-        //---------------
-
-        //input assembly
-        VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssemblyInfo(
-            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            VK_FALSE,
-            nullptr
-        );
-        //--------------
-
-        //viewport & scissor
-        VkViewport viewport = {};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        auto extent = VK_DATA->getExtent();
-        viewport.width = (float)extent.width;
-        viewport.height = (float)extent.height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-
-        VkRect2D scissor = {};
-        scissor.offset = { 0, 0 };
-        scissor.extent = extent;
-
-        VkPipelineViewportStateCreateInfo viewportInfo = createViewportInfo(viewport, scissor);
-        //--------------
-
-        //rasterizer
-        VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
-            VK_FALSE,
-            VK_POLYGON_MODE_FILL,
-            VK_CULL_MODE_BACK_BIT,
-            VK_FRONT_FACE_COUNTER_CLOCKWISE
-        );
-        //---------------
-
-        //multisample
-        VkPipelineMultisampleStateCreateInfo multisample = createMultisampleInfo();
-        //---------------
+        //-------------
 
         //color blend
         VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
@@ -123,16 +83,23 @@ namespace Rife::Graphics {
         colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-        VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
         //--------------
 
         //depth stencil
         VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //--------------
 
+        //rasterizer
+        VkPipelineRasterizationStateCreateInfo rasterizer = ShaderFactory::createRasterizerInfo(
+            VK_FALSE,
+            VK_POLYGON_MODE_FILL,
+            VK_CULL_MODE_BACK_BIT,
+            VK_FRONT_FACE_COUNTER_CLOCKWISE
+        );
+        //---------------
 
-        //Shaders------------------------------
+
+        //file paths------------------------------
 
         std::vector<std::string> names = {
             "default_vert.spv",
@@ -141,8 +108,7 @@ namespace Rife::Graphics {
 
         //--------------------------------------------------------------
 
-
-        auto shader = ShaderBuilder()
+        return ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
             .addUniformBufferObjectInfo(cameraInfo)
@@ -150,16 +116,12 @@ namespace Rife::Graphics {
             .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
             .setShaderNames(names)
-            .setVertexInputState(vertexInputInfo)
-            .setInputAssemblyState(inputAssembly)
-            .setViewportState(viewportInfo)
-            .setRasterizationState(rasterizer)
-            .setMultisampleState(multisample)
-            .setColorBlendState(colorBlend)
-            .setDepthStencilState(depthStencil)
+            .setVertexInputBinding(vertexBinding)
+            .setVertexAttribute(vertexAttribute)
+            .setColorBlend(colorBlendAttachment)
+            .setDepthStencil(depthStencil)
+            .setRasterizer(rasterizer)
             .createShader();
-
-        return shader;
     }
 
 
@@ -249,46 +211,6 @@ namespace Rife::Graphics {
         VkVertexInputBindingDescription vertexBinding = vertexLayout.getBindingDescription();
         std::vector<VkVertexInputAttributeDescription> vertexAttribute = vertexLayout.getAttributeDescriptions();
 
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
-
-		//---------------
-		
-		//input assembly
-		VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssemblyInfo(
-			VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-			VK_FALSE,
-			nullptr
-		);
-		//--------------
-
-		//viewport & scissor
-        VkViewport viewport = {};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        auto extent = VK_DATA->getExtent();
-        viewport.width = (float)extent.width;
-        viewport.height = (float)extent.height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-
-        VkRect2D scissor = {};
-        scissor.offset = { 0, 0 };
-        scissor.extent = extent;
-
-		VkPipelineViewportStateCreateInfo viewportInfo = createViewportInfo(viewport, scissor);
-		//--------------
-        
-		//rasterizer
-		VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
-			VK_FALSE,
-			VK_POLYGON_MODE_FILL,
-			VK_CULL_MODE_BACK_BIT,
-			VK_FRONT_FACE_COUNTER_CLOCKWISE
-		);
-		//---------------
-
-		//multisample
-		VkPipelineMultisampleStateCreateInfo multisample = createMultisampleInfo();
 		//---------------
 
 		//color blend
@@ -302,22 +224,30 @@ namespace Rife::Graphics {
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
-		VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
 		//--------------
 
-		//depth stencil
-		VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
-		//--------------
+        //depth stencil
+        VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
+        //--------------
 
-        std::vector<char> vertShaderCode = loadShaderFile(vertShaderName);
-        std::vector<char> fragShaderCode = loadShaderFile(fragShaderName);
+        //rasterizer
+        VkPipelineRasterizationStateCreateInfo rasterizer = ShaderFactory::createRasterizerInfo(
+            VK_FALSE,
+            VK_POLYGON_MODE_FILL,
+            VK_CULL_MODE_BACK_BIT,
+            VK_FRONT_FACE_COUNTER_CLOCKWISE
+        );
+        //---------------
 
+        //file paths
         std::vector<std::string> names = {
            vertShaderName,
            fragShaderName
         };
 
-        auto shader = ShaderBuilder()
+        //----------
+
+		return ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
             .addUniformBufferObjectInfo(cameraInfo)
@@ -325,15 +255,12 @@ namespace Rife::Graphics {
             .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
             .setShaderNames(names)
-			.setVertexInputState(vertexInputInfo)
-			.setInputAssemblyState(inputAssembly)
-			.setViewportState(viewportInfo)
-			.setRasterizationState(rasterizer)
-			.setMultisampleState(multisample)
-			.setColorBlendState(colorBlend)
-			.setDepthStencilState(depthStencil)
-			.createShader();
-		return shader;
+            .setVertexInputBinding(vertexBinding)
+            .setVertexAttribute(vertexAttribute)
+            .setColorBlend(colorBlendAttachment)
+            .setDepthStencil(depthStencil)
+            .setRasterizer(rasterizer)
+            .createShader();
 	}
 
     Shader* ShaderFactory::skyboxShader() {
@@ -357,8 +284,6 @@ namespace Rife::Graphics {
             nullptr                                     //immutable samplers
         ));
 
-       
-
         VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {};
         descriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         descriptorSetLayoutInfo.bindingCount = static_cast<uint32_t>(layoutBindings.size());
@@ -376,47 +301,6 @@ namespace Rife::Graphics {
             });
         VkVertexInputBindingDescription vertexBinding = vertexLayout.getBindingDescription();
         std::vector<VkVertexInputAttributeDescription> vertexAttribute = vertexLayout.getAttributeDescriptions();
-
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
-
-        //---------------
-
-        //input assembly
-        VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssemblyInfo(
-            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            VK_FALSE,
-            nullptr
-        );
-        //--------------
-
-        //viewport & scissor
-        VkViewport viewport = {};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        auto extent = VK_DATA->getExtent();
-        viewport.width = (float)extent.width;
-        viewport.height = (float)extent.height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-
-        VkRect2D scissor = {};
-        scissor.offset = { 0, 0 };
-        scissor.extent = extent;
-
-        VkPipelineViewportStateCreateInfo viewportInfo = createViewportInfo(viewport, scissor);
-        //--------------
-
-        //rasterizer
-        VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
-            VK_FALSE,
-            VK_POLYGON_MODE_FILL,
-            VK_CULL_MODE_FRONT_BIT,
-            VK_FRONT_FACE_COUNTER_CLOCKWISE
-        );
-        //---------------
-
-        //multisample
-        VkPipelineMultisampleStateCreateInfo multisample = createMultisampleInfo();
         //---------------
 
         //color blend
@@ -429,8 +313,6 @@ namespace Rife::Graphics {
         colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-        VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
         //--------------
 
 
@@ -439,27 +321,31 @@ namespace Rife::Graphics {
         VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //-------------
 
+        //rasterizer
+        VkPipelineRasterizationStateCreateInfo rasterizer = ShaderFactory::createRasterizerInfo(
+            VK_FALSE,
+            VK_POLYGON_MODE_FILL,
+            VK_CULL_MODE_FRONT_BIT,
+            VK_FRONT_FACE_COUNTER_CLOCKWISE
+        );
+        //---------------
 
         std::vector<std::string> names = {
             "skybox_vert.spv",
             "skybox_frag.spv"
         };
 
-        auto shader = ShaderBuilder()
+        return ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
             .setLayoutBindings(layoutBindings)
             .setShaderNames(names)
-            .setVertexInputState(vertexInputInfo)
-            .setInputAssemblyState(inputAssembly)
-            .setViewportState(viewportInfo)
-            .setRasterizationState(rasterizer)
-            .setMultisampleState(multisample)
-            .setColorBlendState(colorBlend)
-            .setDepthStencilState(depthStencil)
+            .setVertexInputBinding(vertexBinding)
+            .setVertexAttribute(vertexAttribute)
+            .setColorBlend(colorBlendAttachment)
+            .setDepthStencil(depthStencil)
+            .setRasterizer(rasterizer)
             .createShader();
-
-        return shader;
     }
 
     Shader* ShaderFactory::terrainShader() {
@@ -554,46 +440,6 @@ namespace Rife::Graphics {
             });
         VkVertexInputBindingDescription vertexBinding = vertexLayout.getBindingDescription();
         std::vector<VkVertexInputAttributeDescription> vertexAttribute = vertexLayout.getAttributeDescriptions();
-
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo = createVertexInputInfo(vertexBinding, vertexAttribute);
-        //---------------
-
-        //input assembly
-        VkPipelineInputAssemblyStateCreateInfo inputAssembly = createInputAssemblyInfo(
-            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            VK_FALSE,
-            nullptr
-        );
-        //--------------
-
-        //viewport & scissor
-        VkViewport viewport = {};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        auto extent = VK_DATA->getExtent();
-        viewport.width = (float)extent.width;
-        viewport.height = (float)extent.height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-
-        VkRect2D scissor = {};
-        scissor.offset = { 0, 0 };
-        scissor.extent = extent;
-
-        VkPipelineViewportStateCreateInfo viewportInfo = createViewportInfo(viewport, scissor);
-        //--------------
-
-        //rasterizer
-        VkPipelineRasterizationStateCreateInfo rasterizer = createRasterizerInfo(
-            VK_FALSE,
-            VK_POLYGON_MODE_FILL,
-            VK_CULL_MODE_BACK_BIT,
-            VK_FRONT_FACE_COUNTER_CLOCKWISE
-        );
-        //---------------
-
-        //multisample
-        VkPipelineMultisampleStateCreateInfo multisample = createMultisampleInfo();
         //---------------
 
         //color blend
@@ -606,22 +452,29 @@ namespace Rife::Graphics {
         colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-        VkPipelineColorBlendStateCreateInfo colorBlend = createColorBlendInfo(colorBlendAttachment);
         //--------------
 
         //depth stencil
         VkPipelineDepthStencilStateCreateInfo depthStencil = createDepthStencilInfo(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS_OR_EQUAL);
         //--------------
 
-        //Shaders------------------------------
+        //rasterizer
+        VkPipelineRasterizationStateCreateInfo rasterizer = ShaderFactory::createRasterizerInfo(
+            VK_FALSE,
+            VK_POLYGON_MODE_FILL,
+            VK_CULL_MODE_BACK_BIT,
+            VK_FRONT_FACE_COUNTER_CLOCKWISE
+        );
+        //---------------
+
+        //file paths------------------------------
         std::vector<std::string> names = {
             "terrain_vert.spv",
             "terrain_frag.spv"
         };
         //--------------------------------------------------------------
 
-        auto shader = ShaderBuilder()
+        return ShaderBuilder()
             .addDescriptorSetLayoutInfo(descriptorSetLayoutInfo)
             .addUniformBufferObjectInfo(modelInfo)
             .addUniformBufferObjectInfo(cameraInfo)
@@ -629,16 +482,12 @@ namespace Rife::Graphics {
             .addPushConstantRange(materialPushConstant)
             .setLayoutBindings(layoutBindings)
             .setShaderNames(names)
-            .setVertexInputState(vertexInputInfo)
-            .setInputAssemblyState(inputAssembly)
-            .setViewportState(viewportInfo)
-            .setRasterizationState(rasterizer)
-            .setMultisampleState(multisample)
-            .setColorBlendState(colorBlend)
-            .setDepthStencilState(depthStencil)
+            .setVertexInputBinding(vertexBinding)
+            .setVertexAttribute(vertexAttribute)
+            .setColorBlend(colorBlendAttachment)
+            .setDepthStencil(depthStencil)
+            .setRasterizer(rasterizer)
             .createShader();
-
-        return shader;
     }
 
 	std::vector<char> ShaderFactory::loadShaderFile(const std::string& filename) {

@@ -8,19 +8,19 @@ Application *Application::getInstance() {
     return s_instance != nullptr ? s_instance : (s_instance = new Application());
 }
 //----------------------------------
-void Application::onWindowResized(GLFWwindow* window, int width, int height) {
+void Application::glfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 	app->m_width = width;
 	app->m_height = height;
 	app->m_windowResized = true;
 }
 
-void Application::onKeyboardAction(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void Application::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	KEYBOARD->set(key, action);
 }
 
-void Application::onMouseAction(GLFWwindow* window, double xpos, double ypos) {
-    MOUSE->updatePosition(xpos, ypos);
+void Application::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos) {
+    MOUSE->mouseMove(xpos, ypos);
 }
 
 
@@ -85,12 +85,12 @@ void Application::initGlfw() {
         throw std::runtime_error("Failed to create the GLFW Window");
 
 	glfwSetWindowUserPointer(m_window, this);
-    glfwSetFramebufferSizeCallback(m_window, onWindowResized);
+    glfwSetFramebufferSizeCallback(m_window, glfwWindowResizedCallback);
     glfwShowWindow(m_window);
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetKeyCallback(m_window, onKeyboardAction);
-    glfwSetCursorPosCallback(m_window, onMouseAction);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetKeyCallback(m_window, keyboardCallback);
+    glfwSetCursorPosCallback(m_window, mouseMoveCallback);
    
 }
 

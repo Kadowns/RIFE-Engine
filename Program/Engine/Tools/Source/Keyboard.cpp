@@ -33,13 +33,11 @@ namespace Rife::Tools {
     }
 
     void Keyboard::set(int key, int action) {
-        if (action == GLFW_PRESS)
-        {
+        if (action == GLFW_PRESS) {
             m_downKeys.insert(key);
             m_pressedKeys.insert(key);
         }
-        else if (action == GLFW_RELEASE)
-        {
+        else if (action == GLFW_RELEASE) {
             m_downKeys.erase(key);
             m_releasedKeys.insert(key);
         }

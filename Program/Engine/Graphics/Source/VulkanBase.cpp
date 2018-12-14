@@ -29,7 +29,6 @@ namespace Rife::Graphics {
 		createSurface();//Cria uma "superficie" na janela onde podemos desenhar
 		pickPhysicalDevice();//escolhe a melhor GPU disponivel
 		createLogicalDevice();//faz uns bagulho com queue e sei l� o que
-	   // createDescriptorSetLayout();
 		//---------------------------------
 		//todo---configuravel VVVV
 		createSwapchain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
@@ -42,16 +41,12 @@ namespace Rife::Graphics {
 
 
 		createDepthResources();
-		createFramebuffers();//Frame buffers 
-		//-----------------------
-		for (int i = 0; i < m_renderers.size(); i++) {
-			m_renderers[i]->createCommandBuffers();
-		}
+		createFramebuffers();
 		createCommandBuffer();
 		createSyncObjects();
 	}
 
-	void VulkanBase::onWindowResized() {
+	void VulkanBase::windowResized() {
 
 		int width = 0, height = 0;
 		while (width == 0 || height == 0) {
@@ -61,30 +56,22 @@ namespace Rife::Graphics {
 
 		vkDeviceWaitIdle(VK_DATA->getDevice());
 
-		for (int i = 0; i < m_renderers.size(); i++) {
-			m_renderers[i]->freeCommandBuffers();
-		}
-
-		m_secondaryCommandBuffers.clear();
-
-		cleanupSwapChain();
+		cleanupWindowResources();
 
 		createSwapchain();
 		createSwapChainImageViews();
 		createRenderPass();
-
-
 		createDepthResources();
-		createFramebuffers();
-		for (int i = 0; i < m_renderers.size(); i++) {
-			m_renderers[i]->createCommandBuffers();
-		}
+
+        m_recreatePipelineEvent();
+
+		createFramebuffers();    
 		createCommandBuffer();
 	}
 
 	void VulkanBase::terminateVulkan() {
 
-		cleanupSwapChain();
+		cleanupWindowResources();
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			vkDestroySemaphore(VK_DATA->getDevice(), VK_DATA->getRenderFinishedSemaphores()[i], nullptr);
@@ -810,11 +797,7 @@ namespace Rife::Graphics {
 
 		VkResult result = vkQueuePresentKHR(VK_DATA->getPresentQueue(), &presentInfo);
 
-		m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-
-		if (result != VK_SUCCESS) {
-			throw std::runtime_error("failed to present swap chain image!");
-		}
+		m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;	
 
 		return result;
 	}
@@ -828,6 +811,9 @@ namespace Rife::Graphics {
 	}
 
 	void VulkanBase::createCommandBuffer() {
+
+        m_recreateRendererEvent();
+
         VK_DATA->getPrimaryCommandBuffers().resize(VK_DATA->getFramebuffers().size());
 
 		VkCommandBufferAllocateInfo allocInfo = {};
@@ -903,7 +889,11 @@ namespace Rife::Graphics {
 		}
 	}
 
-	void VulkanBase::cleanupSwapChain() {
+	void VulkanBase::cleanupWindowResources() {
+
+
+        m_cleanupRendererEvent();
+
 
 		vkDestroyImageView(VK_DATA->getDevice(), VK_DATA->getDepthImageView(), nullptr);
 		vkDestroyImage(VK_DATA->getDevice(), VK_DATA->getDepthImage(), nullptr);
@@ -913,13 +903,16 @@ namespace Rife::Graphics {
 			vkDestroyFramebuffer(VK_DATA->getDevice(), VK_DATA->getFramebuffers()[i], nullptr);
 		}
 
-
 		vkFreeCommandBuffers(
             VK_DATA->getDevice(),
             VK_DATA->getCommandPool(),
             static_cast<uint32_t>(VK_DATA->getPrimaryCommandBuffers().size()),
             VK_DATA->getPrimaryCommandBuffers().data()
         );
+
+        m_secondaryCommandBuffers.clear();
+
+        m_cleanupPipelineEvent();
 
 		vkDestroyRenderPass(VK_DATA->getDevice(), VK_DATA->getRenderPass(), nullptr);
 

@@ -4,6 +4,8 @@
 
 #include <VulkanInclude.h>
 
+#include <Event.h>
+
 #include <Renderer.h>
 
 #include <vector>
@@ -57,6 +59,11 @@ namespace Rife::Graphics {
 
         size_t m_currentFrame = 0;
 
+        OnCleanupRenderer m_cleanupRendererEvent;
+        OnCleanupPipeline m_cleanupPipelineEvent;
+        OnRecreateRenderer m_recreateRendererEvent;
+        OnRecreatePipeline m_recreatePipelineEvent;
+
         std::vector<Renderer*> m_renderers;
         std::vector<std::vector<VkCommandBuffer>*> m_secondaryCommandBuffers;
 
@@ -92,7 +99,7 @@ namespace Rife::Graphics {
         void createSyncObjects();
         //---------------------
 
-		void cleanupSwapChain();
+		void cleanupWindowResources();
 
     public:
 
@@ -108,7 +115,7 @@ namespace Rife::Graphics {
         VulkanBase(GLFWwindow *window);
         void initialSetup();
 		void finalSetup();
-		void onWindowResized();
+		void windowResized();
         void terminateVulkan();
 
 		VkResult prepareFrame(uint32_t* imageIndex);    
@@ -119,6 +126,11 @@ namespace Rife::Graphics {
 		void bindRenderer(Rife::Graphics::Renderer*);
 
         size_t* getCurrentFrame() { return &m_currentFrame; }
+
+        OnCleanupRenderer& onCleanupRenderer() { return m_cleanupRendererEvent; }
+        OnCleanupPipeline& onCleanupPipeline() { return m_cleanupPipelineEvent; }
+        OnRecreateRenderer& onRecreateRenderer() { return m_recreateRendererEvent; }
+        OnRecreatePipeline& onRecreatePipeline() { return m_recreatePipelineEvent; }
 
         //---------------------
 

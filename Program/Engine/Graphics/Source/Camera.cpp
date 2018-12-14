@@ -6,7 +6,11 @@ namespace Rife::Graphics {
 
     Camera* Camera::s_instance = nullptr;
 
-    
+    Camera::Camera() {
+        m_name = "Camera";
+        s_instance = this;
+        setupBuffer();
+    }
 
     glm::vec3 Camera::getPosition() { return getComponent<Transform>()->m_position; }
 

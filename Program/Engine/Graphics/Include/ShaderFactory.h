@@ -13,7 +13,7 @@ namespace Rife::Graphics {
         static Shader* skyboxShader();
         static Shader* terrainShader();
 
-
+        static VkPipelineViewportStateCreateInfo createViewportInfo(VkViewport&, VkRect2D&);
 		static std::vector<char> loadShaderFile(const std::string& filename);
 		static VkShaderModule createShaderModule(const std::vector<char>& code);
 		static VkPipelineShaderStageCreateInfo createShaderStage(
@@ -21,10 +21,6 @@ namespace Rife::Graphics {
 			VkShaderModule module,
 			const char* pName
 		);
-
-	private:
-
-		
 
 		static VkDescriptorSetLayoutBinding createDescriptorSetLayoutBinding(
 			uint32_t binding,
@@ -53,7 +49,6 @@ namespace Rife::Graphics {
 			const void* pNext
 		);
 
-		static VkPipelineViewportStateCreateInfo createViewportInfo(VkViewport&, VkRect2D&);
 		
 		static VkPipelineRasterizationStateCreateInfo createRasterizerInfo(
 			const VkBool32& depthClamp,

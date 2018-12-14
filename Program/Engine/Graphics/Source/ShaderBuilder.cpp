@@ -27,50 +27,43 @@ namespace Rife::Graphics {
         return *this;
     }
 
-	ShaderBuilder& ShaderBuilder::setVertexInputState(VkPipelineVertexInputStateCreateInfo& vertexInputInfo) {
-		m_pipelineInfo.pVertexInputState = &vertexInputInfo;
+    ShaderBuilder& ShaderBuilder::setRasterizer(VkPipelineRasterizationStateCreateInfo& rasterizer) {
+        m_rasterizer = std::move(rasterizer);
+        return *this;
+    }
+
+    ShaderBuilder& ShaderBuilder::setVertexInputBinding(VkVertexInputBindingDescription& vertexInputBinding) {
+        m_vertexBinding = std::move(vertexInputBinding);
+        return *this;
+    }
+
+    ShaderBuilder& ShaderBuilder::setVertexAttribute(std::vector<VkVertexInputAttributeDescription>& vertexAttribute) {
+        m_vertexAttributes = std::move(vertexAttribute);
+        return *this;
+    }
+
+	ShaderBuilder& ShaderBuilder::setDepthStencil(VkPipelineDepthStencilStateCreateInfo& depthStencil) {
+		m_depthStencil = std::move(depthStencil);
 		return *this;
 	}
 
-	ShaderBuilder& ShaderBuilder::setInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo& inputAssembly) {
-		m_pipelineInfo.pInputAssemblyState = &inputAssembly;
-		return *this;
-	}
-
-	ShaderBuilder& ShaderBuilder::setViewportState(VkPipelineViewportStateCreateInfo& viewportState) {
-        m_viewport = viewportState;
-		return *this;
-	}
-
-	ShaderBuilder& ShaderBuilder::setRasterizationState(VkPipelineRasterizationStateCreateInfo& rasterizer) {
-		m_pipelineInfo.pRasterizationState = &rasterizer;
-		return *this;
-	}
-
-	ShaderBuilder& ShaderBuilder::setMultisampleState(VkPipelineMultisampleStateCreateInfo& multisampling) {
-		m_pipelineInfo.pMultisampleState = &multisampling;
-		return *this;
-	}
-
-	ShaderBuilder& ShaderBuilder::setDepthStencilState(VkPipelineDepthStencilStateCreateInfo& depthStencil) {
-		m_pipelineInfo.pDepthStencilState = &depthStencil;
-		return *this;
-	}
-
-	ShaderBuilder& ShaderBuilder::setColorBlendState(VkPipelineColorBlendStateCreateInfo& colorBlending) {
-		m_pipelineInfo.pColorBlendState = &colorBlending;
+	ShaderBuilder& ShaderBuilder::setColorBlend(VkPipelineColorBlendAttachmentState& colorBlending) {
+        m_colorBlend = std::move(colorBlending);
 		return *this;
 	}
 
 	Shader* ShaderBuilder::createShader() {
         return new Shader(
-            m_pipelineInfo,
             m_descriptorSetLayoutInfos,
             m_pushConstantRanges,
             m_uboInfo,
             m_layoutBindings,
             m_names,
-            m_viewport
+            m_vertexBinding,
+            m_vertexAttributes,
+            m_depthStencil,
+            m_colorBlend,
+            m_rasterizer
         );
 	}
 }

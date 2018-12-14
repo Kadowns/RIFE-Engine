@@ -138,7 +138,7 @@ void ScenePlayer::draw() {
 	VkResult result = VK_BASE->prepareFrame(&imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-		VK_BASE->onWindowResized();
+		VK_BASE->windowResized();
 		return;
 	}
 	std::vector<VkSemaphore> waitSemaphores, signalSemaphores;
@@ -148,9 +148,18 @@ void ScenePlayer::draw() {
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || *APPLICATION->windowResized()) {
 		*APPLICATION->windowResized() = false;
-		VK_BASE->onWindowResized();
-		windowResized(APPLICATION->getWidth(), APPLICATION->getHeight());
+		VK_BASE->windowResized();
+        CAMERA->updateProjection(
+            60.0f,
+            (float)APPLICATION->getWidth() / (float)APPLICATION->getHeight(),
+            0.1f,
+            10000.0f
+        );
+    } 
+    else if (result != VK_SUCCESS) {
+        throw std::runtime_error("failed to present swap chain image!");
     }
+
 }
 
 void ScenePlayer::deinit() {
@@ -159,8 +168,4 @@ void ScenePlayer::deinit() {
 	}
     delete GLOBAL_LIGHTS;
     delete SKYBOX;
-}
-
-void ScenePlayer::windowResized(const uint32_t& width, const uint32_t& height) {
-    CAMERA->updateProjection(CAMERA->getFov(), (float)width / (float)height, CAMERA->getNear(), CAMERA->getFar());
 }

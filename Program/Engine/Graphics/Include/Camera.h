@@ -12,7 +12,7 @@ namespace Rife::Graphics {
     class Camera : public Base::Component, public ShaderItem {
 
     public:
-		Camera() { m_name = "Camera"; s_instance = this; setupBuffer(); }
+        Camera();
 
         void serialize(std::ofstream& file) {
             std::string offset("    ");

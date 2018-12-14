@@ -1,16 +1,22 @@
 #include <Shader.h>
+
+#include <VulkanBase.h>
 #include <VulkanData.h>
 #include <ShaderFactory.h>
 
 namespace Rife::Graphics {
 
-	Shader::Shader(VkGraphicsPipelineCreateInfo& pipelineCreateInfo,
+	Shader::Shader(
 		std::vector<VkDescriptorSetLayoutCreateInfo>& descriptorSetLayoutInfos,
 		std::vector<VkPushConstantRange>& pushConstantRanges,
         std::vector<UniformBufferObjectInfo>& uboInfo,
         std::vector<VkDescriptorSetLayoutBinding>& layoutBindings,
-		std::vector<std::string>& shaderNames,
-		VkPipelineViewportStateCreateInfo& viewportInfo
+		std::vector<std::string>& filePaths,
+        VkVertexInputBindingDescription& vertexBinding,
+        std::vector<VkVertexInputAttributeDescription>& vertexAttributes,
+        VkPipelineDepthStencilStateCreateInfo& depthStencil,
+        VkPipelineColorBlendAttachmentState& colorBlend,
+        VkPipelineRasterizationStateCreateInfo& rasterizer
     ) {
 
 		m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
@@ -21,47 +27,58 @@ namespace Rife::Graphics {
 			}
 		}
 
+        m_pushConstantRanges = std::move(pushConstantRanges);
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.pNext = nullptr;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(m_descriptorSetLayouts.size());
 		pipelineLayoutInfo.pSetLayouts = m_descriptorSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
-		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
+		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(m_pushConstantRanges.size());
+		pipelineLayoutInfo.pPushConstantRanges = m_pushConstantRanges.data();
 
 		if (vkCreatePipelineLayout(VK_DATA->getDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
 
-		m_shaderNames = std::move(shaderNames);
-		m_pipelineInfo = std::move(pipelineCreateInfo);
-		createPipeline(viewportInfo);
-		
-
         m_name = std::move("Shader");
+		m_filePaths = std::move(filePaths);
+
         m_uboInfo = std::move(uboInfo);
         m_layoutBindings = std::move(layoutBindings);
+
+        m_vertexBinding = std::move(vertexBinding);
+        m_vertexAttributes = std::move(vertexAttributes);
+        m_colorBlend = std::move(colorBlend);
+        m_depthStencil = std::move(depthStencil);
+        m_rasterizer = std::move(rasterizer);
+
+		createPipeline();
+        
+        m_pipelineCleanupCallback = [this]() {
+            this->clearPipeline();
+        };
+        VK_BASE->onCleanupPipeline() += &m_pipelineCleanupCallback;
+
+        m_pipelineRecreateCallback = [this]() {
+            this->createPipeline();
+        };
+        VK_BASE->onRecreatePipeline() += &m_pipelineRecreateCallback;
 	}
 
 	Shader::~Shader() {
 		clearPipeline();
+        vkDestroyPipelineLayout(VK_DATA->getDevice(), m_pipelineLayout, nullptr);
 		for (size_t i = 0; i < m_descriptorSetLayouts.size(); i++) {
 			vkDestroyDescriptorSetLayout(VK_DATA->getDevice(), m_descriptorSetLayouts[i], nullptr);
 		}
+        VK_BASE->onCleanupPipeline() -= &m_pipelineCleanupCallback;
+        VK_BASE->onRecreatePipeline() -= &m_pipelineRecreateCallback;
 	}
 
-	void Shader::createPipeline(VkPipelineViewportStateCreateInfo& viewportInfo) {
+	void Shader::createPipeline() {
 
-		m_pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		m_pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-		m_pipelineInfo.basePipelineIndex = -1; // Optional
-		m_pipelineInfo.renderPass = VK_DATA->getRenderPass();
-		m_pipelineInfo.subpass = 0;
-		m_pipelineInfo.layout = m_pipelineLayout;
-		m_pipelineInfo.pViewportState = &viewportInfo;
-
-		std::vector<char> vertShaderCode = ShaderFactory::loadShaderFile(m_shaderNames[0]);
-		std::vector<char> fragShaderCode = ShaderFactory::loadShaderFile(m_shaderNames[1]);
+		std::vector<char> vertShaderCode = ShaderFactory::loadShaderFile(m_filePaths[0]);
+		std::vector<char> fragShaderCode = ShaderFactory::loadShaderFile(m_filePaths[1]);
 
 		VkShaderModule vertShaderModule = ShaderFactory::createShaderModule(vertShaderCode);
 		VkShaderModule fragShaderModule = ShaderFactory::createShaderModule(fragShaderCode);
@@ -70,10 +87,61 @@ namespace Rife::Graphics {
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo = ShaderFactory::createShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main");
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-		m_pipelineInfo.pStages = shaderStages;
-		m_pipelineInfo.stageCount = 2;
 
-		if (vkCreateGraphicsPipelines(VK_DATA->getDevice(), VK_NULL_HANDLE, 1, &m_pipelineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
+
+        VkViewport viewport = {};
+        viewport.x = 0.0f;
+        viewport.y = 0.0f;
+        auto extent = VK_DATA->getExtent();
+        viewport.width = (float)extent.width;
+        viewport.height = (float)extent.height;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+
+        VkRect2D scissor = {};
+        scissor.offset = { 0, 0 };
+        scissor.extent = extent;
+
+        VkPipelineViewportStateCreateInfo viewportInfo = ShaderFactory::createViewportInfo(viewport, scissor);
+
+        //input assembly
+        VkPipelineInputAssemblyStateCreateInfo inputAssembly = ShaderFactory::createInputAssemblyInfo(
+            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+            VK_FALSE,
+            nullptr
+        );
+        //--------------
+
+        //multisample
+        VkPipelineMultisampleStateCreateInfo multisample = ShaderFactory::createMultisampleInfo();
+        //---------------
+
+        //vertex input
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo = ShaderFactory::createVertexInputInfo(m_vertexBinding, m_vertexAttributes);
+        //---------------
+
+        //color blend
+        VkPipelineColorBlendStateCreateInfo colorBlend = ShaderFactory::createColorBlendInfo(m_colorBlend);
+        //---------------
+
+        VkGraphicsPipelineCreateInfo pipelineInfo = {};
+        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+        pipelineInfo.basePipelineIndex = -1; // Optional
+        pipelineInfo.renderPass = VK_DATA->getRenderPass();
+        pipelineInfo.subpass = 0;
+        pipelineInfo.layout = m_pipelineLayout;
+        pipelineInfo.pDepthStencilState = &m_depthStencil;
+        pipelineInfo.pVertexInputState = &vertexInputInfo;
+        pipelineInfo.pColorBlendState = &colorBlend;
+        pipelineInfo.pInputAssemblyState = &inputAssembly;
+        pipelineInfo.pRasterizationState = &m_rasterizer;
+        pipelineInfo.pMultisampleState = &multisample;
+        pipelineInfo.pViewportState = &viewportInfo;
+		pipelineInfo.pStages = shaderStages;
+		pipelineInfo.stageCount = 2;
+
+		if (vkCreateGraphicsPipelines(VK_DATA->getDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 
@@ -99,6 +167,6 @@ namespace Rife::Graphics {
 
 	void Shader::clearPipeline() {
 		vkDestroyPipeline(VK_DATA->getDevice(), m_pipeline, nullptr);
-		vkDestroyPipelineLayout(VK_DATA->getDevice(), m_pipelineLayout, nullptr);
+		//vkDestroyPipelineLayout(VK_DATA->getDevice(), m_pipelineLayout, nullptr);
 	}
 }

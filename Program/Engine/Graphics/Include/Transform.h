@@ -40,6 +40,10 @@ namespace Rife::Graphics {
             return m_rotation * glm::vec3(0.0f, 1.0f, 0.0f);
         }
 
+        glm::vec3 getRight() {
+            return m_rotation * glm::vec3(1.0f, 0.0f, 0.0f);
+        }
+
         glm::vec3 getEuler() { return glm::degrees(glm::eulerAngles(m_rotation)); }
 
         glm::mat4 getRotationMatrix() {

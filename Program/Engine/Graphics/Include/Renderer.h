@@ -20,6 +20,11 @@ namespace Rife::Graphics {
         void createDescriptorPool();
         void createDescriptorSets();
 
+
+        OnCleanupRenderer::EventListener m_cleanupRendererCallback;
+        OnRecreateRenderer::EventListener m_recreateRendererCallback;
+
+
         std::vector<VkCommandBuffer> m_commandBuffers;
 
         MaterialInstance m_material;

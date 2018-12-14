@@ -20,13 +20,26 @@ namespace Rife::Graphics {
         vkDestroyDescriptorPool(VK_DATA->getDevice(), m_descriptorPool, nullptr);
 
         freeCommandBuffers();
+
+        VK_BASE->onRecreateRenderer() -= &m_recreateRendererCallback;
+        VK_BASE->onCleanupRenderer() -= &m_cleanupRendererCallback;
     }
 
     void Renderer::setup() {
 
         createDescriptorPool();
         createDescriptorSets();
-        VK_BASE->bindRenderer(this);
+
+        m_recreateRendererCallback = [this]() {
+            this->createCommandBuffers();
+        };
+        VK_BASE->onRecreateRenderer() += &m_recreateRendererCallback;
+
+
+        m_cleanupRendererCallback = [this]() {
+            this->freeCommandBuffers();
+        };
+        VK_BASE->onCleanupRenderer() += &m_cleanupRendererCallback;
 
     }
 

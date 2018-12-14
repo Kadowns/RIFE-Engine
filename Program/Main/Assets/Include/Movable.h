@@ -18,7 +18,7 @@ namespace Scripts {
 		float moveSpeed;
         float rotateSpeed;
 
-        glm::vec3 front, up;
+        glm::vec3 front, up, right;
 
 		Transform* transform;
 	    Keyboard* input;
@@ -67,13 +67,14 @@ namespace Scripts {
             float rotateAmount = 0.0f;
             front = transform->getFront();
             up = transform->getUp();
+            right = transform->getRight();
 			glm::vec3 moveDirection(0.0f);
 
 			if (input->isDown(GLFW_KEY_A)) {
-				moveDirection -= glm::normalize(glm::cross(front, up));
+                moveDirection -= right;
 			}
 			else if (input->isDown(GLFW_KEY_D)){
-				moveDirection += glm::normalize(glm::cross(front, up));
+                moveDirection += right;
 			}
 			if (input->isDown(GLFW_KEY_W)) {
 				moveDirection += front;
