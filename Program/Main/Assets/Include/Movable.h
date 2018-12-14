@@ -18,10 +18,13 @@ namespace Scripts {
 		float moveSpeed;
         float rotateSpeed;
 
+        bool mouseDrag = false;
+
         glm::vec3 front, up, right;
 
 		Transform* transform;
 	    Keyboard* input;
+        Mouse* mouse;
 
         MouseMoveEvent::EventListener callback;
 
@@ -36,20 +39,33 @@ namespace Scripts {
         }
 
         void OnMouseMove(double x, double y) {
-            transform->m_rotation *= glm::quat(glm::radians(glm::vec3(y, -x, 0)));
-            glm::normalize(transform->m_rotation);
+
+            if (mouseDrag) {
+                transform->m_rotation *= glm::quat(glm::radians(glm::vec3(y, -x, 0)));
+                glm::normalize(transform->m_rotation);
+            }          
         }
 
 		void awake() {
 			transform = getComponent<Transform>();
 			input = KEYBOARD;
+            mouse = MOUSE;
             callback = [this](double x, double y) {
                 this->OnMouseMove(x, y);
             };
-            MOUSE->OnMouseMove() += &callback;
+            mouse->OnMouseMove() += &callback;
 		}
 
 		void update() {
+
+            if (mouse->isPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                mouse->setCursor(false);            
+                mouseDrag = true;
+            }
+            else if (mouse->isReleased(GLFW_MOUSE_BUTTON_LEFT)) {
+                mouse->setCursor(true);
+                mouseDrag = false;
+            }
 
 			if (input->isDown(GLFW_KEY_LEFT_SHIFT)) {
 				moveSpeed = baseSpeed * 10;

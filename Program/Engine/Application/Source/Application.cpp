@@ -8,7 +8,7 @@ Application *Application::getInstance() {
     return s_instance != nullptr ? s_instance : (s_instance = new Application());
 }
 //----------------------------------
-void Application::glfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
+void Application::windowResizedCallback(GLFWwindow* window, int width, int height) {
 	auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 	app->m_width = width;
 	app->m_height = height;
@@ -21,6 +21,10 @@ void Application::keyboardCallback(GLFWwindow* window, int key, int scancode, in
 
 void Application::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos) {
     MOUSE->mouseMove(xpos, ypos);
+}
+
+void Application::mouseButtonCallback(GLFWwindow * window, int button, int action, int mods) {
+    MOUSE->set(button, action);
 }
 
 
@@ -85,12 +89,20 @@ void Application::initGlfw() {
         throw std::runtime_error("Failed to create the GLFW Window");
 
 	glfwSetWindowUserPointer(m_window, this);
-    glfwSetFramebufferSizeCallback(m_window, glfwWindowResizedCallback);
     glfwShowWindow(m_window);
+
+    //inputs
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+    //callbacks
+    glfwSetFramebufferSizeCallback(m_window, windowResizedCallback);
 	glfwSetKeyCallback(m_window, keyboardCallback);
     glfwSetCursorPosCallback(m_window, mouseMoveCallback);
+    glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
+
+    MOUSE->setWindow(m_window);
    
 }
 
@@ -112,7 +124,9 @@ void Application::loop() {
         m_scene->update();
         m_scene->draw();
 
+        
         KEYBOARD->update();
+        MOUSE->update();
         glfwPollEvents();
 
         TIME->lateUpdate();

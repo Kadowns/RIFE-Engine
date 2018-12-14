@@ -19,6 +19,7 @@ namespace Rife::Graphics {
         VkPipelineRasterizationStateCreateInfo& rasterizer
     ) {
 
+        //criação dos descriptorlayout e pipeline layout
 		m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
 		for (int i = 0; i < m_descriptorSetLayouts.size(); i++) {
 			if (vkCreateDescriptorSetLayout(VK_DATA->getDevice(), &descriptorSetLayoutInfos[i], nullptr, &m_descriptorSetLayouts[i])
@@ -39,21 +40,26 @@ namespace Rife::Graphics {
 		if (vkCreatePipelineLayout(VK_DATA->getDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
+        //--------------------------------------------------
 
+        //cache de coisas importantes
         m_name = std::move("Shader");
 		m_filePaths = std::move(filePaths);
-
         m_uboInfo = std::move(uboInfo);
         m_layoutBindings = std::move(layoutBindings);
-
         m_vertexBinding = std::move(vertexBinding);
         m_vertexAttributes = std::move(vertexAttributes);
         m_colorBlend = std::move(colorBlend);
         m_depthStencil = std::move(depthStencil);
         m_rasterizer = std::move(rasterizer);
+        //-------------------------
 
+        //cria a pipeline
 		createPipeline();
+        //------
         
+
+        //se inscreve nos eventos de resize
         m_pipelineCleanupCallback = [this]() {
             this->clearPipeline();
         };
@@ -63,6 +69,7 @@ namespace Rife::Graphics {
             this->createPipeline();
         };
         VK_BASE->onRecreatePipeline() += &m_pipelineRecreateCallback;
+        //------------------------------------
 	}
 
 	Shader::~Shader() {
