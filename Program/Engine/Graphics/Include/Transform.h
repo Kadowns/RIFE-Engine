@@ -28,10 +28,6 @@ namespace Rife::Graphics {
             file << (offset + NAME(m_scale) + ": " + std::to_string(m_scale) + "\n").c_str();
         }
 
-        void apply() {
-            flushData(&m_ubo);
-        }
-
         glm::vec3 getFront() {
             return m_rotation * glm::vec3(0.0f, 0.0f, -1.0f);
         }
@@ -60,7 +56,7 @@ namespace Rife::Graphics {
         // Inherited via ShaderItem
         virtual void setupBuffer() override;
 
-		virtual void updateBuffer() override;
+		virtual void updateBuffer(uint32_t imageIndex) override;
 
     private:
         struct {

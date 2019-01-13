@@ -23,8 +23,6 @@ namespace Rife::Graphics {
 
         }
 
-        void apply();
-
     private:
 
         struct {
@@ -40,7 +38,7 @@ namespace Rife::Graphics {
 
 
 		// Inherited via ShaderItem
-		virtual void updateBuffer() override;
+		virtual void updateBuffer(uint32_t imageIndex) override;
 
 	};
 }

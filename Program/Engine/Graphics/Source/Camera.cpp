@@ -42,26 +42,27 @@ namespace Rife::Graphics {
         return sizeof(m_ubo);
     }
 
-    void Camera::apply() {
-        flushData(&m_ubo);
-    }
-
     Camera* Camera::getInstance() {
         return s_instance;
     }
 
     void Camera::setupBuffer() {
 
+
         BufferInfo info = {};
         info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
         info.usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        VulkanTools::createBuffer(sizeof(m_ubo), info, m_buffer);
-        m_buffer.map();
+
+        m_buffers.resize(VK_DATA->getSwapchainImages().size());
+        for (size_t i = 0; i < m_buffers.size(); i++) {
+            VulkanTools::createBuffer(sizeof(m_ubo), info, m_buffers[i]);
+            m_buffers[i].map();
+        }
     }
 
-	void Camera::updateBuffer() {
+	void Camera::updateBuffer(uint32_t imageIndex) {
 		m_ubo.position = glm::vec4(m_position, 0.0f);
 		m_ubo.vp = m_projection * m_view;
-		apply();
+        flushData(&m_ubo, imageIndex);
 	}
 }

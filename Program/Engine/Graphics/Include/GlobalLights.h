@@ -41,8 +41,6 @@ namespace Rife::Graphics {
 
         void setDirectionalLight(DirectionalLight* directional);
 
-        void apply();
-
     private:
 
         GlobalLights() {
@@ -65,6 +63,6 @@ namespace Rife::Graphics {
         virtual void setupBuffer() override;
 
 		// Inherited via ShaderItem
-		virtual void updateBuffer() override;
+		virtual void updateBuffer(uint32_t imageIndex) override;
 	};
 }

@@ -22,22 +22,21 @@ namespace Rife::Graphics {
         return sizeof(m_ubo);
     }
 
-    void Skybox::apply() {
-        flushData(&m_ubo);
-    }
-
     void Skybox::setupBuffer() {
 
         BufferInfo info = {};
         info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
         info.usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        VulkanTools::createBuffer(sizeof(m_ubo), info, m_buffer);
-        m_buffer.map();
+        m_buffers.resize(VK_DATA->getSwapchainImages().size());
+        for (size_t i = 0; i < m_buffers.size(); i++) {
+            VulkanTools::createBuffer(sizeof(m_ubo), info, m_buffers[i]);
+            m_buffers[i].map();
+        }
     }
 
-	void Skybox::updateBuffer() {
+	void Skybox::updateBuffer(uint32_t imageIndex) {
 		m_ubo.m_projection = CAMERA->getProjection();
 		m_ubo.m_view = glm::mat3(CAMERA->getView());
-		apply();
+        flushData(&m_ubo, imageIndex);
 	}
 }

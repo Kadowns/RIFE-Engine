@@ -23,22 +23,24 @@ namespace Rife::Graphics {
 		}
 
         virtual ~ShaderItem() {
-			m_buffer.unmap();
-			m_buffer.destroy();
+            for (auto& buffer : m_buffers) {
+                buffer.unmap();
+                buffer.destroy();
+            }
+			
 		};
-        virtual void apply() = 0;
         virtual void setupBuffer() = 0;
-		virtual void updateBuffer() = 0;
+		virtual void updateBuffer(uint32_t index) = 0;
 
-        Buffer& getBuffer();
+        Buffer& getBuffer(uint32_t index);
 
-		static void updateBuffers();
+		static void updateBuffers(uint32_t index);
 
     protected:
 
-        void flushData(void* data);
+        void flushData(void* data, uint32_t index);
 
-        Buffer m_buffer;
+        std::vector<Buffer> m_buffers;
 
 	private:
 		static std::vector<ShaderItem*> s_items;

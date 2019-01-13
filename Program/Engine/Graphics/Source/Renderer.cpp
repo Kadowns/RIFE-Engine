@@ -99,16 +99,16 @@ namespace Rife::Graphics {
             for (size_t j = 0; j < bufferInfos.size(); j++) {
 				switch (shader->getUboInfo(j).type) {
 				case SHADER_ITEM_TYPE_TRANSFORM:
-					bufferInfos[j].buffer = getComponent<Transform>()->getBuffer().buffer;
+					bufferInfos[j].buffer = getComponent<Transform>()->getBuffer(i).buffer;
 					break;
 				case SHADER_ITEM_TYPE_CAMERA:
-					bufferInfos[j].buffer = CAMERA->getBuffer().buffer;
+					bufferInfos[j].buffer = CAMERA->getBuffer(i).buffer;
 					break;
 				case SHADER_ITEM_TYPE_LIGHTS:
-					bufferInfos[j].buffer = GLOBAL_LIGHTS->getBuffer().buffer;
+					bufferInfos[j].buffer = GLOBAL_LIGHTS->getBuffer(i).buffer;
 					break;
 				case SHADER_ITEM_TYPE_SKYBOX:
-					bufferInfos[j].buffer = SKYBOX->getBuffer().buffer;
+					bufferInfos[j].buffer = SKYBOX->getBuffer(i).buffer;
 					break;
 				default:
 					std::cout << "Invalid shader item!\n";

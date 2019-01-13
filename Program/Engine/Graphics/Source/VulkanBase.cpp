@@ -42,7 +42,7 @@ namespace Rife::Graphics {
 
 		createDepthResources();
 		createFramebuffers();
-		createCommandBuffer();
+		createCommandBuffers();
 		createSyncObjects();
 	}
 
@@ -66,7 +66,7 @@ namespace Rife::Graphics {
         m_recreatePipelineEvent();
 
 		createFramebuffers();    
-		createCommandBuffer();
+		createCommandBuffers();
 	}
 
 	void VulkanBase::terminateVulkan() {
@@ -333,6 +333,65 @@ namespace Rife::Graphics {
 
 		return score;
 	}
+
+    void VulkanBase::prepareDrawCommandBuffer() {
+
+        VK_DATA->getPrimaryCommandBuffers().resize(VK_DATA->getSwapchainImages().size());
+        VkCommandBufferAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandPool = VK_DATA->getCommandPool();
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = VK_DATA->getSwapchainImages().size();
+
+        if (vkAllocateCommandBuffers(VK_DATA->getDevice(), &allocInfo, VK_DATA->getPrimaryCommandBuffers().data()) != VK_SUCCESS) {
+            throw std::runtime_error("failed to allocate command buffers!");
+        }
+    }
+
+    void VulkanBase::beginDrawCommands(uint32_t imageIndex) {
+
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+        beginInfo.pInheritanceInfo = nullptr; // Optional
+
+        if (vkBeginCommandBuffer(VK_DATA->getPrimaryCommandBuffers()[imageIndex], &beginInfo) != VK_SUCCESS) {
+            throw std::runtime_error("failed to begin recording command buffer!");
+        }
+
+        VkRenderPassBeginInfo renderPassInfo = {};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.renderPass = VK_DATA->getRenderPass();
+        renderPassInfo.framebuffer = VK_DATA->getFramebuffers()[imageIndex];
+
+        renderPassInfo.renderArea.offset = { 0, 0 };
+        renderPassInfo.renderArea.extent = VK_DATA->getExtent();
+
+        std::array<VkClearValue, 2> clearValues = {};
+
+        clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+        clearValues[1].depthStencil = { 1.0f, 0 };
+
+        renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+        renderPassInfo.pClearValues = clearValues.data();
+
+        vkCmdBeginRenderPass(VK_DATA->getPrimaryCommandBuffers()[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+    }
+
+    void VulkanBase::recordDrawCommands(uint32_t imageIndex) {
+
+        beginDrawCommands(imageIndex);
+
+        for (size_t cmdBufferIndex = 0; cmdBufferIndex < m_secondaryCommandBuffers.size(); cmdBufferIndex++) {
+            vkCmdExecuteCommands(VK_DATA->getPrimaryCommandBuffers()[imageIndex], 1, &m_secondaryCommandBuffers[cmdBufferIndex]->at(imageIndex));
+        }
+
+        vkCmdEndRenderPass(VK_DATA->getPrimaryCommandBuffers()[imageIndex]);
+
+        if (vkEndCommandBuffer(VK_DATA->getPrimaryCommandBuffers()[imageIndex]) != VK_SUCCESS) {
+            throw std::runtime_error("failed to record command buffer!");
+        }
+    }
 
 	void VulkanBase::pickPhysicalDevice() {
 		//verifica quantas placas de video suportam a vulkan no pc
@@ -690,7 +749,7 @@ namespace Rife::Graphics {
 		VkCommandPoolCreateInfo poolInfo = {};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
-		poolInfo.flags = 0; // Optional
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; // permite resetar os commandbuffers a todo frame
 
 		if (vkCreateCommandPool(VK_DATA->getDevice(), &poolInfo, nullptr, &VK_DATA->getCommandPool()) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create command pool!");
@@ -758,10 +817,12 @@ namespace Rife::Graphics {
 		std::vector<VkSemaphore>& waitSemaphores,
 		std::vector<VkSemaphore>& signalSemaphores
 	) {
-        ShaderItem::updateBuffers();
+        ShaderItem::updateBuffers(imageIndex);
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+        recordDrawCommands(imageIndex);
 
 		waitSemaphores = { VK_DATA->getImageAvailableSemaphores()[m_currentFrame] };
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -769,7 +830,7 @@ namespace Rife::Graphics {
 		submitInfo.pWaitSemaphores = waitSemaphores.data();
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &VK_DATA->getPrimaryCommandBuffers()[imageIndex];
+        submitInfo.pCommandBuffers = &VK_DATA->getPrimaryCommandBuffers()[imageIndex];
 
 		signalSemaphores = { VK_DATA->getRenderFinishedSemaphores()[m_currentFrame] };
 
@@ -810,60 +871,11 @@ namespace Rife::Graphics {
 		m_secondaryCommandBuffers.push_back(cmdBuffers);
 	}
 
-	void VulkanBase::createCommandBuffer() {
+	void VulkanBase::createCommandBuffers() {
+        prepareDrawCommandBuffer();
 
         m_recreateRendererEvent();
-
-        VK_DATA->getPrimaryCommandBuffers().resize(VK_DATA->getFramebuffers().size());
-
-		VkCommandBufferAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = VK_DATA->getCommandPool();
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = (uint32_t)VK_DATA->getPrimaryCommandBuffers().size();
-
-		if (vkAllocateCommandBuffers(VK_DATA->getDevice(), &allocInfo, VK_DATA->getPrimaryCommandBuffers().data()) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate command buffers!");
-		}
-
-		for (size_t i = 0; i < VK_DATA->getPrimaryCommandBuffers().size(); i++) {
-			VkCommandBufferBeginInfo beginInfo = {};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-			beginInfo.pInheritanceInfo = nullptr; // Optional
-
-			if (vkBeginCommandBuffer(VK_DATA->getPrimaryCommandBuffers()[i], &beginInfo) != VK_SUCCESS) {
-				throw std::runtime_error("failed to begin recording command buffer!");
-			}
-
-			VkRenderPassBeginInfo renderPassInfo = {};
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = VK_DATA->getRenderPass();
-			renderPassInfo.framebuffer = VK_DATA->getFramebuffers()[i];
-
-			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = VK_DATA->getExtent();
-
-			std::array<VkClearValue, 2> clearValues = {};
-
-			clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-			clearValues[1].depthStencil = { 1.0f, 0 };
-
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-			renderPassInfo.pClearValues = clearValues.data();
-
-			vkCmdBeginRenderPass(VK_DATA->getPrimaryCommandBuffers()[i], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
-
-			for (size_t cmdBufferIndex = 0; cmdBufferIndex < m_secondaryCommandBuffers.size(); cmdBufferIndex++) {
-				vkCmdExecuteCommands(VK_DATA->getPrimaryCommandBuffers()[i], 1, &m_secondaryCommandBuffers[cmdBufferIndex]->at(i));
-			}
-
-			vkCmdEndRenderPass(VK_DATA->getPrimaryCommandBuffers()[i]);
-
-			if (vkEndCommandBuffer(VK_DATA->getPrimaryCommandBuffers()[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to record command buffer!");
-			}
-		}
+		
 	}
 
 	void VulkanBase::createSyncObjects() {

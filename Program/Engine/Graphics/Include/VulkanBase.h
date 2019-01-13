@@ -80,6 +80,9 @@ namespace Rife::Graphics {
         bool checkValidationLayerSupport();
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         int rateDeviceSuitability(VkPhysicalDevice device);
+        void prepareDrawCommandBuffer();
+        void beginDrawCommands(uint32_t imageIndex);
+        void recordDrawCommands(uint32_t imageIndex);
         //-----------------------------------
 
         //Initializer functions
@@ -95,7 +98,7 @@ namespace Rife::Graphics {
         void createCommandPool();
 		void createDepthResources();
 		
-        void createCommandBuffer();
+        void createCommandBuffers();
         void createSyncObjects();
         //---------------------
 

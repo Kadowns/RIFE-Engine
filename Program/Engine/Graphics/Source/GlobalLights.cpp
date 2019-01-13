@@ -15,25 +15,25 @@ namespace Rife::Graphics {
         m_directionalLight = directional;
     }
 
-    void GlobalLights::apply() {
-        flushData(&m_ubo_lights);
-    }
-
     void GlobalLights::setupBuffer() {
         BufferInfo info = {};
         info.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
         info.usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        VulkanTools::createBuffer(sizeof(m_ubo_lights), info, m_buffer);
-		m_buffer.map();
+
+        m_buffers.resize(VK_DATA->getSwapchainImages().size());
+        for (size_t i = 0; i < m_buffers.size(); i++) {
+            VulkanTools::createBuffer(sizeof(m_ubo_lights), info, m_buffers[i]);
+            m_buffers[i].map();
+        }
     }
 
-	void GlobalLights::updateBuffer() {
+	void GlobalLights::updateBuffer(uint32_t imageIndex) {
 		if (m_directionalLight != nullptr) {
 			m_directionalLight->apply(m_ubo_lights.directional);
 		}
 		for (uint8_t i = 0; i < m_pointLights.size(); i++) {
 			m_pointLights[i]->apply(m_ubo_lights.point[i]);
 		}
-		apply();
+        flushData(&m_ubo_lights, imageIndex);
 	}
 }

@@ -39,7 +39,6 @@ namespace Rife::Graphics {
 
 		static size_t size();
 
-        void apply();
         // Inherited via ShaderItem
         static Camera* getInstance();
 
@@ -60,7 +59,7 @@ namespace Rife::Graphics {
         virtual void setupBuffer() override;
 
 		// Inherited via ShaderItem
-		virtual void updateBuffer() override;
+		virtual void updateBuffer(uint32_t imageIndex) override;
 
 	};
 }

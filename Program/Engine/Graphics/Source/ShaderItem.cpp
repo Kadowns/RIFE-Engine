@@ -3,19 +3,19 @@
 
 namespace Rife::Graphics {
 
-    Buffer& ShaderItem::getBuffer() {
-        return m_buffer;
+    Buffer& ShaderItem::getBuffer(uint32_t index) {
+        return m_buffers[index];
     }
 
 	std::vector<ShaderItem*> ShaderItem::s_items;
 
-	void ShaderItem::updateBuffers() {
+	void ShaderItem::updateBuffers(uint32_t index) {
 		for (auto& it : s_items) {
-			it->updateBuffer();
+			it->updateBuffer(index);
 		}
 	}
 
-    void ShaderItem::flushData(void* data) {
-        memcpy(m_buffer.mapped, data, m_buffer.size);
+    void ShaderItem::flushData(void* data, uint32_t index) {
+        memcpy(m_buffers[index].mapped, data, m_buffers[index].size);
     }
 }
