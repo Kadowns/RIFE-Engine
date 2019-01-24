@@ -1,6 +1,5 @@
 #include <Mesh.h>
 #include <VulkanTools.h>
-#include <VulkanData.h>
 
 namespace Rife::Graphics {
 

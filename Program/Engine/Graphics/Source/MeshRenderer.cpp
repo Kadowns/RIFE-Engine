@@ -17,15 +17,15 @@ namespace Rife::Graphics {
     }
 
     void MeshRenderer::createCommandBuffers() {
-        m_commandBuffers.resize(VK_DATA->getSwapchainImages().size());
+        m_commandBuffers.resize(Vulkan::swapchainImages.size());
 
         VkCommandBufferAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.commandPool = VK_DATA->getCommandPool();
+        allocInfo.commandPool = Vulkan::commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
         allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
 
-        if (vkAllocateCommandBuffers(VK_DATA->getDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+        if (vkAllocateCommandBuffers(Vulkan::device, &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate command buffers!");
         }
 
@@ -34,8 +34,8 @@ namespace Rife::Graphics {
             VkCommandBufferInheritanceInfo inheritanceInfo = {};
             inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
             inheritanceInfo.pNext = nullptr;
-            inheritanceInfo.renderPass = VK_DATA->getRenderPass();
-            inheritanceInfo.framebuffer = (VK_DATA->getFramebuffers())[i];
+            inheritanceInfo.renderPass = Vulkan::renderPass;
+            inheritanceInfo.framebuffer = Vulkan::framebuffers[i];
             inheritanceInfo.subpass = 0;
 
 

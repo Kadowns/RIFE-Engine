@@ -9,11 +9,11 @@ namespace Rife::Graphics {
         VkCommandBufferAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = VK_DATA->getCommandPool();
+        allocInfo.commandPool = Vulkan::commandPool;
         allocInfo.commandBufferCount = 1;
 
         VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(VK_DATA->getDevice(), &allocInfo, &commandBuffer);
+        vkAllocateCommandBuffers(Vulkan::device, &allocInfo, &commandBuffer);
 
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -33,10 +33,10 @@ namespace Rife::Graphics {
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer;
 
-        vkQueueSubmit(VK_DATA->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(VK_DATA->getGraphicsQueue());
+        vkQueueSubmit(Vulkan::graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(Vulkan::graphicsQueue);
 
-        vkFreeCommandBuffers(VK_DATA->getDevice(), VK_DATA->getCommandPool(), 1, &commandBuffer);
+        vkFreeCommandBuffers(Vulkan::device, Vulkan::commandPool, 1, &commandBuffer);
     }
 
     VkResult VulkanTools::createBuffer(const VkDeviceSize& size, const BufferInfo& info, Buffer& buffer, void* data) {
@@ -48,12 +48,12 @@ namespace Rife::Graphics {
         bufferInfo.usage = info.usageFlags;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if ((result = vkCreateBuffer(VK_DATA->getDevice(), &bufferInfo, nullptr, &buffer.buffer)) != VK_SUCCESS) {
+        if ((result = vkCreateBuffer(Vulkan::device, &bufferInfo, nullptr, &buffer.buffer)) != VK_SUCCESS) {
             return result;
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(VK_DATA->getDevice(), buffer.buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(Vulkan::device, buffer.buffer, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -61,7 +61,7 @@ namespace Rife::Graphics {
         allocInfo.memoryTypeIndex = VulkanTools::findMemoryType(memRequirements.memoryTypeBits, info.memoryPropertyFlags);
 
         //TODO --- implementar solução top de alocação de memória (ver vulkan tutorial)
-        if ((result = vkAllocateMemory(VK_DATA->getDevice(), &allocInfo, nullptr, &buffer.memory)) != VK_SUCCESS) {
+        if ((result = vkAllocateMemory(Vulkan::device, &allocInfo, nullptr, &buffer.memory)) != VK_SUCCESS) {
             return result;
         }
 
@@ -111,23 +111,23 @@ namespace Rife::Graphics {
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
         imageInfo.flags = flags;
 
-        if (vkCreateImage(VK_DATA->getDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
+        if (vkCreateImage(Vulkan::device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
             throw std::runtime_error("failed to create image!");
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetImageMemoryRequirements(VK_DATA->getDevice(), image, &memRequirements);
+        vkGetImageMemoryRequirements(Vulkan::device, image, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(VK_DATA->getDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+        if (vkAllocateMemory(Vulkan::device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate image memory!");
         }
 
-        vkBindImageMemory(VK_DATA->getDevice(), image, imageMemory, 0);
+        vkBindImageMemory(Vulkan::device, image, imageMemory, 0);
     }
 
     VkImageView VulkanTools::createImageView(VkImage image, VkFormat format, VkImageViewType viewType, VkImageSubresourceRange subresourceRange) {
@@ -138,14 +138,9 @@ namespace Rife::Graphics {
         viewInfo.viewType = viewType;
         viewInfo.format = format;
         viewInfo.subresourceRange = subresourceRange;
-        /*viewInfo.subresourceRange.aspectMask = aspectFlags;
-        viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = 1;
-        viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = 1;*/
 
         VkImageView imageView;
-        if (vkCreateImageView(VK_DATA->getDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        if (vkCreateImageView(Vulkan::device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture image view!");
         }
 
@@ -168,22 +163,6 @@ namespace Rife::Graphics {
         barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         barrier.image = image;
         barrier.subresourceRange = subresourceRange;
-
-       /* if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-
-            if (hasStencilComponent(format)) {
-                barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-            }
-        }
-        else {
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        }
-
-        barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;*/
 
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;
@@ -248,7 +227,7 @@ namespace Rife::Graphics {
 
         for (VkFormat format : candidates) {
             VkFormatProperties props;
-            vkGetPhysicalDeviceFormatProperties(VK_DATA->getPhysicalDevice(), format, &props);
+            vkGetPhysicalDeviceFormatProperties(Vulkan::physicalDevice, format, &props);
 
             if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
                 return format;
@@ -262,7 +241,7 @@ namespace Rife::Graphics {
 
     uint32_t VulkanTools::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         VkPhysicalDeviceMemoryProperties memProperties;
-        vkGetPhysicalDeviceMemoryProperties(VK_DATA->getPhysicalDevice(), &memProperties);
+        vkGetPhysicalDeviceMemoryProperties(Vulkan::physicalDevice, &memProperties);
 
         for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
             if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
@@ -275,9 +254,5 @@ namespace Rife::Graphics {
 
     bool VulkanTools::hasStencilComponent(VkFormat format) {
         return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-    }
-
-   
+    } 
 }
-
-

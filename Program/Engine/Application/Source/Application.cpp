@@ -1,4 +1,5 @@
 #include <Application.h>
+#include <VulkanData.h>
 #include <thread>
 
 //--------------------------Singleton
@@ -108,7 +109,6 @@ void Application::initGlfw() {
 
 //Inicializa a vulkan
 void Application::initVulkan() {
-    m_vulkanData = new Rife::Graphics::VulkanData();
     m_vulkanBase = new Rife::Graphics::VulkanBase(m_window);
     m_vulkanBase->initialSetup();
 }
@@ -133,7 +133,7 @@ void Application::loop() {
 
     } // se o maluco apertar os bot�o de sair, vc sai
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == GLFW_FALSE);
-    vkDeviceWaitIdle(VK_DATA->getDevice());
+    vkDeviceWaitIdle(Rife::Graphics::Vulkan::device);
    
 }
 
@@ -143,7 +143,6 @@ void Application::terminate() {
 	DATABASE::unloadData();
     m_vulkanBase->terminateVulkan();
     delete m_vulkanBase;
-    delete m_vulkanData;
     glfwDestroyWindow(m_window);
     glfwTerminate();
 }

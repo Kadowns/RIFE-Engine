@@ -22,7 +22,7 @@ namespace Rife::Graphics {
         //criação dos descriptorlayout e pipeline layout
 		m_descriptorSetLayouts.resize(descriptorSetLayoutInfos.size());
 		for (int i = 0; i < m_descriptorSetLayouts.size(); i++) {
-			if (vkCreateDescriptorSetLayout(VK_DATA->getDevice(), &descriptorSetLayoutInfos[i], nullptr, &m_descriptorSetLayouts[i])
+			if (vkCreateDescriptorSetLayout(Vulkan::device, &descriptorSetLayoutInfos[i], nullptr, &m_descriptorSetLayouts[i])
 				!= VK_SUCCESS) {
 				throw std::runtime_error("failed to create descriptor set layout!");
 			}
@@ -37,7 +37,7 @@ namespace Rife::Graphics {
 		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(m_pushConstantRanges.size());
 		pipelineLayoutInfo.pPushConstantRanges = m_pushConstantRanges.data();
 
-		if (vkCreatePipelineLayout(VK_DATA->getDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
+		if (vkCreatePipelineLayout(Vulkan::device, &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
         //--------------------------------------------------
@@ -74,9 +74,9 @@ namespace Rife::Graphics {
 
 	Shader::~Shader() {
 		clearPipeline();
-        vkDestroyPipelineLayout(VK_DATA->getDevice(), m_pipelineLayout, nullptr);
+        vkDestroyPipelineLayout(Vulkan::device, m_pipelineLayout, nullptr);
 		for (size_t i = 0; i < m_descriptorSetLayouts.size(); i++) {
-			vkDestroyDescriptorSetLayout(VK_DATA->getDevice(), m_descriptorSetLayouts[i], nullptr);
+			vkDestroyDescriptorSetLayout(Vulkan::device, m_descriptorSetLayouts[i], nullptr);
 		}
         VK_BASE->onCleanupPipeline() -= &m_pipelineCleanupCallback;
         VK_BASE->onRecreatePipeline() -= &m_pipelineRecreateCallback;
@@ -99,15 +99,14 @@ namespace Rife::Graphics {
         VkViewport viewport = {};
         viewport.x = 0.0f;
         viewport.y = 0.0f;
-        auto extent = VK_DATA->getExtent();
-        viewport.width = (float)extent.width;
-        viewport.height = (float)extent.height;
+        viewport.width = (float)Vulkan::extent.width;
+        viewport.height = (float)Vulkan::extent.height;
         viewport.minDepth = 0.0f;
         viewport.maxDepth = 1.0f;
 
         VkRect2D scissor = {};
         scissor.offset = { 0, 0 };
-        scissor.extent = extent;
+        scissor.extent = Vulkan::extent;
 
         VkPipelineViewportStateCreateInfo viewportInfo = ShaderFactory::createViewportInfo(viewport, scissor);
 
@@ -135,7 +134,7 @@ namespace Rife::Graphics {
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
         pipelineInfo.basePipelineIndex = -1; // Optional
-        pipelineInfo.renderPass = VK_DATA->getRenderPass();
+        pipelineInfo.renderPass = Vulkan::renderPass;
         pipelineInfo.subpass = 0;
         pipelineInfo.layout = m_pipelineLayout;
         pipelineInfo.pDepthStencilState = &m_depthStencil;
@@ -148,12 +147,12 @@ namespace Rife::Graphics {
 		pipelineInfo.pStages = shaderStages;
 		pipelineInfo.stageCount = 2;
 
-		if (vkCreateGraphicsPipelines(VK_DATA->getDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
+		if (vkCreateGraphicsPipelines(Vulkan::device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 
-        vkDestroyShaderModule(VK_DATA->getDevice(), vertShaderModule, nullptr);
-        vkDestroyShaderModule(VK_DATA->getDevice(), fragShaderModule, nullptr);
+        vkDestroyShaderModule(Vulkan::device, vertShaderModule, nullptr);
+        vkDestroyShaderModule(Vulkan::device, fragShaderModule, nullptr);
 	}
 
 	UniformBufferObjectInfo Shader::getUboInfo(size_t index) {
@@ -173,7 +172,6 @@ namespace Rife::Graphics {
     }
 
 	void Shader::clearPipeline() {
-		vkDestroyPipeline(VK_DATA->getDevice(), m_pipeline, nullptr);
-		//vkDestroyPipelineLayout(VK_DATA->getDevice(), m_pipelineLayout, nullptr);
+		vkDestroyPipeline(Vulkan::device, m_pipeline, nullptr);
 	}
 }

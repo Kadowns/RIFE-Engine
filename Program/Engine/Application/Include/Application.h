@@ -27,7 +27,6 @@ private :
     GLFWwindow *m_window;
     GLFWerrorfun m_errorCallback;
 
-    Rife::Graphics::VulkanData *m_vulkanData;
     Rife::Graphics::VulkanBase *m_vulkanBase;
 
     Application();

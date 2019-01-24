@@ -6,19 +6,19 @@
 namespace Rife::Graphics {
 
     VkResult Buffer::map(VkDeviceSize size, VkDeviceSize offset) {
-        return vkMapMemory(VK_DATA->getDevice(), memory, offset, size, 0, &mapped);
+        return vkMapMemory(Vulkan::device, memory, offset, size, 0, &mapped);
     }
 
     void Buffer::unmap() {
 
         if (mapped) {
-            vkUnmapMemory(VK_DATA->getDevice(), memory);
+            vkUnmapMemory(Vulkan::device, memory);
             mapped = nullptr;
         }
     }
 
     VkResult Buffer::bind(VkDeviceSize offset) {
-        return vkBindBufferMemory(VK_DATA->getDevice(), buffer, memory, offset);
+        return vkBindBufferMemory(Vulkan::device, buffer, memory, offset);
     }
 
     void Buffer::copyTo(void* data, VkDeviceSize size) {
@@ -28,11 +28,11 @@ namespace Rife::Graphics {
 
     void Buffer::destroy() {
         if (buffer) {
-            vkDestroyBuffer(VK_DATA->getDevice(), buffer, nullptr);
+            vkDestroyBuffer(Vulkan::device, buffer, nullptr);
         }
 
         if (memory) {
-            vkFreeMemory(VK_DATA->getDevice(), memory, nullptr);
+            vkFreeMemory(Vulkan::device, memory, nullptr);
         }
     }
 

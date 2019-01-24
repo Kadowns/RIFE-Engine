@@ -17,7 +17,7 @@ namespace Rife::Graphics {
 
     Renderer::~Renderer() {
 
-        vkDestroyDescriptorPool(VK_DATA->getDevice(), m_descriptorPool, nullptr);
+        vkDestroyDescriptorPool(Vulkan::device, m_descriptorPool, nullptr);
 
         freeCommandBuffers();
 
@@ -45,8 +45,8 @@ namespace Rife::Graphics {
 
     void Renderer::freeCommandBuffers() {
         vkFreeCommandBuffers(
-            VK_DATA->getDevice(),
-            VK_DATA->getCommandPool(),
+            Vulkan::device,
+            Vulkan::commandPool,
             static_cast<uint32_t>(m_commandBuffers.size()),
             m_commandBuffers.data()
         );
@@ -59,7 +59,7 @@ namespace Rife::Graphics {
         poolSizes.resize(layoutBindings.size());
         for (size_t i = 0; i < layoutBindings.size(); i++) {
             poolSizes[i].type = layoutBindings[i].descriptorType;
-            poolSizes[i].descriptorCount = VK_DATA->getSwapchainImages().size();
+            poolSizes[i].descriptorCount = Vulkan::swapchainImages.size();
         }
 
         VkDescriptorPoolCreateInfo poolInfo = {};
@@ -68,7 +68,7 @@ namespace Rife::Graphics {
         poolInfo.pPoolSizes = poolSizes.data();
         poolInfo.maxSets = static_cast<uint32_t>(poolSizes[0].descriptorCount);
 
-        if (vkCreateDescriptorPool(VK_DATA->getDevice(), &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
+        if (vkCreateDescriptorPool(Vulkan::device, &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor pool!");
         }
     }
@@ -76,15 +76,15 @@ namespace Rife::Graphics {
 
     void Renderer::createDescriptorSets() {
 
-        std::vector<VkDescriptorSetLayout> layouts(VK_DATA->getSwapchainImages().size(), *(m_material.getShader()->getDescriptorSetLayouts()).data());
+        std::vector<VkDescriptorSetLayout> layouts(Vulkan::swapchainImages.size(), *(m_material.getShader()->getDescriptorSetLayouts()).data());
         VkDescriptorSetAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = m_descriptorPool;
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(VK_DATA->getSwapchainImages().size());
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(Vulkan::swapchainImages.size());
         allocInfo.pSetLayouts = layouts.data();
 
-        m_descriptorSets.resize(VK_DATA->getSwapchainImages().size());
-        if (vkAllocateDescriptorSets(VK_DATA->getDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
+        m_descriptorSets.resize(Vulkan::swapchainImages.size());
+        if (vkAllocateDescriptorSets(Vulkan::device, &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate descriptor sets!");
         }
 
@@ -148,7 +148,7 @@ namespace Rife::Graphics {
             }
 
 
-            vkUpdateDescriptorSets(VK_DATA->getDevice(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
+            vkUpdateDescriptorSets(Vulkan::device, static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
         }
     }
 }

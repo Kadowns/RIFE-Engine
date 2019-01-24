@@ -1,7 +1,4 @@
 #pragma once
-
-#include <VulkanData.h>
-
 #include <Buffer.h>
 
 namespace Rife::Graphics {

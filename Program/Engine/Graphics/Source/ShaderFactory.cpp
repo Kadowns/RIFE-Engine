@@ -539,7 +539,7 @@ namespace Rife::Graphics {
 
     UniformBufferObjectInfo ShaderFactory::createUboInfo(VkDeviceSize size, SHADER_ITEM_TYPE type) {
         
-        VkDeviceSize minAlignment = VK_DATA->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment;
+        VkDeviceSize minAlignment = Vulkan::physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
         UniformBufferObjectInfo uboInfo = {};
         uboInfo.offset = (size / minAlignment) * minAlignment + ((size % minAlignment) > 0 ? minAlignment : 0);
 		uboInfo.range = size;
@@ -556,7 +556,7 @@ namespace Rife::Graphics {
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
 		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(VK_DATA->getDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+		if (vkCreateShaderModule(Vulkan::device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create shader module!");
 		}
 		return shaderModule;

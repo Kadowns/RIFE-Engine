@@ -65,7 +65,7 @@ namespace Rife::Graphics {
         );
 
         VkFormat format;
-        VkPhysicalDeviceFeatures deviceFeatures = VK_DATA->getPhysicalDeviceFeatures();
+        VkPhysicalDeviceFeatures deviceFeatures = Vulkan::physicalDeviceFeatures;
         if (deviceFeatures.textureCompressionBC) {
             format = VK_FORMAT_BC3_UNORM_BLOCK;
         }
@@ -134,7 +134,7 @@ namespace Rife::Graphics {
 
 
         VkFormat format;
-        VkPhysicalDeviceFeatures deviceFeatures = VK_DATA->getPhysicalDeviceFeatures();
+        VkPhysicalDeviceFeatures deviceFeatures = Vulkan::physicalDeviceFeatures;
         if (deviceFeatures.textureCompressionBC) {
             format = VK_FORMAT_BC3_UNORM_BLOCK;
         }
@@ -202,7 +202,7 @@ namespace Rife::Graphics {
         samplerInfo.minLod = 0.0f;
         samplerInfo.maxLod = texture.mipLevels;
 
-        if (vkCreateSampler(VK_DATA->getDevice(), &samplerInfo, nullptr, &texture.sampler) != VK_SUCCESS) {
+        if (vkCreateSampler(Vulkan::device, &samplerInfo, nullptr, &texture.sampler) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture sampler!");
         }
     }
