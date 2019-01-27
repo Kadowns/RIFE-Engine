@@ -11,5 +11,5 @@ function(CreateModule MODULE_SUB_PATH MODULE_NAME MODULE_SOURCES)
             $<INSTALL_INTERFACE:Include>
             )
     set_target_properties(${MODULE_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-    print_target_properties(${MODULE_NAME})
+    #print_target_properties(${MODULE_NAME})
 endfunction(CreateModule)

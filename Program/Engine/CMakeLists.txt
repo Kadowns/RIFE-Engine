@@ -1,5 +1,0 @@
-add_subdirectory(Core)
-add_subdirectory(Graphics)
-add_subdirectory(Tools)
-add_subdirectory(Application)
-
