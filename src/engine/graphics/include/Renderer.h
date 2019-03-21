@@ -2,6 +2,7 @@
 #include <RifeCore.h>
 #include <MaterialInstance.h>
 #include <VulkanInclude.h>
+#include <Scene.h>
 
 namespace Rife::Graphics {
 
@@ -10,12 +11,14 @@ namespace Rife::Graphics {
 
         virtual ~Renderer();
 
-        virtual void setup();
+        virtual void onInit() override;
 
         virtual void createCommandBuffers() = 0;
         virtual void freeCommandBuffers();
 
     protected:
+
+        Renderer();
 
         void createDescriptorPool();
         void createDescriptorSets();
@@ -23,6 +26,8 @@ namespace Rife::Graphics {
 
         OnCleanupRenderer::EventListener m_cleanupRendererCallback;
         OnRecreateRenderer::EventListener m_recreateRendererCallback;
+        OnDraw::EventListener m_cmdDrawCallback;
+       
 
 
         std::vector<VkCommandBuffer> m_commandBuffers;
@@ -31,5 +36,9 @@ namespace Rife::Graphics {
 
         std::vector<VkDescriptorSet> m_descriptorSets;
         VkDescriptorPool m_descriptorPool;
+
+    private:
+
+        void cmdDraw(const uint32_t& imageIndex);
     };
 }

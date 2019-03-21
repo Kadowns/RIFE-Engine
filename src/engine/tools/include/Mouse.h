@@ -7,7 +7,7 @@
 
 #define MOUSE Rife::Tools::Mouse::getInstance()
 
-typedef Rife::Base::Event<double, double> MouseMoveEvent;
+typedef Rife::Base::Event<double, double> OnMouseMove;
 
 struct GLFWwindow;
 
@@ -33,13 +33,13 @@ namespace Rife::Tools {
 
         void update();
 
-        MouseMoveEvent& OnMouseMove() { return m_onMouseMoveEvent; }
+        OnMouseMove& onMouseMove() { return m_onMouseMoveEvent; }
 
     private:
 
         Mouse();
 
-        MouseMoveEvent m_onMouseMoveEvent;
+        OnMouseMove m_onMouseMoveEvent;
 
         GLFWwindow* p_window;
 

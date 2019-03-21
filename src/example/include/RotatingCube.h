@@ -20,17 +20,19 @@ namespace Scripts {
             m_name = "RotatingCube";
         }
 
+        ~RotatingCube() {         
+        }
+
         void serialize(std::ofstream& file) {
             
         }
 
-        void awake() {
-
+        virtual void onAwake() override {
             transform = getComponent<Transform>();
             rotation = glm::vec3(Rife::Tools::Random::range(-50, 50), Rife::Tools::Random::range(-20, 20), Rife::Tools::Random::range(-20, 20));
         }
 
-        void update() {
+        virtual void onUpdate() override {
             transform->m_rotation *= glm::quat(glm::radians(rotation * (float)TIME->getLastFrameTime()));
             glm::normalize(transform->m_rotation);
         }

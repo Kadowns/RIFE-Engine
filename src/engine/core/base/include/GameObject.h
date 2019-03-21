@@ -11,12 +11,8 @@ namespace Rife::Base {
     public:
         
         GameObject();
-        GameObject(Component* transform);
+        GameObject(const char* name);
         ~GameObject();
-        
-        void setup();
-        void awake();
-        void update();
         
         Component* addComponent(Component*);
        
@@ -25,8 +21,19 @@ namespace Rife::Base {
 
         void serialize(std::ofstream& file);
 
+        void setActive(bool value);
+
+        bool isActive() { return m_active; }
+
+        void onInit();
+        void onAwake();
+        void onUpdate();
+        void onLateUpdate();        
+
     private:
         
+        bool m_active = true;
+
         std::map<std::type_index, Component*> m_components;
     };
     

@@ -59,12 +59,6 @@ namespace Rife::Graphics {
 
         size_t m_currentFrame = 0;
 
-        OnCleanupRenderer m_cleanupRendererEvent;
-        OnCleanupPipeline m_cleanupPipelineEvent;
-        OnRecreateRenderer m_recreateRendererEvent;
-        OnRecreatePipeline m_recreatePipelineEvent;
-
-        std::vector<Renderer*> m_renderers;
         std::vector<std::vector<VkCommandBuffer>*> m_secondaryCommandBuffers;
 
 		GLFWwindow* m_glfwWindow;
@@ -81,7 +75,6 @@ namespace Rife::Graphics {
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         int rateDeviceSuitability(VkPhysicalDevice device);
         void prepareDrawCommandBuffer();
-        void beginDrawCommands(uint32_t imageIndex);
         void recordDrawCommands(uint32_t imageIndex);
         //-----------------------------------
 
@@ -116,8 +109,6 @@ namespace Rife::Graphics {
 		static VulkanBase* getInstance();
 
         VulkanBase(GLFWwindow *window);
-        void initialSetup();
-		void finalSetup();
 		void windowResized();
         void terminateVulkan();
 
@@ -125,15 +116,13 @@ namespace Rife::Graphics {
 		void submitFrame(uint32_t& imageIndex, std::vector<VkSemaphore>& waitSemaphores, std::vector<VkSemaphore>& signalSemaphores);
 		VkResult presentFrame(uint32_t& imageIndex, std::vector<VkSemaphore>& waitSemaphores);
 
-		void bindCommandBuffer(std::vector<VkCommandBuffer>*);
-		void bindRenderer(Rife::Graphics::Renderer*);
-
         size_t* getCurrentFrame() { return &m_currentFrame; }
 
-        OnCleanupRenderer& onCleanupRenderer() { return m_cleanupRendererEvent; }
-        OnCleanupPipeline& onCleanupPipeline() { return m_cleanupPipelineEvent; }
-        OnRecreateRenderer& onRecreateRenderer() { return m_recreateRendererEvent; }
-        OnRecreatePipeline& onRecreatePipeline() { return m_recreatePipelineEvent; }
+        OnCleanupRenderer onCleanupRenderer;
+        OnCleanupPipeline onCleanupPipeline;
+        OnRecreateRenderer onRecreateRenderer;
+        OnRecreatePipeline onRecreatePipeline;
+        OnDraw onDraw;
 
         //---------------------
 

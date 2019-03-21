@@ -1,34 +1,22 @@
-#include <GameObject.h>
+#include <Scene.h>
+
+
+namespace Rife::Graphics {
+    class Transform;
+}
 
 namespace Rife::Base {
-    GameObject::GameObject() {}
-
-    GameObject::GameObject(Component* transform) {
+    GameObject::GameObject() {
         m_name = "GameObject";
-        addComponent(transform);
+    }
+
+    GameObject::GameObject(const char* name) {
+        m_name = name;
     }
 
     GameObject::~GameObject() {
         for (auto it : m_components) {
             delete it.second;
-        }
-    }
-
-    void GameObject::setup() {
-        for (auto it : m_components) {
-            it.second->setup();
-        }
-    }
-
-    void GameObject::awake() {
-        for (auto it : m_components) {
-            it.second->awake();
-        }
-    }
-
-    void GameObject::update() {
-        for (auto it : m_components) {
-            it.second->update();
         }
     }
 
@@ -45,6 +33,34 @@ namespace Rife::Base {
             it.second->serialize(file);
         }
         file << "-\n";
+    }
+
+    void GameObject::setActive(bool value) {
+        m_active = value;
+    }
+
+    void GameObject::onInit() {
+        for (auto& it : m_components) {
+            it.second->onInit();
+        }
+    }
+
+    void GameObject::onAwake() {
+        for (auto& it : m_components) {
+            it.second->onAwake();
+        }
+    }
+
+    void GameObject::onUpdate() {
+        for (auto& it : m_components) {
+            it.second->onUpdate();
+        }
+    }
+
+    void GameObject::onLateUpdate() {
+        for (auto& it : m_components) {
+            it.second->onLateUpdate();
+        }
     }
 }
 

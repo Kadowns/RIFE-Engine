@@ -32,7 +32,12 @@ namespace Rife::Graphics {
 
         DirectionalLight(glm::vec3 direction, glm::vec3 color, float intensity);
 
-        void awake();
+        ~DirectionalLight() { }
+
+
+        virtual void onAwake() override {
+            m_transform = p_gameObject->getComponent<Transform>();
+        }
 
         void apply(uDirectionalLight& ubo);
 
@@ -47,12 +52,14 @@ namespace Rife::Graphics {
         PointLight() { m_name = "PointLight"; }
         PointLight(float constant, float linear, float quadratic);
 
-        void awake() {
+        ~PointLight() { }
+
+        virtual void onAwake() override {
             m_transform = p_gameObject->getComponent<Transform>();
         }
 
-        void update() {
-            m_position = m_transform->m_position;
+        virtual void onUpdate() override {
+            position = m_transform->position;
         }
 
         void apply(uPointLight& ubo);
@@ -61,7 +68,7 @@ namespace Rife::Graphics {
 
         Transform* m_transform;
 
-        glm::vec3 m_position;
+        glm::vec3 position;
         float m_constant;
         float m_linear;
         float m_quadratic;

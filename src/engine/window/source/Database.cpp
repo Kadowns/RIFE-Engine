@@ -5,9 +5,9 @@
 
 
 namespace Rife::Data {
-	std::map<const char*, Rife::Graphics::Mesh*> Database::s_meshes;
-	std::map<const char*, Rife::Graphics::Texture*> Database::s_textures;
-    std::map<const char*, Rife::Graphics::Material*> Database::s_materials;
+	std::map<std::string, Rife::Graphics::Mesh*> Database::s_meshes;
+	std::map<std::string, Rife::Graphics::Texture*> Database::s_textures;
+    std::map<std::string, Rife::Graphics::Material*> Database::s_materials;
 
 	void Database::loadTextures() {
 		std::cout << "Loading Textures..." << std::endl;
@@ -93,32 +93,28 @@ namespace Rife::Data {
         unloadMeshes();
 	}
 
-	Graphics::Mesh* Database::getMesh(const char* name) {
-		//isso ai ta uma bosta     
-		for (auto it : s_meshes) {
-			if (strcmp(it.first, name) == 0) {
-				return it.second;
-			}
-		}
+	Graphics::Mesh* Database::getMesh(const char* name) {   
+        auto& it = s_meshes.find(name);
+        if (it != s_meshes.end()) {
+            return it->second;
+        }
 		throw std::runtime_error("Failed to find mesh in the DataBase!");
 		return nullptr;
 	}
 
 	Graphics::Texture* Database::getTexture(const char* name) {
-		for (auto it : s_textures) {
-			if (strcmp(it.first, name) == 0) {
-				return it.second;
-			}
-		}
+        auto& it = s_textures.find(name);
+        if (it != s_textures.end()) {
+            return it->second;
+        }
 		throw std::runtime_error("Failed to find texture in the DataBase!");
 		return nullptr;
 	}
 
     Graphics::Material* Database::getMaterial(const char* name) {
-        for (auto it : s_materials) {
-            if (strcmp(it.first, name) == 0) {
-                return it.second;
-            }
+        auto& it = s_materials.find(name);
+        if (it != s_materials.end()) {
+            return it->second;
         }
         throw std::runtime_error("Failed to find material in the DataBase!");
         return nullptr;

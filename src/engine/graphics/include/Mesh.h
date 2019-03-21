@@ -32,8 +32,5 @@ namespace Rife::Graphics {
         std::vector<uint32_t> m_indices;
         Buffer m_vertexBuffer, m_indexBuffer;
 
-        /*VkBuffer m_vertexBuffer, m_indexBuffer;
-        VkDeviceMemory m_vertexBufferMemory, m_indexBufferMemory;*/
-
     };
 }

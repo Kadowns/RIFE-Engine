@@ -1,6 +1,6 @@
 GameObject:
   c:Transform:
-    m_position: 0.000000 0.200000 6.000000
+    position: 0.000000 0.200000 6.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:Camera:
@@ -11,14 +11,14 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 -450.000000 0.000000
+    position: 0.000000 -450.000000 0.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 100.000000 480.000000 100.000000
   c:MeshRenderer:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 0.000000 4.000000
+    position: 0.000000 0.000000 4.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -26,7 +26,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: -20.000000 0.000000 2.000000
+    position: -20.000000 0.000000 2.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -34,7 +34,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 40.000000 0.000000 0.000000
+    position: 40.000000 0.000000 0.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -42,7 +42,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 20.000000 0.000000 -2.000000
+    position: 20.000000 0.000000 -2.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -50,7 +50,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 0.000000 -4.000000
+    position: 0.000000 0.000000 -4.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -58,7 +58,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: -20.000000 0.000000 -6.000000
+    position: -20.000000 0.000000 -6.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -66,7 +66,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 40.000000 0.000000 -8.000000
+    position: 40.000000 0.000000 -8.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -74,7 +74,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 20.000000 0.000000 -10.000000
+    position: 20.000000 0.000000 -10.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -82,7 +82,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 0.000000 -12.000000
+    position: 0.000000 0.000000 -12.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -90,7 +90,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: -20.000000 0.000000 -14.000000
+    position: -20.000000 0.000000 -14.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -98,7 +98,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 30.000000 15.000000 5.000000
+    position: 30.000000 15.000000 5.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:DirectionalLight:
@@ -107,7 +107,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: -30.000000 2.000000 -5.000000
+    position: -30.000000 2.000000 -5.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -115,7 +115,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: -70.000000 30.000000 -50.000000
+    position: -70.000000 30.000000 -50.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c:MeshRenderer:
@@ -123,7 +123,7 @@ GameObject:
 -
 GameObject:
   c:Transform:
-    m_position: 0.000000 0.000000 0.000000
+    position: 0.000000 0.000000 0.000000
     m_rotation: 0.000000 0.000000 0.000000 1.000000
     m_scale: 1.000000 1.000000 1.000000
   c::

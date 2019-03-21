@@ -14,36 +14,27 @@ namespace Rife::Graphics {
 
 	VulkanBase::VulkanBase(GLFWwindow *window) : m_glfwWindow(window) {
 		s_instance = this;
+
+        //Initial base
+        createVulkanInstance();//Cria e configura a instancia
+        setupDebugCallback();//caso seja no modo debug, cria e configura o debug callback
+        createSurface();//Cria uma "superficie" na janela onde podemos desenhar
+        pickPhysicalDevice();//escolhe a melhor GPU disponivel
+        createLogicalDevice();//faz uns bagulho com queue e sei l� o que
+        //---------------------------------
+        //todo---configuravel VVVV
+        createSwapchain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
+        createSwapChainImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
+        createRenderPass();//Cria o render pass que eu n faço ideia do que é  
+        createCommandPool();
+        createDepthResources();
+        createFramebuffers();
+        createCommandBuffers();
+        createSyncObjects();
 	}
 
 	VulkanBase* VulkanBase::getInstance() {
 		return s_instance;
-	}
-
-	//Inicializa a vulkan
-	void VulkanBase::initialSetup() {
-
-		//Initial base
-		createVulkanInstance();//Cria e configura a instancia
-		setupDebugCallback();//caso seja no modo debug, cria e configura o debug callback
-		createSurface();//Cria uma "superficie" na janela onde podemos desenhar
-		pickPhysicalDevice();//escolhe a melhor GPU disponivel
-		createLogicalDevice();//faz uns bagulho com queue e sei l� o que
-		//---------------------------------
-		//todo---configuravel VVVV
-		createSwapchain();//Cria a swap chain, � uma queue que � usada pra mostrar as imagens na hora certa
-		createSwapChainImageViews();//Cria o objeto que basicamente vai ser a imagem exibida
-		createRenderPass();//Cria o render pass que eu n faço ideia do que é  
-		createCommandPool();  
-	}
-
-	void VulkanBase::finalSetup() {
-
-
-		createDepthResources();
-		createFramebuffers();
-		createCommandBuffers();
-		createSyncObjects();
 	}
 
 	void VulkanBase::windowResized() {
@@ -62,14 +53,16 @@ namespace Rife::Graphics {
 		createSwapChainImageViews();
 		createRenderPass();
 		createDepthResources();
-
-        m_recreatePipelineEvent();
+        
+        onRecreatePipeline();
 
 		createFramebuffers();    
 		createCommandBuffers();
 	}
 
 	void VulkanBase::terminateVulkan() {
+
+        vkDeviceWaitIdle(Vulkan::device);
 
 		cleanupWindowResources();
 
@@ -348,12 +341,13 @@ namespace Rife::Graphics {
         }
     }
 
-    void VulkanBase::beginDrawCommands(uint32_t imageIndex) {
+    void VulkanBase::recordDrawCommands(uint32_t imageIndex) {
 
+        //Prepara o cmd buffer
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-        beginInfo.pInheritanceInfo = nullptr; // Optional
+        beginInfo.pInheritanceInfo = nullptr;
 
         if (vkBeginCommandBuffer(Vulkan::primaryCommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS) {
             throw std::runtime_error("failed to begin recording command buffer!");
@@ -376,16 +370,11 @@ namespace Rife::Graphics {
         renderPassInfo.pClearValues = clearValues.data();
 
         vkCmdBeginRenderPass(Vulkan::primaryCommandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
-    }
+        //A partir daqui só pode usar cmd buffers secundários ou finalizar o render pass
 
-    void VulkanBase::recordDrawCommands(uint32_t imageIndex) {
+        onDraw(imageIndex);
 
-        beginDrawCommands(imageIndex);
-
-        for (size_t cmdBufferIndex = 0; cmdBufferIndex < m_secondaryCommandBuffers.size(); cmdBufferIndex++) {
-            vkCmdExecuteCommands(Vulkan::primaryCommandBuffers[imageIndex], 1, &m_secondaryCommandBuffers[cmdBufferIndex]->at(imageIndex));
-        }
-
+        //finaliza o render pass
         vkCmdEndRenderPass(Vulkan::primaryCommandBuffers[imageIndex]);
 
         if (vkEndCommandBuffer(Vulkan::primaryCommandBuffers[imageIndex]) != VK_SUCCESS) {
@@ -861,19 +850,9 @@ namespace Rife::Graphics {
 		return result;
 	}
 
-	void VulkanBase::bindRenderer(Rife::Graphics::Renderer* renderer) {
-		m_renderers.push_back(renderer);
-	}
-
-	void VulkanBase::bindCommandBuffer(std::vector<VkCommandBuffer>* cmdBuffers) {
-		m_secondaryCommandBuffers.push_back(cmdBuffers);
-	}
-
 	void VulkanBase::createCommandBuffers() {
         prepareDrawCommandBuffer();
-
-        m_recreateRendererEvent();
-		
+        onRecreateRenderer();        		
 	}
 
 	void VulkanBase::createSyncObjects() {
@@ -900,10 +879,8 @@ namespace Rife::Graphics {
 	}
 
 	void VulkanBase::cleanupWindowResources() {
-
-
-        m_cleanupRendererEvent();
-
+        
+        onCleanupRenderer();
 
 		vkDestroyImageView(Vulkan::device, Vulkan::depthImageView, nullptr);
 		vkDestroyImage(Vulkan::device, Vulkan::depthImage, nullptr);
@@ -921,8 +898,8 @@ namespace Rife::Graphics {
         );
 
         m_secondaryCommandBuffers.clear();
-
-        m_cleanupPipelineEvent();
+        
+        onCleanupPipeline();
 
 		vkDestroyRenderPass(Vulkan::device, Vulkan::renderPass, nullptr);
 

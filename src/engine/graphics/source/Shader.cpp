@@ -63,12 +63,12 @@ namespace Rife::Graphics {
         m_pipelineCleanupCallback = [this]() {
             this->clearPipeline();
         };
-        VK_BASE->onCleanupPipeline() += &m_pipelineCleanupCallback;
+        VK_BASE->onCleanupPipeline += &m_pipelineCleanupCallback;
 
         m_pipelineRecreateCallback = [this]() {
             this->createPipeline();
         };
-        VK_BASE->onRecreatePipeline() += &m_pipelineRecreateCallback;
+        VK_BASE->onRecreatePipeline += &m_pipelineRecreateCallback;
         //------------------------------------
 	}
 
@@ -78,8 +78,8 @@ namespace Rife::Graphics {
 		for (size_t i = 0; i < m_descriptorSetLayouts.size(); i++) {
 			vkDestroyDescriptorSetLayout(Vulkan::device, m_descriptorSetLayouts[i], nullptr);
 		}
-        VK_BASE->onCleanupPipeline() -= &m_pipelineCleanupCallback;
-        VK_BASE->onRecreatePipeline() -= &m_pipelineRecreateCallback;
+        VK_BASE->onCleanupPipeline -= &m_pipelineCleanupCallback;
+        VK_BASE->onRecreatePipeline -= &m_pipelineRecreateCallback;
 	}
 
 	void Shader::createPipeline() {

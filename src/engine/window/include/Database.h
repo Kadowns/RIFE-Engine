@@ -30,8 +30,8 @@ namespace Rife::Data {
         static void loadMaterials();
         static void unloadMaterials();
 
-		static std::map<const char*, Rife::Graphics::Mesh*> s_meshes;
-		static std::map<const char*, Rife::Graphics::Texture*> s_textures;
-        static std::map<const char*, Rife::Graphics::Material*> s_materials;
+		static std::map<std::string, Rife::Graphics::Mesh*> s_meshes;
+		static std::map<std::string, Rife::Graphics::Texture*> s_textures;
+        static std::map<std::string, Rife::Graphics::Material*> s_materials;
 	};
 }

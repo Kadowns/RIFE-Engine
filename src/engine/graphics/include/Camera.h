@@ -13,6 +13,7 @@ namespace Rife::Graphics {
 
     public:
         Camera();
+        ~Camera();
 
         void serialize(std::ofstream& file) {
             std::string offset("    ");
@@ -30,12 +31,12 @@ namespace Rife::Graphics {
         glm::vec3 getTarget() { return m_target; }
         glm::vec3 getUp() { return m_up; }
 
-        Camera* updateProjection(float fov, float aspect, float near, float far);
-        Camera* updateView();
+        void updateProjection(float fov, float aspect, float near, float far);
+        void updateView();
         glm::mat4 getProjection() { return m_projection; }
         glm::mat4 getView() { return m_view; }
-
-        void update();
+        
+        virtual void onLateUpdate() override;
 
 		static size_t size();
 
@@ -54,7 +55,7 @@ namespace Rife::Graphics {
 
         float m_fov, m_aspect, m_near, m_far;
         glm::mat4 m_projection, m_view;
-        glm::vec3 m_position, m_target, m_up;
+        glm::vec3 position, m_target, m_up;
 
         virtual void setupBuffer() override;
 

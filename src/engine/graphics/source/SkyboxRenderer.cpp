@@ -68,6 +68,5 @@ namespace Rife::Graphics {
                 throw std::runtime_error("failed to record command buffer!");
             }
         }
-        VK_BASE->bindCommandBuffer(&m_commandBuffers);
     }
 }

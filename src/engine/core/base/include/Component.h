@@ -9,15 +9,19 @@ namespace Rife::Base {
 
 	public:
 
-        virtual void setup();
-        virtual void awake();
-        virtual void update();
-
         template<typename T>
         T* getComponent();
 
         void setParentObject(GameObject*);
+
+        virtual void onInit() {};
+        virtual void onAwake() {};
+        virtual void onUpdate() {};
+        virtual void onLateUpdate() {};
+
 	protected:
+
+        bool m_enabled = true;
 
         GameObject* p_gameObject;
 

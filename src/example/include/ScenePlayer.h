@@ -9,19 +9,18 @@ using namespace Rife::Math;
 
 class ScenePlayer : public Scene {
 
-private:
-
-    std::vector<GameObject*> gameObjects;
-
 public:
     ScenePlayer();
     ~ScenePlayer();
 
-    void init();
-    void awake();
-    void update();
-    void draw();
-    void deinit();
 
+protected:
+    virtual void onLoadScene() override;
+
+    // Inherited via Scene
+    virtual void onUpdate() override;
+    virtual void onLateUpdate() override;
+    virtual void onRender() override;
+    virtual void onTerminate() override;
 };
 

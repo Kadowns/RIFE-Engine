@@ -37,7 +37,7 @@ int Window::getHeight() {
     return m_height;
 }
 
-void Window::define(Scene *scene, const std::string &title, int width, int height) {
+void Window::define(Rife::Base::Scene *scene, const std::string &title, int width, int height) {
     m_scene = scene;
     m_title = title;
     m_width = width;
@@ -46,7 +46,7 @@ void Window::define(Scene *scene, const std::string &title, int width, int heigh
 }
 
 //---------------------------Constructors
-Window::Window(Scene *scene, const std::string &title, int width, int height) {
+Window::Window(Rife::Base::Scene *scene, const std::string &title, int width, int height) {
     m_scene = scene;
     m_title = title;
     m_width = width;
@@ -54,9 +54,9 @@ Window::Window(Scene *scene, const std::string &title, int width, int height) {
     s_instance = this;
 }
 
-Window::Window(Scene *scene, const std::string &title) : Window(scene, title, 800, 600) {}
+Window::Window(Rife::Base::Scene *scene, const std::string &title) : Window(scene, title, 800, 600) {}
 
-Window::Window(Scene *scene) : Window(scene, "Game") {}
+Window::Window(Rife::Base::Scene *scene) : Window(scene, "Game") {}
 
 Window::Window() {};
 //---------------------------
@@ -67,6 +67,7 @@ void Window::init() {
     initGlfw();
     initVulkan();
 	DATABASE::loadData();
+    m_scene->loadScene();
     m_initialized = true;
 }
 
@@ -110,19 +111,16 @@ void Window::initGlfw() {
 //Inicializa a vulkan
 void Window::initVulkan() {
     m_vulkanBase = new Rife::Graphics::VulkanBase(m_window);
-    m_vulkanBase->initialSetup();
 }
 
 //loop principal, n tem segredo n�
-void Window::loop() {
-    m_scene->init();
-	m_vulkanBase->finalSetup();
-    m_scene->awake();
+void Window::loop() {      
     do {
         TIME->earlyUpdate();
 
-        m_scene->update();
-        m_scene->draw();
+        m_scene->onUpdate();
+        m_scene->onLateUpdate();
+        m_scene->onRender();
 
         
         KEYBOARD->update();
@@ -132,16 +130,17 @@ void Window::loop() {
         TIME->lateUpdate();
 
     } // se o maluco apertar os bot�o de sair, vc sai
-    while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == GLFW_FALSE);
-    vkDeviceWaitIdle(Rife::Graphics::Vulkan::device);
+    while (!KEYBOARD->isPressed(GLFW_KEY_ESCAPE) && glfwWindowShouldClose(m_window) == GLFW_FALSE);
    
 }
 
 void Window::terminate() {
 
-    m_scene->deinit();
+    vkDeviceWaitIdle(Rife::Graphics::Vulkan::device);
+    m_scene->onTerminate();
 	DATABASE::unloadData();
     m_vulkanBase->terminateVulkan();
+
     delete m_vulkanBase;
     glfwDestroyWindow(m_window);
     glfwTerminate();

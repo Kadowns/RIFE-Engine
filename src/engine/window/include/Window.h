@@ -23,7 +23,7 @@ private :
     bool m_initialized = false;
 	bool m_windowResized = false;
 
-    Scene *m_scene;
+    Rife::Base::Scene *m_scene;
     GLFWwindow *m_window;
     GLFWerrorfun m_errorCallback;
 
@@ -59,13 +59,13 @@ public:
 
     int getHeight();
 
-    void define(Scene *scene, const std::string &title, int width, int height);
+    void define(Rife::Base::Scene *scene, const std::string &title, int width, int height);
 
-    Window(Scene *scene, const std::string &title, int width, int height);
+    Window(Rife::Base::Scene *scene, const std::string &title, int width, int height);
 
-    Window(Scene *scene, const std::string &title);
+    Window(Rife::Base::Scene *scene, const std::string &title);
 
-    Window(Scene *scene);
+    Window(Rife::Base::Scene *scene);
 
     virtual ~Window() = default;
 

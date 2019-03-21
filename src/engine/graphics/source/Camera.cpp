@@ -13,29 +13,30 @@ namespace Rife::Graphics {
         setupBuffer();
     }
 
-    glm::vec3 Camera::getPosition() { return getComponent<Transform>()->m_position; }
+    Camera::~Camera() {
+    }
 
-    Camera* Camera::updateProjection(float fov, float aspect, float near, float far) {
+    glm::vec3 Camera::getPosition() { return getComponent<Transform>()->position; }
+
+    void Camera::updateProjection(float fov, float aspect, float near, float far) {
         m_fov = fov;
         m_aspect = aspect;
         m_near = near;
         m_far = far;
         m_projection = glm::perspective(glm::radians(fov), aspect, near, far);
         m_projection[1][1] *= -1;
-        return this;
     }
 
-    Camera* Camera::updateView() {
+    void Camera::updateView() {
         auto t = getComponent<Transform>();
 
-        m_position = t->m_position;
-        m_target = m_position + t->getFront();
+        position = t->position;
+        m_target = position + t->getFront();
         m_up = t->getUp();
-        m_view = glm::lookAt(m_position, m_target, m_up);
-        return this;
+        m_view = glm::lookAt(position, m_target, m_up);
     }
 
-    void Camera::update() {
+    void Camera::onLateUpdate() {
         updateView();     
     }
 
@@ -62,7 +63,7 @@ namespace Rife::Graphics {
     }
 
 	void Camera::updateBuffer(uint32_t imageIndex) {
-		m_ubo.position = glm::vec4(m_position, 0.0f);
+		m_ubo.position = glm::vec4(position, 0.0f);
 		m_ubo.vp = m_projection * m_view;
         flushData(&m_ubo, imageIndex);
 	}

@@ -11,10 +11,6 @@ namespace Rife::Graphics {
         GLOBAL_LIGHTS->setDirectionalLight(this);
     }
 
-    void DirectionalLight::awake() {
-        m_transform = p_gameObject->getComponent<Transform>();
-    }
-
     void DirectionalLight::apply(uDirectionalLight& ubo) {
         ubo.color = glm::vec4(m_color, 1.0f);
         ubo.direction = glm::vec4(getComponent<Transform>()->m_rotation * m_direction, 1.0f);
@@ -32,7 +28,7 @@ namespace Rife::Graphics {
     }
 
     void PointLight::apply(uPointLight& ubo) {
-        ubo.position = glm::vec4(m_position, 1.0f);
+        ubo.position = glm::vec4(position, 1.0f);
         ubo.color = glm::vec4(m_color, 1.0f);
         ubo.intensitys = glm::vec4(m_constant, m_linear, m_quadratic, m_intensity);
     }

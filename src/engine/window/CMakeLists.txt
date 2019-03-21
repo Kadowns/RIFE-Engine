@@ -1,8 +1,7 @@
 include(${CMAKE_HOME_DIRECTORY}/cmake/RIFECreateModule.cmake)
 
 set(WINDOW_INCLUDE
-        include/Window.h  
-		include/Scene.h
+        include/Window.h		
 		include/Database.h
         )
 set(WINDOW_SOURCE

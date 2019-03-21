@@ -3,6 +3,7 @@
 #include <RifeCore.h>
 #include <RifeTools.h>
 #include <RifeGraphics.h>
+#include <RotatingCube.h>
 
 using namespace Rife::Base;
 using namespace Rife::Graphics;
@@ -24,9 +25,9 @@ namespace Scripts {
 
 		Transform* transform;
 	    Keyboard* input;
-        Mouse* mouse;
+        Mouse* mouse;        
 
-        MouseMoveEvent::EventListener callback;
+        OnMouseMove::EventListener callback;
 
 	public:
 
@@ -34,11 +35,14 @@ namespace Scripts {
             m_name = "Movable";
         }
 
+        ~Movable() {
+        }
+
         void serialize(std::ofstream& file) {
             
         }
 
-        void OnMouseMove(double x, double y) {
+        void onMouseMove(double x, double y) {
 
             if (mouseDrag) {
                 transform->m_rotation *= glm::quat(glm::radians(glm::vec3(y, -x, 0)));
@@ -46,17 +50,17 @@ namespace Scripts {
             }          
         }
 
-		void awake() {
+        virtual void onAwake() override {
 			transform = getComponent<Transform>();
 			input = KEYBOARD;
             mouse = MOUSE;
             callback = [this](double x, double y) {
-                this->OnMouseMove(x, y);
+                this->onMouseMove(x, y);
             };
-            mouse->OnMouseMove() += &callback;
+            mouse->onMouseMove() += &callback;
 		}
 
-		void update() {
+		virtual void onUpdate() override {
 
             if (mouse->isPressed(GLFW_MOUSE_BUTTON_LEFT)) {
                 mouse->setCursor(false);            
@@ -78,6 +82,19 @@ namespace Scripts {
             else {
                 moveSpeed = baseSpeed;
                 rotateSpeed = baseSpeed;
+            }
+
+            if (input->isDown(GLFW_KEY_G)) {
+                auto go = Scene::addGameObject();
+                go->addComponent(new Transform());
+                Ubo::MaterialProperties matProp = {};
+                matProp.color = glm::vec4(Random::range(0.5f, 1.0f), Random::range(0.5f, 1.0f), Random::range(0.5f, 1.0f), 1.0f);
+                matProp.specularPower = Random::range(1.0f, 256.0f);
+                matProp.reflectionPower = Random::range(0.5f, 1.0f);
+
+                go->addComponent(new MeshRenderer(DATABASE::getMesh("PolarSphere"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
+                go->addComponent(new RotatingCube());
+                go->getComponent<Transform>()->position = transform->position;                
             }
 
             float rotateAmount = 0.0f;
@@ -113,12 +130,12 @@ namespace Scripts {
 		}
 
 		void move(glm::vec3 direction) {
-			transform->m_position += direction * moveSpeed * (float)TIME->getLastFrameTime();
+			transform->position += direction * moveSpeed * (float)TIME->getLastFrameTime();
 		}
 
         void rotateZ(double amount) {
             transform->m_rotation *= glm::quat(glm::radians(glm::vec3(0.0f, 0.0f, amount * TIME->getLastFrameTime())));
-            glm::normalize(transform->m_position);
+            glm::normalize(transform->position);
         }
 	};
 }

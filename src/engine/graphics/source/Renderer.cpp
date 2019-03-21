@@ -21,11 +21,15 @@ namespace Rife::Graphics {
 
         freeCommandBuffers();
 
-        VK_BASE->onRecreateRenderer() -= &m_recreateRendererCallback;
-        VK_BASE->onCleanupRenderer() -= &m_cleanupRendererCallback;
+        VK_BASE->onRecreateRenderer -= &m_recreateRendererCallback;
+        VK_BASE->onCleanupRenderer -= &m_cleanupRendererCallback;
+        VK_BASE->onDraw -= &m_cmdDrawCallback;
     }
 
-    void Renderer::setup() {
+    Renderer::Renderer() {
+    }
+
+    void Renderer::onInit() {
 
         createDescriptorPool();
         createDescriptorSets();
@@ -33,14 +37,20 @@ namespace Rife::Graphics {
         m_recreateRendererCallback = [this]() {
             this->createCommandBuffers();
         };
-        VK_BASE->onRecreateRenderer() += &m_recreateRendererCallback;
+        VK_BASE->onRecreateRenderer += &m_recreateRendererCallback;
 
 
         m_cleanupRendererCallback = [this]() {
             this->freeCommandBuffers();
         };
-        VK_BASE->onCleanupRenderer() += &m_cleanupRendererCallback;
+        VK_BASE->onCleanupRenderer += &m_cleanupRendererCallback;
+        
+        m_cmdDrawCallback = [this](const uint32_t& imageIndex) {
+            this->cmdDraw(imageIndex);
+        };
+        VK_BASE->onDraw += &m_cmdDrawCallback;
 
+        createCommandBuffers();
     }
 
     void Renderer::freeCommandBuffers() {
@@ -150,5 +160,11 @@ namespace Rife::Graphics {
 
             vkUpdateDescriptorSets(Vulkan::device, static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
         }
+    }
+
+    void Renderer::cmdDraw(const uint32_t& imageIndex) {
+        if (!m_enabled || !p_gameObject->isActive())
+            return;
+        vkCmdExecuteCommands(Vulkan::primaryCommandBuffers[imageIndex], 1, &m_commandBuffers[imageIndex]);
     }
 }
