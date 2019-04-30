@@ -92,9 +92,9 @@ namespace Scripts {
                 matProp.specularPower = Random::range(1.0f, 256.0f);
                 matProp.reflectionPower = Random::range(0.5f, 1.0f);
 
-                go->addComponent(new MeshRenderer(DATABASE::getMesh("PolarSphere"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
+                go->addComponent(new MeshRenderer(DATABASE::getMesh("Cube"), MaterialInstance(DATABASE::getMaterial("Metal"), matProp)));
                 go->addComponent(new RotatingCube());
-                go->getComponent<Transform>()->position = transform->position;                
+                go->getComponent<Transform>()->position = transform->position + (transform->getFront() * 10.0f);
             }
 
             float rotateAmount = 0.0f;

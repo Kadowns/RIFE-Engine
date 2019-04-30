@@ -53,7 +53,7 @@ void ScenePlayer::onLoadScene() {
     go = Scene::addGameObject();
     go->addComponent(new Transform());    
     go->addComponent(new MeshRenderer(
-        DATABASE::getMesh("Cube"),//DATABASE::insertMesh(TerrainGenerator::generateTerrain(terrainInfo), "Terrain"),
+        DATABASE::insertMesh(TerrainGenerator::generateTerrain(terrainInfo), "Terrain"),
         MaterialInstance(DATABASE::getMaterial("Terrain"), matProp)));
     auto t = go->getComponent<Transform>();
     t->position = glm::vec3(0.0f, -450.0f, 0.0f);

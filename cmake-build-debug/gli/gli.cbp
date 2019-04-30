@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="gli"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\src\;CMake Files\src\engine\;CMake Files\src\engine\core\;CMake Files\src\engine\core\math\;CMake Files\src\engine\core\base\;CMake Files\src\engine\graphics\;CMake Files\src\engine\tools\;CMake Files\src\engine\window\;CMake Files\src\example\;CMake Files\cmake\;CMake Files\libs\;CMake Files\libs\glm\;CMake Files\libs\glm\cmake\;CMake Files\libs\glm\glm\;CMake Files\libs\glm\test\;CMake Files\libs\glm\test\bug\;CMake Files\libs\glm\test\core\;CMake Files\libs\glm\test\ext\;CMake Files\libs\glm\test\gtc\;CMake Files\libs\glm\test\gtx\;CMake Files\libs\glm\test\perf\;CMake Files\libs\gli\;CMake Files\libs\gli\cmake\;CMake Files\libs\gli\gli\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gli_dummy">
+				<Option output="D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/gli_dummy.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D_CRT_SECURE_NO_WARNINGS"/>
+					<Add option="-DSOURCE_DIR=&quot;D:/Projetos/RIFE Engine/RIFE Engine/libs/gli&quot;"/>
+					<Add directory="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/."/>
+					<Add directory="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/.."/>
+					<Add directory="D:/MinGW/include"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../include/c++/4.8.3"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../include/c++/4.8.3/x86_64-w64-mingw32"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../include/c++/4.8.3/backward"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/include"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/include-fixed"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 gli_dummy"/>
+					<CompileFile command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gli_dummy/fast">
+				<Option output="D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/gli_dummy.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D_CRT_SECURE_NO_WARNINGS"/>
+					<Add option="-DSOURCE_DIR=&quot;D:/Projetos/RIFE Engine/RIFE Engine/libs/gli&quot;"/>
+					<Add directory="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/."/>
+					<Add directory="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/.."/>
+					<Add directory="D:/MinGW/include"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../include/c++/4.8.3"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../include/c++/4.8.3/x86_64-w64-mingw32"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../include/c++/4.8.3/backward"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/include"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/include-fixed"/>
+					<Add directory="d:\mingw\bin\../lib64/gcc/x86_64-w64-mingw32/4.8.3/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 gli_dummy/fast"/>
+					<CompileFile command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MinGW/bin/mingw32-make.exe -f &quot;D:/Projetos/RIFE Engine/RIFE Engine/cmake-build-debug/gli/gli/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/CMakeLists.txt">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/doc/spec/index.html">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/clear.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/comparison.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/convert.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/copy.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/bc.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/bc.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/clear.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/clear.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/comparison.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/convert.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/convert_func.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/coord.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/copy.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/dummy.cpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/duplicate.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/dx.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/file.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/file.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/filter.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/filter.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/filter_compute.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/flip.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/flip.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/format.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/generate_mipmaps.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/gl.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/image.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/levels.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/load.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/load_dds.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/load_kmg.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/load_ktx.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/make_texture.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/mipmaps_compute.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/reduce.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/s3tc.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/s3tc.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler1d.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler1d_array.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler2d.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler2d_array.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler3d.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler_cube.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/sampler_cube_array.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/save.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/save_dds.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/save_kmg.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/save_ktx.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/storage.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/storage.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/storage_linear.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/storage_linear.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture1d.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture1d_array.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture2d.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture2d_array.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture3d.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture_cube.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/texture_cube_array.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/transform.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/view.inl">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/core/workaround.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/duplicate.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/dx.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/format.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/generate_mipmaps.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/gl.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/gli.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/image.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/levels.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/load.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/load_dds.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/load_kmg.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/load_ktx.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/make_texture.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/reduce.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler1d.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler1d_array.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler2d.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler2d_array.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler3d.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler_cube.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/sampler_cube_array.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/save.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/save_dds.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/save_kmg.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/save_ktx.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/target.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture1d.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture1d_array.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture2d.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture2d_array.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture3d.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture_cube.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/texture_cube_array.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/transform.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/type.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/view.hpp">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/manual.md">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/readme.md">
+			<Option target="gli_dummy"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/core/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\core\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/core/math/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\core\math\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/core/base/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\core\base\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/graphics/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\graphics\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\tools\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/engine/window/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\engine\window\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/src/example/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\example\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/cmake/FindGLFW.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/cmake/FindGLI.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/cmake/FindGLM.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/cmake/FindVulkan.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/cmake/PrintProperties.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/cmake/RIFECreateModule.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\libs\glm\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/cmake/CMakePackageConfigHelpers.cmake">
+			<Option virtualFolder="CMake Files\libs\glm\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/cmake/GNUInstallDirs.cmake">
+			<Option virtualFolder="CMake Files\libs\glm\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/cmake/glm.pc.in">
+			<Option virtualFolder="CMake Files\libs\glm\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/cmake/glmBuildConfig.cmake.in">
+			<Option virtualFolder="CMake Files\libs\glm\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/cmake/glmConfig.cmake.in">
+			<Option virtualFolder="CMake Files\libs\glm\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/glm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\glm\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/bug/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\bug\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/core/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\core\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/ext/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\ext\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/gtc/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\gtc\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/gtx/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\gtx\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/glm/test/perf/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\glm\test\perf\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\gli\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/cmake/CMakePackageConfigHelpers.cmake">
+			<Option virtualFolder="CMake Files\libs\gli\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/cmake/GNUInstallDirs.cmake">
+			<Option virtualFolder="CMake Files\libs\gli\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/cmake/gliBuildConfig.cmake.in">
+			<Option virtualFolder="CMake Files\libs\gli\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/cmake/gliConfig.cmake.in">
+			<Option virtualFolder="CMake Files\libs\gli\cmake\"/>
+		</Unit>
+		<Unit filename="D:/Projetos/RIFE Engine/RIFE Engine/libs/gli/gli/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libs\gli\gli\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
