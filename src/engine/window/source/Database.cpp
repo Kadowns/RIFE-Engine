@@ -38,7 +38,7 @@ namespace Rife::Data {
 		s_meshes["Plane"] = Graphics::MeshFactory::createPlane(20, 20);
 		s_meshes["PolarSphere"] = Graphics::MeshFactory::createPolarSphere(32);
 		s_meshes["NormalizedSphere"] = Graphics::MeshFactory::createNormalizedSphere(32);
-		s_meshes["Ship"] = Graphics::MeshFactory::createCube();//loadMesh("Arc170.obj");
+        s_meshes["Ship"] = s_meshes["Cube"];//Graphics::MeshFactory::loadMesh("Arc170.obj");
 		std::cout << "Meshes loaded!" << std::endl;
 	}
 

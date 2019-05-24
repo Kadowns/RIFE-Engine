@@ -25,8 +25,8 @@ void ScenePlayer::onLoadScene() {
     
     Ubo::MaterialProperties matProp = {};
     matProp.color = glm::vec4(1.0f);
-	matProp.reflectionPower = 0;
-	matProp.specularPower = 0;
+	matProp.reflectionPower = 256.0f;
+	matProp.specularPower = 128.0f;
     matProp.tiling = 4.0f;
     
     TerrainCreateInfo terrainInfo = {};
@@ -35,7 +35,7 @@ void ScenePlayer::onLoadScene() {
     terrainInfo.seed = 0;
     terrainInfo.octaves = 8;
     terrainInfo.scale = 16.0f;
-    terrainInfo.lacunarity = 2.5f;
+    terrainInfo.lacunarity = 8.5f;
     terrainInfo.persistence = 0.25f;
 
     terrainInfo.weights[0].min = 0.0f;
@@ -57,7 +57,7 @@ void ScenePlayer::onLoadScene() {
         MaterialInstance(DATABASE::getMaterial("Terrain"), matProp)));
     auto t = go->getComponent<Transform>();
     t->position = glm::vec3(0.0f, -450.0f, 0.0f);
-    //t->m_scale = glm::vec3(100.0f, 480.0f, 100.0f);
+    t->m_scale = glm::vec3(100.0f, 480.0f, 100.0f);
 
     matProp.tiling = 1.0f;
 	int newSize = m_gameObjects.size() + 10;
